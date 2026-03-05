@@ -420,16 +420,24 @@
           const isLove = /感情|戀|爱情|关系|复合|曖昧/.test(q);
           const isCareer = /工作|事業|创业|職場|面試|升職|生意/.test(q);
           const isMoney = /金錢|财|收入|投資|债|花费/.test(q);
+          const isGrowth = /自我|成长|療癒|疗愈|焦慮|焦虑|內在|阴影|榮格|jung/.test(q);
 
+          let profile = '綜合';
           let mindsetAdvice = '先停止用「結果」評價自己，改以「是否持續對齊價值」作為判準。';
           let actionAdvice = '未來 7 天，每天固定 30 分鐘完成一件最小可驗證行動，並在晚間做 3 句復盤。';
 
           if (isLove) {
+            profile = '感情向';
             mindsetAdvice = '把「害怕失去」轉為「建立界線」：愛不是討好，而是清晰表達需求。';
             actionAdvice = '本週只做一次高品質溝通：先寫下需求、底線、可妥協區，再進行對話。';
           } else if (isCareer || isMoney) {
+            profile = '事業/財務向';
             mindsetAdvice = '把焦點從焦慮轉到可控槓桿：技能、節奏、輸出。';
             actionAdvice = '做一次資源盤點（時間/現金流/能力），刪掉一個低回報任務，集中到一個高價值目標。';
+          } else if (isGrowth) {
+            profile = '自我成長向';
+            mindsetAdvice = '把「我是不是不夠好」改寫成「我正在整合哪一部分陰影」，停止自我攻擊。';
+            actionAdvice = '連續 7 天進行「主動想像」：每天 10 分鐘寫下夢境/情緒觸發，再提煉一個可行動的覺察。';
           }
 
           const elementHintMap = {
@@ -448,6 +456,7 @@
                 <div className="p-5 rounded-2xl border border-[#F7E7CE]/20 bg-[#F7E7CE]/5">
                   <p className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE]/80 mb-2">本次提問主題</p>
                   <p className="text-base">{submittedQuestion}</p>
+                  <p className="text-xs mt-2 opacity-80">解析語氣：{profile}</p>
                 </div>
               )}
 
