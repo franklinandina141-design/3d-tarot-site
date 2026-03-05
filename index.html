@@ -412,8 +412,8 @@
             ? `目前的「${n.name}」不只是在描述外在阻力，更像在映照你對「失去控制」的深層焦慮；這會讓你傾向延後決策或反覆尋求確定感。`
             : `目前的「${n.name}」顯示你其實已看見方向，但潛意識仍在等待完美時機，擔心一旦行動就要承擔不可逆的責任。`;
           const mirrorBlind = n.isReversed
-            ? '盲點是：你看見了問題，卻不願承認自己也在餵養它（拖延、討好、過度防禦）。'
-            : '盲點是：你看見了機會，但仍低估「持續投入」而高估「靈感瞬間」。';
+            ? '你看見了問題，也許暫時還不想承認自己也在其中用力（拖延、討好、過度防禦）。'
+            : '你看見了機會，但仍容易把希望放在瞬間改變，而不是穩定投入。';
 
           const linkText = `從【${p.name}】過渡到【${n.name}】，你的心理動力從「${info(p).energy}」轉為「${info(n).energy}」，這解釋了為什麼你現在會感到拉扯與疲憊。`;
           const pivotText = `要從【${n.name}】跨向【${f.name}】，核心轉折不是更努力，而是把「被動等待」切換成「有邊界的主動選擇」。`;
@@ -462,28 +462,26 @@
               )}
 
               <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">1. 能量特質分析（Elemental & Archetype）</h4>
-                <p className="text-sm md:text-base">元素比例：火 {counts['火']} / 水 {counts['水']} / 風 {counts['風']} / 土 {counts['土']}</p>
-                <p className="text-sm mt-2">{elementSpeech}</p>
-                {balanceReport && <p className="text-sm mt-2 text-[#f3dede]">{balanceReport}</p>}
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">1. 靈魂氣候總覽</h4>
+                <p className="text-sm mt-2">此刻的你像站在季節交界處：一部分想向前，一部分仍想先確認安全。這不是矛盾，而是內在正在重新排序。你正在學習把感受與現實放在同一張地圖上，讓每一步更穩、更真實。</p>
               </div>
 
               <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
                 <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">2. 現狀深度解碼</h4>
-                <p className="text-sm">現在位【{n.name}・{stance(n)}】映照：{mirrorShadow}</p>
-                <p className="text-sm mt-2">盲點提示：{mirrorBlind}</p>
-                <p className="text-sm mt-2">重點是先把情緒與事實分開：先確認你真正擔心的是什麼，再決定下一步怎麼做。</p>
+                <p className="text-sm">現在位【{n.name}・{stance(n)}】像一面溫柔的鏡子：{mirrorShadow}</p>
+                <p className="text-sm mt-2">如果你願意慢下來，你會發現自己其實早已感受到答案，只是還在等一個更安心的時刻。{mirrorBlind}</p>
+                <p className="text-sm mt-2">先把情緒安放好，再看清事實，接著做一個不勉強自己的小決定。</p>
               </div>
 
               <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">3. 牌陣動力鏈結（The Narrative Link）</h4>
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">3. 你的故事如何走到這裡</h4>
                 <p className="text-sm">{linkText}</p>
                 <p className="text-sm mt-2">{pivotText}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-2xl border border-[#F7E7CE]/15 bg-[#F7E7CE]/5">
-                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE] mb-2">4. 戰略級建議</h5>
+                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE] mb-2">4. 你現在最需要的方向</h5>
                   <p className="text-sm leading-relaxed">心理建議：{mindsetAdvice}</p>
                   <p className="text-sm leading-relaxed mt-2">行動建議：{actionAdvice}</p>
                   <p className="text-sm leading-relaxed mt-2">執行原則：只做一個最關鍵動作，先把局面穩住，再擴大節奏。</p>
@@ -495,7 +493,7 @@
               </div>
 
               <div className="pt-6 border-t border-[#F7E7CE]/20">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">5. 權威結語與倫理聲明</h4>
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">5. 給你的溫柔結語</h4>
                 <p>牌面揭示的是趨勢與提醒，不是命運判決。當你願意面對真正的問題並採取行動，轉機就會開始；決定權始終在你手中。</p>
                 <p className="text-xs mt-3 opacity-80">本解讀僅供自我覺察與成長參考，不取代醫療、法律、財務或其他專業決策建議；若處於心理危機，請優先尋求專業心理支持。</p>
               </div>
