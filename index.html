@@ -138,6 +138,7 @@
 
       const App = () => {
         const [view, setView] = useState('cover');
+        const [deckCatalog, setDeckCatalog] = useState([]);
         const [deck, setDeck] = useState([]);
         const [selectedCards, setSelectedCards] = useState([]);
         const [handPos, setHandPos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
@@ -156,13 +157,41 @@
         const animationFrameRef = useRef(null);
         const cameraRef = useRef(null);
         const bgmRef = useRef(null);
+        const audioCtxRef = useRef(null);
+        const droneNodesRef = useRef([]);
 
         useEffect(() => { selectedCardsRef.current = selectedCards; }, [selectedCards]);
         useEffect(() => { deckRef.current = deck; }, [deck]);
 
+        useEffect(() => {
+          fetch('./assets/tarot-deck.local.json', { cache: 'no-store' })
+            .then((res) => (res.ok ? res.json() : null))
+            .then((json) => {
+              if (json && Array.isArray(json.cards)) setDeckCatalog(json.cards);
+            })
+            .catch(() => {});
+        }, []);
+
         const initializeDeck = () => {
           const fullDeck = Array.from({ length: 78 }).map((_, index) => {
-            const baseData = buildCardByIndex(index);
+            const source = deckCatalog[index];
+            const baseData = source
+              ? {
+                  name: source.name ? `${source.name}${source.name_en ? ` (${source.name_en})` : ''}` : (source.name_en || buildCardByIndex(index).name),
+                  image: source.image_url || buildCardByIndex(index).image,
+                  upright: {
+                    energy: `韋特牌義提示：${source.up || '請回到當下，保持覺察。'}`,
+                    insight: `這張牌在當前議題上多對應「${source.up || '內在指引'}」。重點是把模糊感受變成可落地決策。`,
+                    action: '今天先完成一件最小但可驗證的行動，避免只停留在想法。'
+                  },
+                  reversed: {
+                    energy: `逆位提醒：${source.down || '當前能量可能失衡，需要調整節奏。'}`,
+                    insight: '先降低外界噪音，辨識你真正的焦慮來源，再做下一步。',
+                    action: '先停、再看、再選：給自己 20 分鐘獨處，寫下一條新的行動界線。'
+                  }
+                }
+              : buildCardByIndex(index);
+
             return {
               ...baseData,
               uid: Math.random().toString(36).slice(2, 11),
@@ -176,23 +205,64 @@
           targetScrollRef.current = init;
         };
 
+        const stopDrone = () => {
+          droneNodesRef.current.forEach((node) => {
+            try { node.stop?.(); } catch (_) {}
+            try { node.disconnect?.(); } catch (_) {}
+          });
+          droneNodesRef.current = [];
+        };
+
+        const startDrone = async () => {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return false;
+          if (!audioCtxRef.current) audioCtxRef.current = new Ctx();
+          const ctx = audioCtxRef.current;
+          if (ctx.state === 'suspended') await ctx.resume();
+
+          const master = ctx.createGain();
+          master.gain.value = 0.02;
+          master.connect(ctx.destination);
+
+          const freqs = [174.61, 261.63, 392.0];
+          const nodes = [];
+          freqs.forEach((f) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = f;
+            gain.gain.value = 0.08;
+            osc.connect(gain);
+            gain.connect(master);
+            osc.start();
+            nodes.push(osc, gain);
+          });
+
+          droneNodesRef.current = nodes;
+          return true;
+        };
+
         const toggleMusic = async () => {
           const audio = bgmRef.current;
-          if (!audio) return;
 
           if (musicOn) {
-            audio.pause();
+            if (audio) audio.pause();
+            stopDrone();
             setMusicOn(false);
             return;
           }
 
-          try {
-            audio.volume = 0.32;
-            await audio.play();
-            setMusicOn(true);
-          } catch (e) {
-            setMusicOn(false);
+          if (audio) {
+            try {
+              audio.volume = 0.32;
+              await audio.play();
+              setMusicOn(true);
+              return;
+            } catch (_) {}
           }
+
+          const ok = await startDrone();
+          setMusicOn(ok);
         };
 
         useEffect(() => {
@@ -216,6 +286,8 @@
               cameraRef.current.stop();
               cameraRef.current = null;
             }
+            if (bgmRef.current) bgmRef.current.pause();
+            stopDrone();
           };
         }, [view, deck.length]);
 
