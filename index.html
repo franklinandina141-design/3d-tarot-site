@@ -159,6 +159,8 @@
         const bgmRef = useRef(null);
         const audioCtxRef = useRef(null);
         const droneNodesRef = useRef([]);
+        const fileSourceRef = useRef(null);
+        const fileGainRef = useRef(null);
 
         useEffect(() => { selectedCardsRef.current = selectedCards; }, [selectedCards]);
         useEffect(() => { deckRef.current = deck; }, [deck]);
@@ -213,6 +215,14 @@
           droneNodesRef.current = [];
         };
 
+        const stopFileTrack = () => {
+          try { fileSourceRef.current?.stop?.(); } catch (_) {}
+          try { fileSourceRef.current?.disconnect?.(); } catch (_) {}
+          try { fileGainRef.current?.disconnect?.(); } catch (_) {}
+          fileSourceRef.current = null;
+          fileGainRef.current = null;
+        };
+
         const startDrone = async () => {
           const Ctx = window.AudioContext || window.webkitAudioContext;
           if (!Ctx) return false;
@@ -259,24 +269,49 @@
           return true;
         };
 
-        const toggleMusic = async () => {
-          const audio = bgmRef.current;
+        const startFileTrack = async () => {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return false;
+          if (!audioCtxRef.current) audioCtxRef.current = new Ctx();
+          const ctx = audioCtxRef.current;
+          if (ctx.state === 'suspended') await ctx.resume();
 
+          const res = await fetch('./assets/audio/spiritual-ambient.mp3', { cache: 'no-store' });
+          if (!res.ok) throw new Error('audio file not found');
+          const arr = await res.arrayBuffer();
+          const buffer = await ctx.decodeAudioData(arr.slice(0));
+
+          const src = ctx.createBufferSource();
+          const gain = ctx.createGain();
+          gain.gain.value = 0.55;
+          src.buffer = buffer;
+          src.loop = true;
+          src.connect(gain);
+          gain.connect(ctx.destination);
+          src.start();
+
+          fileSourceRef.current = src;
+          fileGainRef.current = gain;
+          return true;
+        };
+
+        const toggleMusic = async () => {
           if (musicOn) {
+            const audio = bgmRef.current;
             if (audio) audio.pause();
+            stopFileTrack();
             stopDrone();
             setMusicOn(false);
             return;
           }
 
-          if (audio) {
-            try {
-              audio.volume = 0.32;
-              await audio.play();
+          try {
+            const okFile = await startFileTrack();
+            if (okFile) {
               setMusicOn(true);
               return;
-            } catch (_) {}
-          }
+            }
+          } catch (_) {}
 
           const ok = await startDrone();
           setMusicOn(ok);
@@ -304,6 +339,7 @@
               cameraRef.current = null;
             }
             if (bgmRef.current) bgmRef.current.pause();
+            stopFileTrack();
             stopDrone();
           };
         }, [view, deck.length]);
@@ -395,6 +431,29 @@
           const stance = (card) => (card.isReversed ? '逆位' : '正位');
           const info = (card) => (card.isReversed ? card.reversed : card.upright);
 
+          const q = (submittedQuestion || '').toLowerCase();
+          const names = `${p.name} ${n.name} ${f.name}`;
+          const isLove = /感情|戀|爱情|关系|复合|曖昧/.test(q);
+          const isCareer = /工作|事業|创业|職場|面試|升職|生意/.test(q);
+          const isMoney = /金錢|财|收入|投資|债|花费/.test(q);
+
+          let actionPlan = '每天做一件最小行動：早晨 5 分鐘靜心 + 晚上 3 行日記（今天覺察、今天停止、明天行動）。';
+          let finalAdvice = '不要急於在外部世界尋求證明，而是把焦點拉回呼吸與當下感受。先穩住節奏，再推進選擇。';
+
+          if (isLove) {
+            actionPlan = '7天內先做「情緒降噪」：第1-2天不追問結果，第3-4天梳理界線與需求，第5-7天只做一次真誠對話，不重複拉扯。';
+            finalAdvice = '這組牌在關係上提醒你：先確認你要的是「被愛」還是「被回應」。當你把界線說清楚，關係才有機會走向穩定。';
+          } else if (isCareer || isMoney) {
+            actionPlan = '7天行動聚焦在一件可量化目標：拆成每日 30 分鐘深度推進，並在第7天復盤「投入時間 / 產出結果 / 下一步」。';
+            finalAdvice = '這組牌對事業與金錢的訊號是：避免一次做太多，先穩現金流與核心技能，再擴張。穩定比衝動更重要。';
+          } else if (/死神|高塔|惡魔|月亮/.test(names)) {
+            actionPlan = '接下來 7 天先做斷捨離：每天清理一項消耗（人、事、習慣），騰出空間給真正想發展的方向。';
+            finalAdvice = '這組牌偏「深層轉化」：不是壞，而是要你停止舊模式。當你願意放手，新的秩序才會進來。';
+          } else if (/太陽|星星|世界|命運之輪/.test(names)) {
+            actionPlan = '7天內把機會具體化：每天固定輸出一個成果（內容、溝通、提案），讓好運有落地容器。';
+            finalAdvice = '這組牌偏「順風期」：你已在正確軌道上，重點是持續與節奏，不要因為害怕失去而自我設限。';
+          }
+
           return (
             <div className="space-y-8 text-[#d1d5db] font-light leading-relaxed">
               {submittedQuestion && (
@@ -424,15 +483,14 @@
                 </div>
                 <div className="p-4 rounded-2xl border border-[#9d85c4]/25 bg-[#9d85c4]/10">
                   <h5 className="text-xs tracking-[0.2em] uppercase text-[#d9c7ff] mb-2">7天落地行動</h5>
-                  <p className="text-sm leading-relaxed">每天做一件最小行動：早晨 5 分鐘靜心 + 晚上 3 行日記（今天覺察、今天停止、明天行動）。7天後回看，你會看到能量已經開始轉向。</p>
+                  <p className="text-sm leading-relaxed">{actionPlan}</p>
                 </div>
               </div>
 
               <div className="pt-6 border-t border-[#F7E7CE]/20">
                 <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">宇宙最終建議</h4>
                 <p>
-                  綜合來看，目前最重要的轉化是：不要急於在外部世界尋求證明，而是要將焦點拉回到呼吸與當下的感受。
-                  你所擔憂的事物，正隨著你內在頻率的提升而自動重組。請用 7 天去驗證這份指引：每天完成一個微小而真實的行動。
+                  {finalAdvice}
                 </p>
               </div>
             </div>
