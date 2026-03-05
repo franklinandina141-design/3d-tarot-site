@@ -475,20 +475,21 @@
           [p, n, f].forEach((c) => { counts[elementOf(c)] += 1; });
           const sortedElements = Object.entries(counts).sort((a, b) => b[1] - a[1]);
           const topEl = sortedElements[0][0];
+          const secondEl = sortedElements[1][0];
           const weakEl = sortedElements[sortedElements.length - 1][0];
 
           const activeScore = [p, n, f].reduce((acc, c) => acc + (c.isReversed ? -1 : 1), 0);
           const energyTone = activeScore >= 2 ? '積極進取' : activeScore <= -1 ? '停滯警示' : '內省修復';
 
           const mirrorShadow = n.isReversed
-            ? '你內在對失控的焦慮正在放大，於是傾向延後決策或反覆確認安全感。'
-            : '你其實知道該往哪走，但仍在等待「完美時機」才敢全面投入。';
+            ? `目前的「${n.name}」不只是在描述外在阻力，更像在映照你對「失去控制」的深層焦慮；這會讓你傾向延後決策或反覆尋求確定感。`
+            : `目前的「${n.name}」顯示你其實已看見方向，但潛意識仍在等待完美時機，擔心一旦行動就要承擔不可逆的責任。`;
           const mirrorBlind = n.isReversed
-            ? '你看見了問題，但不想承認自己也在餵養它（例如拖延、討好、過度自我保護）。'
-            : '你看見了機會，卻低估了持續行動的重要性。';
+            ? '盲點是：你看見了問題，卻不願承認自己也在餵養它（拖延、討好、過度防禦）。'
+            : '盲點是：你看見了機會，但仍低估「持續投入」而高估「靈感瞬間」。';
 
-          const linkText = `從【${p.name}】到【${n.name}】的因果鏈，是你從「${info(p).energy}」過渡到「${info(n).energy}」。`;
-          const pivotText = `而要從【${n.name}】跨向【${f.name}】，關鍵心理轉變是：把「被動等待」改為「有邊界的主動選擇」。`;
+          const linkText = `從【${p.name}】過渡到【${n.name}】，你的心理動力從「${info(p).energy}」轉為「${info(n).energy}」，這解釋了為什麼你現在會感到拉扯與疲憊。`;
+          const pivotText = `要從【${n.name}】跨向【${f.name}】，核心轉折不是更努力，而是把「被動等待」切換成「有邊界的主動選擇」。`;
 
           const isLove = /感情|戀|爱情|关系|复合|曖昧/.test(q);
           const isCareer = /工作|事業|创业|職場|面試|升職|生意/.test(q);
@@ -505,7 +506,15 @@
             actionAdvice = '做一次資源盤點（時間/現金流/能力），刪掉一個低回報任務，集中到一個高價值目標。';
           }
 
-          const elementSpeech = `在你的能量矩陣中，出現較強的「${topEl}元素」，而「${weakEl}元素」相對不足，整體調性偏向「${energyTone}」。`;
+          const elementHintMap = {
+            '火水': '情感豐富、衝動與直覺並行，需補足結構化執行。',
+            '水土': '感受力與責任感都強，但容易想太多、行動偏慢。',
+            '風土': '理性與現實感充足，需避免情感壓抑。',
+            '火風': '想法與動能都強，需防止節奏過快造成消耗。'
+          };
+          const pairKey = `${topEl}${secondEl}`;
+          const pairHint = elementHintMap[pairKey] || elementHintMap[`${secondEl}${topEl}`] || '你正處在能量重整期，重點是平衡感受與行動。';
+          const elementSpeech = `在你的能量矩陣中，較強的是「${topEl}元素」與「${secondEl}元素」，而「${weakEl}元素」相對不足；整體調性屬於「${energyTone}」。${pairHint}`;
 
           return (
             <div className="space-y-8 text-[#d1d5db] font-light leading-relaxed">
