@@ -130,8 +130,7 @@
 
       function resolveCardImage(cardId = '', remote = '', fallback = '') {
         const local = cardId ? `./assets/cards/${cardId}.jpg` : '';
-        // 只優先使用本地卡圖，避免外部來源牌圖錯配
-        return local || fallback || remote || './assets/cards/ar00.jpg';
+        return local || remote || fallback || './assets/cards/ar00.jpg';
       }
 
       function buildCardByIndex(index) {
@@ -232,6 +231,7 @@
                   id: cardId,
                   name: source.name ? `${source.name}${source.name_en ? ` (${source.name_en})` : ''}` : (source.name_en || fallback.name),
                   image: resolveCardImage(cardId, source.image_url, fallback.image),
+                  backupImage: source.image_url || fallback.image || './assets/cards/ar00.jpg',
                   upright: {
                     energy: `偉特牌義提示：${upMain}。這是一張偏向「順流但需要覺察」的訊號。`,
                     insight: `在你的議題裡，它更指向 ${upExtra}。你可以把它理解為「可前進，但要保持誠實」。`,
@@ -248,6 +248,7 @@
               })
             : Array.from({ length: 78 }).map((_, index) => ({
                 ...buildCardByIndex(index),
+                backupImage: buildCardByIndex(index).image,
                 uid: Math.random().toString(36).slice(2, 11),
                 isReversed: Math.random() > 0.5
               }))
@@ -571,7 +572,14 @@
                     <div key={card.uid} className="flex flex-col items-center group card-reveal" style={{ animationDelay: `${i * 120}ms` }}>
                       <span className="text-[11px] tracking-[0.5em] text-[#9d85c4] mb-6 uppercase">{i === 0 ? '過去 - 根基' : i === 1 ? '現在 - 脈動' : '未來 - 指引'}</span>
                       <div className="relative w-full max-w-[240px] aspect-[2/3.5] rounded-3xl overflow-hidden border border-[#F7E7CE]/30 shadow-lg">
-                        <img src={card.image} loading="lazy" decoding="async" onError={(e) => { e.currentTarget.src = './assets/cards/ar00.jpg'; }} className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
+                        <img src={card.image} data-fallback={card.backupImage || ''} loading="lazy" decoding="async" onError={(e) => {
+                          const fb = e.currentTarget.dataset.fallback;
+                          if (fb && e.currentTarget.src !== fb) {
+                            e.currentTarget.src = fb;
+                          } else {
+                            e.currentTarget.src = './assets/cards/ar00.jpg';
+                          }
+                        }} className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e1a] via-transparent to-transparent opacity-80" />
                         <div className="absolute bottom-8 w-full text-center px-4">
                           <p className="text-xl tracking-[0.15em] text-[#F7E7CE] mb-2">{card.name}</p>
