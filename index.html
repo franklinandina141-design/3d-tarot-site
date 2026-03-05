@@ -217,29 +217,13 @@
           setTimeout(() => { pinchCooldownRef.current = false; }, 1200);
         };
 
-        const buildDeepInterpretation = (card, index) => {
-          const position = index === 0 ? '過去根基' : index === 1 ? '現在脈動' : '未來指引';
-          const info = card.isReversed ? card.reversed : card.upright;
-          const focusMap = {
-            0: '你正在整合過去經驗，讓舊模式轉化為新的底氣。',
-            1: '你此刻的選擇正在重塑關係與自我價值感。',
-            2: '接下來 2~4 週，最重要的是讓行動與內在節奏一致。'
-          };
-
-          return {
-            position,
-            energy: info.energy,
-            insight: info.insight || '當下最重要的是誠實面對自己的真實感受。',
-            action: info.action,
-            focus: focusMap[index],
-            warning: card.isReversed ? '先慢一拍，不要在焦慮下做決定。' : '避免分心，把能量放在一個最核心目標。',
-            journal: `如果我願意真正尊重自己，${position} 這張牌要我立刻停止哪件事？`
-          };
-        };
-
         const generateSoulSummary = () => {
           if (selectedCards.length < 3) return null;
           const [p, n, f] = selectedCards;
+
+          const stance = (card) => (card.isReversed ? '逆位' : '正位');
+          const info = (card) => (card.isReversed ? card.reversed : card.upright);
+
           return (
             <div className="space-y-8 text-[#d1d5db] font-light leading-relaxed">
               {submittedQuestion && (
@@ -248,16 +232,36 @@
                   <p className="text-base">{submittedQuestion}</p>
                 </div>
               )}
+
+              <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">三張牌總覽</h4>
+                <p className="text-sm md:text-base">
+                  過去【{p.name}・{stance(p)}】→ 現在【{n.name}・{stance(n)}】→ 未來【{f.name}・{stance(f)}】
+                </p>
+              </div>
+
               <p className="text-lg italic">
-                「妳所走過的【{p.name}】已沉澱為靈魂的基石。在那個階段，妳學會了如何面對{p.isReversed ? '隱藏的失衡' : '內在的力量'}。
-                而此刻，【{n.name}】的能量正包圍著妳，這是一個宇宙邀請妳進行{n.isReversed ? '深度反思' : '勇敢顯化'}的時刻。
-                展望未來，【{f.name}】預示著當妳帶著覺知行動時，那份屬於妳的{f.isReversed ? '課題將會解開' : '恩典將會降臨'}。」
+                「你走過的【{p.name}】正在提醒你：{info(p).insight}
+                此刻的【{n.name}】指出核心課題是：{info(n).insight}
+                而未來的【{f.name}】給出的方向是：{info(f).insight}」
               </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl border border-[#F7E7CE]/15 bg-[#F7E7CE]/5">
+                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE] mb-2">綜合關鍵訊息</h5>
+                  <p className="text-sm leading-relaxed">當下最重要的不是一次做對所有選擇，而是先把注意力收回到你真正可控的行動。過去在塑造你，現在在考驗你，未來在回應你。</p>
+                </div>
+                <div className="p-4 rounded-2xl border border-[#9d85c4]/25 bg-[#9d85c4]/10">
+                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#d9c7ff] mb-2">7天落地行動</h5>
+                  <p className="text-sm leading-relaxed">每天做一件最小行動：早晨 5 分鐘靜心 + 晚上 3 行日記（今天覺察、今天停止、明天行動）。7天後回看，你會看到能量已經開始轉向。</p>
+                </div>
+              </div>
+
               <div className="pt-6 border-t border-[#F7E7CE]/20">
                 <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">宇宙最終建議</h4>
                 <p>
                   綜合來看，目前最重要的轉化是：不要急於在外部世界尋求證明，而是要將焦點拉回到呼吸與當下的感受。
-                  妳所擔憂的事物，正隨著妳內在頻率的提升而自動重組。請用 7 天去驗證這份指引：每天完成一個微小而真實的行動。
+                  你所擔憂的事物，正隨著你內在頻率的提升而自動重組。請用 7 天去驗證這份指引：每天完成一個微小而真實的行動。
                 </p>
               </div>
             </div>
@@ -329,49 +333,19 @@
                 <h2 className="text-3xl md:text-5xl font-light tracking-[0.4em] text-[#F7E7CE] mb-20 uppercase">三位一體之啟示</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-7xl w-full mb-24">
-                  {selectedCards.map((card, i) => {
-                    const detail = buildDeepInterpretation(card, i);
-                    return (
-                      <div key={card.uid} className="flex flex-col items-center group">
-                        <span className="text-[11px] tracking-[0.5em] text-[#9d85c4] mb-6 uppercase">{i === 0 ? '過去 - 根基' : i === 1 ? '現在 - 脈動' : '未來 - 指引'}</span>
-                        <div className="relative w-full max-w-[240px] aspect-[2/3.5] rounded-3xl overflow-hidden border border-[#F7E7CE]/30 shadow-2xl transition-transform hover:scale-105 duration-700">
-                          <img src={card.image} className={`w-full h-full object-cover transition-opacity duration-1000 ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e1a] via-transparent to-transparent opacity-80" />
-                          <div className="absolute bottom-8 w-full text-center px-4">
-                            <p className="text-xl tracking-[0.15em] text-[#F7E7CE] mb-2">{card.name}</p>
-                            <p className="text-[10px] tracking-[0.2em] opacity-60 uppercase">{card.isReversed ? 'Shadow (逆位)' : 'Light (正位)'}</p>
-                          </div>
-                        </div>
-
-                        <div className="mt-10 space-y-4 text-left px-2 max-w-[320px]">
-                          <div className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">能量觀察</h4>
-                            <p className="text-sm font-light leading-relaxed opacity-90">{detail.energy}</p>
-                          </div>
-                          <div className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">深層洞察</h4>
-                            <p className="text-sm font-light leading-relaxed opacity-90">{detail.insight}</p>
-                          </div>
-                          <div className="p-4 bg-[#F7E7CE]/5 rounded-2xl border border-[#F7E7CE]/10">
-                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">行動建議</h4>
-                            <p className="text-sm italic leading-relaxed opacity-95">「{detail.action}」</p>
-                          </div>
-                          <div className="p-4 bg-[#9d85c4]/10 rounded-2xl border border-[#9d85c4]/20">
-                            <h4 className="text-[10px] tracking-widest text-[#d9c7ff] mb-3 uppercase">本位焦點</h4>
-                            <p className="text-sm leading-relaxed opacity-90">{detail.focus}</p>
-                          </div>
-                          <div className="p-4 bg-[#ffd5d5]/5 rounded-2xl border border-[#ffd5d5]/20">
-                            <h4 className="text-[10px] tracking-widest text-[#ffd5d5] mb-3 uppercase">提醒</h4>
-                            <p className="text-sm leading-relaxed opacity-85">{detail.warning}</p>
-                          </div>
-                          <div className="p-4 bg-[#F7E7CE]/5 rounded-2xl border border-[#F7E7CE]/10">
-                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">日記提問</h4>
-                            <p className="text-sm italic leading-relaxed opacity-90">{detail.journal}</p>
-                          </div>
+                  {selectedCards.map((card, i) => (
+                    <div key={card.uid} className="flex flex-col items-center group">
+                      <span className="text-[11px] tracking-[0.5em] text-[#9d85c4] mb-6 uppercase">{i === 0 ? '過去 - 根基' : i === 1 ? '現在 - 脈動' : '未來 - 指引'}</span>
+                      <div className="relative w-full max-w-[240px] aspect-[2/3.5] rounded-3xl overflow-hidden border border-[#F7E7CE]/30 shadow-2xl transition-transform hover:scale-105 duration-700">
+                        <img src={card.image} className={`w-full h-full object-cover transition-opacity duration-1000 ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e1a] via-transparent to-transparent opacity-80" />
+                        <div className="absolute bottom-8 w-full text-center px-4">
+                          <p className="text-xl tracking-[0.15em] text-[#F7E7CE] mb-2">{card.name}</p>
+                          <p className="text-[10px] tracking-[0.2em] opacity-60 uppercase">{card.isReversed ? 'Shadow (逆位)' : 'Light (正位)'}</p>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
 
                 <div className="max-w-4xl w-full p-12 md:p-16 rounded-[60px] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/10 backdrop-blur-3xl shadow-2xl">
@@ -383,14 +357,35 @@
                     <p className="text-center text-sm md:text-base text-[#e5e7eb] leading-relaxed">
                       如果你希望我根據你的真實處境做更深入的一對一解讀，
                       可直接私訊關鍵字 <span className="text-[#F7E7CE] font-semibold">「預約解讀」</span>。
-                      我會依照你的主題（感情 / 事業 / 自我成長）安排專屬牌陣與建議。
                     </p>
+
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="p-4 rounded-2xl border border-white/10 bg-white/5">
+                        <h5 className="text-[#F7E7CE] tracking-[0.2em] uppercase text-xs mb-3">服務說明</h5>
+                        <ul className="space-y-2 text-[#e5e7eb]/90 leading-relaxed">
+                          <li>• 一對一深度解讀（感情 / 事業 / 自我成長）</li>
+                          <li>• 解讀形式：文字整理 + 語音重點（依你偏好）</li>
+                          <li>• 交付內容：核心課題、行動建議、7天落地練習</li>
+                          <li>• 可加購：週追蹤回訪，協助你調整節奏</li>
+                        </ul>
+                      </div>
+                      <div className="p-4 rounded-2xl border border-[#ffd5d5]/20 bg-[#ffd5d5]/5">
+                        <h5 className="text-[#ffd5d5] tracking-[0.2em] uppercase text-xs mb-3">免責聲明</h5>
+                        <ul className="space-y-2 text-[#f3dede]/90 leading-relaxed">
+                          <li>• 本服務屬於心靈探索與自我覺察，不構成醫療、法律或投資建議。</li>
+                          <li>• 解讀結果僅供參考，實際決策請依你的現實情況與專業意見判斷。</li>
+                          <li>• 如你正處於嚴重心理壓力或危機，請優先尋求專業心理諮商與支持系統。</li>
+                          <li>• 預約即代表你理解並同意以上說明。</li>
+                        </ul>
+                      </div>
+                    </div>
+
                     <div className="mt-6 flex flex-col md:flex-row gap-3 justify-center">
                       <button className="px-6 py-3 rounded-full border border-[#F7E7CE]/30 hover:border-[#F7E7CE] hover:bg-[#F7E7CE]/10 transition-all text-xs tracking-[0.2em] uppercase">
                         私訊我：預約解讀
                       </button>
                       <button className="px-6 py-3 rounded-full border border-[#9d85c4]/40 hover:border-[#9d85c4] hover:bg-[#9d85c4]/10 transition-all text-xs tracking-[0.2em] uppercase text-[#d9c7ff]">
-                        查看服務說明
+                        查看完整服務流程
                       </button>
                     </div>
                   </div>
