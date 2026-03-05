@@ -25,50 +25,88 @@
     <script type="text/babel">
       const { useState, useEffect, useRef, useMemo } = React;
 
-      const TAROT_DATA = {
-        0: {
-          name: "愚者 (The Fool)",
-          image: "https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg",
-          upright: {
-            energy: "這是靈魂踏入物質世界的第一步。妳正處於一種純粹的潛能狀態，像是一張尚未著色的畫布。",
-            insight: "現在的宇宙正邀請妳放下所有的『預設』。恐懼往往來自於對未知的掌控欲，而這張牌告訴妳，當妳信任生命時，懸崖之下自有羽翼。",
-            action: "去嘗試一件妳完全不擅長的事，純粹為了快樂而做，不計成果。"
-          },
-          reversed: {
-            energy: "妳可能在盲目地跳躍，試圖透過改變外部環境來逃避內在的焦慮。",
-            insight: "自由不代表不負責任。現在的停滯或混亂，是在提醒妳檢查腳下的基石是否穩固。妳是在跟隨直覺，還是在逃避現實？",
-            action: "在做決定前先深呼吸三次，問問自己：這個選擇是出於熱愛，還是出於恐慌？"
-          }
-        },
-        1: {
-          name: "魔術師 (The Magician)",
-          image: "https://www.sacred-texts.com/tarot/pkt/img/ar01.jpg",
-          upright: {
-            energy: "妳擁有將靈感轉化為現實的所有工具。天、地、火、水、風的力量正在妳指尖交匯。",
-            insight: "這是一張『顯化』的牌。妳的意志就是導火線。當妳的內在願景與行動達成一致時，奇蹟就不再是偶然。",
-            action: "明確寫下妳的一項具體目標，並在今天為它踏出第一個實質性的、物理性的步驟。"
-          },
-          reversed: {
-            energy: "能量正在流失，或者是妳的才華被用在了錯誤的方向。妳可能感到有力無處使，或者在操縱某種局勢。",
-            insight: "當魔術師失效時，通常是因為我們試圖用大腦去控制靈魂。妳是否在試圖走捷徑，而忽略了事物的自然節奏？",
-            action: "清理妳的工作空間或居住環境，讓混亂的能量重新歸位，找回妳的專注力。"
-          }
-        },
-        2: {
-          name: "女祭司 (The High Priestess)",
-          image: "https://www.sacred-texts.com/tarot/pkt/img/ar02.jpg",
-          upright: {
-            energy: "妳正站在神祕與直覺的門檻上。此時，靜默比任何語言都更有力量。",
-            insight: "答案不在外面的世界，而在妳夢境與清醒之間的那個縫隙。這是一段『向內看』的時期，妳不需要急著給出答案。",
-            action: "今晚睡前進行一次 10 分鐘的靜坐，並在床頭放一張紙，記下妳醒來後的第一個夢境片段。"
-          },
-          reversed: {
-            energy: "妳可能過度依賴邏輯，或是被表面訊息所迷惑。內在的指南針因為外界的噪音而失去了準星。",
-            insight: "過度的理性有時是一種防禦機制。妳在害怕看見那個隱藏在黑暗中的真相嗎？秘密正呼之欲出。",
-            action: "停止向身邊的人尋求意見，獨處一小時，聽聽那個被妳壓抑已久的、最微弱的直覺聲響。"
-          }
-        }
+      const MAJOR_ARCANA = [
+        "愚者 (The Fool)", "魔術師 (The Magician)", "女祭司 (The High Priestess)", "女皇 (The Empress)", "皇帝 (The Emperor)",
+        "教皇 (The Hierophant)", "戀人 (The Lovers)", "戰車 (The Chariot)", "力量 (Strength)", "隱者 (The Hermit)",
+        "命運之輪 (Wheel of Fortune)", "正義 (Justice)", "倒吊人 (The Hanged Man)", "死神 (Death)", "節制 (Temperance)",
+        "惡魔 (The Devil)", "高塔 (The Tower)", "星星 (The Star)", "月亮 (The Moon)", "太陽 (The Sun)",
+        "審判 (Judgement)", "世界 (The World)"
+      ];
+
+      const MAJOR_KEYWORDS = {
+        0: ["新旅程", "信任未知", "天真與風險"],
+        1: ["意志顯化", "資源整合", "行動力"],
+        2: ["直覺", "潛意識", "靜默智慧"],
+        3: ["滋養", "豐盛", "創造"],
+        4: ["秩序", "邊界", "責任"],
+        5: ["傳統", "信念系統", "導師"],
+        6: ["關係選擇", "價值一致", "承諾"],
+        7: ["掌舵", "自律", "突破"],
+        8: ["溫柔力量", "耐心", "本能整合"],
+        9: ["退隱", "獨處反思", "內在明燈"],
+        10: ["週期轉折", "命運節點", "順勢"],
+        11: ["因果平衡", "誠實", "清晰判斷"],
+        12: ["停看轉化", "視角翻轉", "放下控制"],
+        13: ["結束與重生", "斷捨離", "深層更新"],
+        14: ["調和", "節奏", "療癒整合"],
+        15: ["慾望束縛", "依附", "自我覺察"],
+        16: ["真相揭露", "結構崩塌", "重建"],
+        17: ["希望", "修復", "靈感"],
+        18: ["投射", "不安", "潛在真相"],
+        19: ["生命力", "清晰", "喜悅"],
+        20: ["召喚", "復盤", "覺醒"],
+        21: ["完成", "整合", "新階段"],
       };
+
+      const SUITS = ["權杖", "聖杯", "寶劍", "錢幣"];
+      const RANKS = ["A", "二", "三", "四", "五", "六", "七", "八", "九", "十", "侍者", "騎士", "皇后", "國王"];
+
+      function buildCardByIndex(index) {
+        if (index < 22) {
+          const name = MAJOR_ARCANA[index];
+          const kw = MAJOR_KEYWORDS[index] || ["轉化", "覺察", "行動"];
+          return {
+            name,
+            image: `https://www.sacred-texts.com/tarot/pkt/img/ar${String(index).padStart(2, '0')}.jpg`,
+            upright: {
+              energy: `韋特體系中，${name} 常象徵「${kw[0]}」。你正在被推向一個更成熟的位置。`,
+              insight: `這張牌的核心是「${kw[1]}」。先釐清你真正重視的事，再決定節奏。`,
+              action: `把「${kw[2]}」具體化：今天完成一件可量化的小行動。`
+            },
+            reversed: {
+              energy: `${name}逆位多指向「${kw[0]}」受阻，可能是拖延、過度防禦或方向模糊。`,
+              insight: `你需要修正的是「${kw[1]}」而非自我否定。問題不是你不夠好，而是方法不對。`,
+              action: `先停下比較，回到最小步驟：用 20 分鐘完成當下最關鍵的一件事。`
+            }
+          };
+        }
+
+        const minorIndex = index - 22;
+        const suit = SUITS[Math.floor(minorIndex / 14)] || "權杖";
+        const rank = RANKS[minorIndex % 14] || "A";
+        const name = `${suit}${rank}`;
+        const suitTheme = {
+          權杖: "行動與企圖",
+          聖杯: "情感與連結",
+          寶劍: "思維與決策",
+          錢幣: "現實與資源"
+        };
+
+        return {
+          name,
+          image: `https://www.sacred-texts.com/tarot/pkt/img/ar${String(minorIndex % 22).padStart(2, '0')}.jpg`,
+          upright: {
+            energy: `${name}（韋特體系）關注「${suitTheme[suit]}」。眼下主題是把分散的能量收束成一條主線。`,
+            insight: `這張牌提醒你：情緒與現實要同時被看見。只談感受或只談效率，都會失衡。`,
+            action: `設定一個 7 天可完成的小目標，並每天固定同一時間推進。`
+          },
+          reversed: {
+            energy: `${name}逆位通常顯示「${suitTheme[suit]}」卡住，可能是用力過猛或完全放掉。`,
+            insight: `先辨識真正阻力：是外部條件，還是你內在對失敗的恐懼。`,
+            action: `減少一半目標量，先恢復節奏感，再逐步加碼。`
+          }
+        };
+      }
 
       const App = () => {
         const [view, setView] = useState('cover');
@@ -94,12 +132,7 @@
 
         const initializeDeck = () => {
           const fullDeck = Array.from({ length: 78 }).map((_, index) => {
-            const baseData = TAROT_DATA[index] || {
-              name: `牌項 ${index}`,
-              image: `https://www.sacred-texts.com/tarot/pkt/img/ar${String(index % 22).padStart(2, '0')}.jpg`,
-              upright: { energy: "這是一段成長的契機。", insight: "宇宙在引導妳向善。", action: "保持覺察。" },
-              reversed: { energy: "這是一次內在的挑戰。", insight: "需要重新審視自我。", action: "尋求平靜。" }
-            };
+            const baseData = buildCardByIndex(index);
             return {
               ...baseData,
               uid: Math.random().toString(36).slice(2, 11),
@@ -365,8 +398,6 @@
                         <ul className="space-y-2 text-[#e5e7eb]/90 leading-relaxed">
                           <li>• 一對一深度解讀（感情 / 事業 / 自我成長）</li>
                           <li>• 解讀形式：文字整理 + 語音重點（依你偏好）</li>
-                          <li>• 交付內容：核心課題、行動建議、7天落地練習</li>
-                          <li>• 可加購：週追蹤回訪，協助你調整節奏</li>
                         </ul>
                       </div>
                       <div className="p-4 rounded-2xl border border-[#ffd5d5]/20 bg-[#ffd5d5]/5">
