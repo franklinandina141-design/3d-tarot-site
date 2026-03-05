@@ -183,8 +183,6 @@
         const [isPinching, setIsPinching] = useState(false);
         const [question, setQuestion] = useState('');
         const [submittedQuestion, setSubmittedQuestion] = useState('');
-        const [musicOn, setMusicOn] = useState(false);
-        const [musicNote, setMusicNote] = useState('');
 
         const scrollPosRef = useRef(0);
         const targetScrollRef = useRef(0);
@@ -195,9 +193,6 @@
         const carouselWrapperRef = useRef(null);
         const animationFrameRef = useRef(null);
         const cameraRef = useRef(null);
-        const audioCtxRef = useRef(null);
-        const droneNodesRef = useRef([]);
-        const musicElRef = useRef(null);
 
         useEffect(() => { selectedCardsRef.current = selectedCards; }, [selectedCards]);
         useEffect(() => { deckRef.current = deck; }, [deck]);
@@ -254,99 +249,6 @@
           targetScrollRef.current = init;
         };
 
-        const stopDrone = () => {
-          droneNodesRef.current.forEach((node) => {
-            try { node.stop?.(); } catch (_) {}
-            try { node.disconnect?.(); } catch (_) {}
-          });
-          droneNodesRef.current = [];
-        };
-
-        const stopFileTrack = () => {
-          try { musicElRef.current?.pause(); } catch (_) {}
-          musicElRef.current = null;
-        };
-
-        const startDrone = async () => {
-          const Ctx = window.AudioContext || window.webkitAudioContext;
-          if (!Ctx) return false;
-          if (!audioCtxRef.current) audioCtxRef.current = new Ctx();
-          const ctx = audioCtxRef.current;
-          if (ctx.state === 'suspended') await ctx.resume();
-
-          const master = ctx.createGain();
-          master.gain.value = 0.035;
-          master.connect(ctx.destination);
-
-          const lowpass = ctx.createBiquadFilter();
-          lowpass.type = 'lowpass';
-          lowpass.frequency.value = 520;
-          lowpass.Q.value = 0.8;
-          lowpass.connect(master);
-
-          const lfo = ctx.createOscillator();
-          const lfoGain = ctx.createGain();
-          lfo.type = 'sine';
-          lfo.frequency.value = 0.08;
-          lfoGain.gain.value = 40;
-          lfo.connect(lfoGain);
-          lfoGain.connect(lowpass.frequency);
-
-          const freqs = [110, 146.83, 196];
-          const nodes = [lfo, lfoGain, master, lowpass];
-
-          freqs.forEach((f, i) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.value = f;
-            osc.detune.value = i === 0 ? -4 : i === 2 ? 4 : 0;
-            gain.gain.value = 0.03;
-            osc.connect(gain);
-            gain.connect(lowpass);
-            osc.start();
-            nodes.push(osc, gain);
-          });
-
-          lfo.start();
-          droneNodesRef.current = nodes;
-          return true;
-        };
-
-        const startFileTrack = async () => {
-          const audio = new Audio('./assets/audio/spiritual-ambient.mp3?v=2');
-          audio.loop = true;
-          audio.preload = 'auto';
-          audio.volume = 0.5;
-          await audio.play();
-          musicElRef.current = audio;
-          return true;
-        };
-
-        const toggleMusic = async () => {
-          if (musicOn) {
-            stopFileTrack();
-            stopDrone();
-            setMusicOn(false);
-            setMusicNote('');
-            return;
-          }
-
-          try {
-            const okFile = await startFileTrack();
-            if (okFile) {
-              setMusicOn(true);
-              setMusicNote('');
-              return;
-            }
-          } catch (_) {
-            setMusicNote('音樂文件未成功播放，已切換到備用氛圍音。');
-          }
-
-          const ok = await startDrone();
-          setMusicOn(ok);
-        };
-
         useEffect(() => {
           const loop = () => {
             const diff = targetScrollRef.current - scrollPosRef.current;
@@ -368,8 +270,6 @@
               cameraRef.current.stop();
               cameraRef.current = null;
             }
-            stopFileTrack();
-            stopDrone();
           };
         }, [view, deck.length]);
 
@@ -593,16 +493,6 @@
 
         return (
           <div className="min-h-screen bg-[#0d0e1a] text-[#F7E7CE] overflow-hidden font-serif relative">
-            <div className="aurora-bg" />
-            <div className="grain-overlay" />
-
-            <button
-              onClick={toggleMusic}
-              className="fixed right-5 top-5 z-[70] px-4 py-2 rounded-full border border-[#F7E7CE]/30 bg-[#0d0e1a]/50 backdrop-blur-md text-[11px] tracking-[0.2em] uppercase hover:border-[#F7E7CE] hover:bg-[#F7E7CE]/10 transition-all"
-            >
-              {musicOn ? '音樂：開啟' : '音樂：關閉'}
-            </button>
-            {musicNote && <div className="fixed right-5 top-16 z-[70] text-[11px] text-[#F7E7CE]/80">{musicNote}</div>}
             <div className="relative z-10">
             {view === 'cover' && (
               <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-[#0d0e1a] via-[#1a1b3a] to-[#0d0e1a] z-50">
@@ -661,8 +551,8 @@
                   {selectedCards.map((card, i) => (
                     <div key={card.uid} className="flex flex-col items-center group">
                       <span className="text-[11px] tracking-[0.5em] text-[#9d85c4] mb-6 uppercase">{i === 0 ? '過去 - 根基' : i === 1 ? '現在 - 脈動' : '未來 - 指引'}</span>
-                      <div className="relative w-full max-w-[240px] aspect-[2/3.5] rounded-3xl overflow-hidden border border-[#F7E7CE]/30 shadow-2xl transition-transform hover:scale-105 duration-700">
-                        <img src={card.image} onError={(e) => { e.currentTarget.src = './assets/cards/ar00.jpg'; }} className={`w-full h-full object-cover transition-opacity duration-1000 ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
+                      <div className="relative w-full max-w-[240px] aspect-[2/3.5] rounded-3xl overflow-hidden border border-[#F7E7CE]/30 shadow-lg">
+                        <img src={card.image} loading="lazy" decoding="async" onError={(e) => { e.currentTarget.src = './assets/cards/ar00.jpg'; }} className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e1a] via-transparent to-transparent opacity-80" />
                         <div className="absolute bottom-8 w-full text-center px-4">
                           <p className="text-xl tracking-[0.15em] text-[#F7E7CE] mb-2">{card.name}</p>
@@ -673,7 +563,7 @@
                   ))}
                 </div>
 
-                <div className="max-w-4xl w-full p-12 md:p-16 rounded-[60px] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/10 backdrop-blur-3xl shadow-2xl">
+                <div className="max-w-4xl w-full p-10 md:p-12 rounded-[48px] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/10 shadow-lg">
                   <h3 className="text-[#F7E7CE] text-2xl font-light tracking-[0.4em] mb-12 text-center uppercase">靈魂指引總結</h3>
                   {generateSoulSummary()}
 
