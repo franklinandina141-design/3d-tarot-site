@@ -377,7 +377,25 @@
                 <div className="max-w-4xl w-full p-12 md:p-16 rounded-[60px] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/10 backdrop-blur-3xl shadow-2xl">
                   <h3 className="text-[#F7E7CE] text-2xl font-light tracking-[0.4em] mb-12 text-center uppercase">靈魂指引總結</h3>
                   {generateSoulSummary()}
-                  <div className="flex justify-center mt-16">
+
+                  <div className="mt-12 p-6 md:p-8 rounded-3xl border border-[#F7E7CE]/20 bg-[#F7E7CE]/5">
+                    <h4 className="text-[#F7E7CE] text-sm tracking-[0.35em] mb-4 uppercase text-center">預約引導</h4>
+                    <p className="text-center text-sm md:text-base text-[#e5e7eb] leading-relaxed">
+                      如果你希望我根據你的真實處境做更深入的一對一解讀，
+                      可直接私訊關鍵字 <span className="text-[#F7E7CE] font-semibold">「預約解讀」</span>。
+                      我會依照你的主題（感情 / 事業 / 自我成長）安排專屬牌陣與建議。
+                    </p>
+                    <div className="mt-6 flex flex-col md:flex-row gap-3 justify-center">
+                      <button className="px-6 py-3 rounded-full border border-[#F7E7CE]/30 hover:border-[#F7E7CE] hover:bg-[#F7E7CE]/10 transition-all text-xs tracking-[0.2em] uppercase">
+                        私訊我：預約解讀
+                      </button>
+                      <button className="px-6 py-3 rounded-full border border-[#9d85c4]/40 hover:border-[#9d85c4] hover:bg-[#9d85c4]/10 transition-all text-xs tracking-[0.2em] uppercase text-[#d9c7ff]">
+                        查看服務說明
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center mt-12">
                     <button
                       onClick={() => { setView('cover'); setSelectedCards([]); selectedCardsRef.current = []; pinchCooldownRef.current = false; setSubmittedQuestion(''); }}
                       className="px-14 py-4 rounded-full border border-[#F7E7CE]/20 text-[10px] tracking-[0.6em] hover:bg-[#F7E7CE]/10 transition-all uppercase"
