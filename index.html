@@ -118,6 +118,11 @@
         return '先完成一個最小可驗證步驟。';
       }
 
+      function resolveCardImage(cardId = '', remote = '', fallback = '') {
+        const local = cardId ? `./assets/cards/${cardId}.jpg` : '';
+        return local || remote || fallback || './assets/cards/ar00.jpg';
+      }
+
       function buildCardByIndex(index) {
         if (index < 22) {
           const name = MAJOR_ARCANA[index];
@@ -220,7 +225,7 @@
                   return {
                     id: source.id || fallback.id,
                     name: source.name ? `${source.name}${source.name_en ? ` (${source.name_en})` : ''}` : (source.name_en || fallback.name),
-                    image: source.image_url || fallback.image,
+                    image: resolveCardImage(source.id || fallback.id, source.image_url, fallback.image),
                     upright: {
                       energy: `Rider-Waite 提示：${upMain}。這是一張偏向「順流但需要覺察」的訊號。`,
                       insight: `在你的議題裡，它更指向 ${upExtra}。你可以把它理解為「可前進，但要保持誠實」。`,
@@ -562,8 +567,8 @@
                   <p className="text-sm leading-relaxed mt-2">行動建議：{actionAdvice}</p>
                 </div>
                 <div className="p-4 rounded-2xl border border-[#9d85c4]/25 bg-[#9d85c4]/10">
-                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#d9c7ff] mb-2">三張牌總覽</h5>
-                  <p className="text-sm">過去【{p.name}・{stance(p)}】→ 現在【{n.name}・{stance(n)}】→ 未來【{f.name}・{stance(f)}】</p>
+                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#d9c7ff] mb-2">關鍵轉化錨點</h5>
+                  <p className="text-sm">把注意力放在「現在位」的修正動作上：只要你今天完成一個具體動詞（整理、溝通、學習、刪減），未來位能量就會開始鬆動。</p>
                 </div>
               </div>
 
@@ -656,7 +661,7 @@
                     <div key={card.uid} className="flex flex-col items-center group">
                       <span className="text-[11px] tracking-[0.5em] text-[#9d85c4] mb-6 uppercase">{i === 0 ? '過去 - 根基' : i === 1 ? '現在 - 脈動' : '未來 - 指引'}</span>
                       <div className="relative w-full max-w-[240px] aspect-[2/3.5] rounded-3xl overflow-hidden border border-[#F7E7CE]/30 shadow-2xl transition-transform hover:scale-105 duration-700">
-                        <img src={card.image} className={`w-full h-full object-cover transition-opacity duration-1000 ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
+                        <img src={card.image} onError={(e) => { e.currentTarget.src = './assets/cards/ar00.jpg'; }} className={`w-full h-full object-cover transition-opacity duration-1000 ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e1a] via-transparent to-transparent opacity-80" />
                         <div className="absolute bottom-8 w-full text-center px-4">
                           <p className="text-xl tracking-[0.15em] text-[#F7E7CE] mb-2">{card.name}</p>
