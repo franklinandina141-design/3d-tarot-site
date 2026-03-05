@@ -89,11 +89,31 @@
       const SUITS = ["權杖", "聖杯", "寶劍", "錢幣"];
       const RANKS = ["A", "二", "三", "四", "五", "六", "七", "八", "九", "十", "侍者", "騎士", "皇后", "國王"];
 
+      function splitMeaning(text = '') {
+        return String(text).split(/[;,]/).map((s) => s.trim()).filter(Boolean);
+      }
+
+      function actionByCardId(id = '') {
+        if (id.startsWith('ar')) {
+          const n = Number(id.slice(2));
+          if ([13, 16].includes(n)) return '做一次結構清理：刪掉一個已不再適合你的承諾。';
+          if ([17, 19, 21].includes(n)) return '把好狀態變成輸出：今天公開一個你真正相信的觀點。';
+          if ([2, 9, 12].includes(n)) return '減少輸入，增加靜心，給自己至少 20 分鐘獨處。';
+          return '用「一件最小行動」把這張牌的提醒落地，不求完美只求完成。';
+        }
+        if (id.startsWith('wa')) return '先動起來：今天把最重要任務推進 30 分鐘，避免空想。';
+        if (id.startsWith('cu')) return '優先處理情緒誠實：寫下你真正的需求，再去溝通。';
+        if (id.startsWith('sw')) return '先釐清判斷標準，再做決策；避免在情緒高點回覆關鍵訊息。';
+        if (id.startsWith('pe')) return '把資源盤點清楚：時間、金錢、精力三者至少守住兩項。';
+        return '先完成一個最小可驗證步驟。';
+      }
+
       function buildCardByIndex(index) {
         if (index < 22) {
           const name = MAJOR_ARCANA[index];
-          const kw = MAJOR_KEYWORDS[index] || ["轉化", "覺察", "行動"];
+          const kw = MAJOR_KEYWORDS[index] || ['轉化', '覺察', '行動'];
           return {
+            id: `ar${String(index).padStart(2, '0')}`,
             name,
             image: `https://www.sacred-texts.com/tarot/pkt/img/ar${String(index).padStart(2, '0')}.jpg`,
             upright: {
@@ -110,17 +130,18 @@
         }
 
         const minorIndex = index - 22;
-        const suit = SUITS[Math.floor(minorIndex / 14)] || "權杖";
-        const rank = RANKS[minorIndex % 14] || "A";
+        const suit = SUITS[Math.floor(minorIndex / 14)] || '權杖';
+        const rank = RANKS[minorIndex % 14] || 'A';
         const name = `${suit}${rank}`;
         const suitTheme = {
-          權杖: "行動與企圖",
-          聖杯: "情感與連結",
-          寶劍: "思維與決策",
-          錢幣: "現實與資源"
+          權杖: '行動與企圖',
+          聖杯: '情感與連結',
+          寶劍: '思維與決策',
+          錢幣: '現實與資源'
         };
 
         return {
+          id: `${['wa','cu','sw','pe'][Math.floor(minorIndex / 14)]}${String((minorIndex % 14) + 1).padStart(2, '0')}`,
           name,
           image: `https://www.sacred-texts.com/tarot/pkt/img/ar${String(minorIndex % 22).padStart(2, '0')}.jpg`,
           upright: {
@@ -146,6 +167,7 @@
         const [question, setQuestion] = useState('');
         const [submittedQuestion, setSubmittedQuestion] = useState('');
         const [musicOn, setMusicOn] = useState(false);
+        const [musicNote, setMusicNote] = useState('');
 
         const scrollPosRef = useRef(0);
         const targetScrollRef = useRef(0);
@@ -156,11 +178,9 @@
         const carouselWrapperRef = useRef(null);
         const animationFrameRef = useRef(null);
         const cameraRef = useRef(null);
-        const bgmRef = useRef(null);
         const audioCtxRef = useRef(null);
         const droneNodesRef = useRef([]);
-        const fileSourceRef = useRef(null);
-        const fileGainRef = useRef(null);
+        const musicElRef = useRef(null);
 
         useEffect(() => { selectedCardsRef.current = selectedCards; }, [selectedCards]);
         useEffect(() => { deckRef.current = deck; }, [deck]);
@@ -178,20 +198,30 @@
           const fullDeck = Array.from({ length: 78 }).map((_, index) => {
             const source = deckCatalog[index];
             const baseData = source
-              ? {
-                  name: source.name ? `${source.name}${source.name_en ? ` (${source.name_en})` : ''}` : (source.name_en || buildCardByIndex(index).name),
-                  image: source.image_url || buildCardByIndex(index).image,
-                  upright: {
-                    energy: `韋特牌義提示：${source.up || '請回到當下，保持覺察。'}`,
-                    insight: `這張牌在當前議題上多對應「${source.up || '內在指引'}」。重點是把模糊感受變成可落地決策。`,
-                    action: '今天先完成一件最小但可驗證的行動，避免只停留在想法。'
-                  },
-                  reversed: {
-                    energy: `逆位提醒：${source.down || '當前能量可能失衡，需要調整節奏。'}`,
-                    insight: '先降低外界噪音，辨識你真正的焦慮來源，再做下一步。',
-                    action: '先停、再看、再選：給自己 20 分鐘獨處，寫下一條新的行動界線。'
-                  }
-                }
+              ? (() => {
+                  const upBits = splitMeaning(source.up || '');
+                  const downBits = splitMeaning(source.down || '');
+                  const upMain = upBits[0] || 'inner alignment';
+                  const upExtra = upBits[1] || upBits[0] || 'clarity';
+                  const downMain = downBits[0] || 'imbalance';
+                  const downExtra = downBits[1] || downBits[0] || 'pause';
+                  const fallback = buildCardByIndex(index);
+                  return {
+                    id: source.id || fallback.id,
+                    name: source.name ? `${source.name}${source.name_en ? ` (${source.name_en})` : ''}` : (source.name_en || fallback.name),
+                    image: source.image_url || fallback.image,
+                    upright: {
+                      energy: `Rider-Waite 提示：${upMain}。這是一張偏向「順流但需要覺察」的訊號。`,
+                      insight: `在你的議題裡，它更指向 ${upExtra}。你可以把它理解為「可前進，但要保持誠實」。`,
+                      action: actionByCardId(source.id || fallback.id)
+                    },
+                    reversed: {
+                      energy: `逆位核心：${downMain}。通常不是失敗，而是節奏與方向需要修正。`,
+                      insight: `這張逆位常見陰影是 ${downExtra}。先停下自我拉扯，再重建優先順序。`,
+                      action: actionByCardId(source.id || fallback.id)
+                    }
+                  };
+                })()
               : buildCardByIndex(index);
 
             return {
@@ -216,11 +246,8 @@
         };
 
         const stopFileTrack = () => {
-          try { fileSourceRef.current?.stop?.(); } catch (_) {}
-          try { fileSourceRef.current?.disconnect?.(); } catch (_) {}
-          try { fileGainRef.current?.disconnect?.(); } catch (_) {}
-          fileSourceRef.current = null;
-          fileGainRef.current = null;
+          try { musicElRef.current?.pause(); } catch (_) {}
+          musicElRef.current = null;
         };
 
         const startDrone = async () => {
@@ -270,38 +297,21 @@
         };
 
         const startFileTrack = async () => {
-          const Ctx = window.AudioContext || window.webkitAudioContext;
-          if (!Ctx) return false;
-          if (!audioCtxRef.current) audioCtxRef.current = new Ctx();
-          const ctx = audioCtxRef.current;
-          if (ctx.state === 'suspended') await ctx.resume();
-
-          const res = await fetch('./assets/audio/spiritual-ambient.mp3', { cache: 'no-store' });
-          if (!res.ok) throw new Error('audio file not found');
-          const arr = await res.arrayBuffer();
-          const buffer = await ctx.decodeAudioData(arr.slice(0));
-
-          const src = ctx.createBufferSource();
-          const gain = ctx.createGain();
-          gain.gain.value = 0.55;
-          src.buffer = buffer;
-          src.loop = true;
-          src.connect(gain);
-          gain.connect(ctx.destination);
-          src.start();
-
-          fileSourceRef.current = src;
-          fileGainRef.current = gain;
+          const audio = new Audio('./assets/audio/spiritual-ambient.mp3?v=2');
+          audio.loop = true;
+          audio.preload = 'auto';
+          audio.volume = 0.5;
+          await audio.play();
+          musicElRef.current = audio;
           return true;
         };
 
         const toggleMusic = async () => {
           if (musicOn) {
-            const audio = bgmRef.current;
-            if (audio) audio.pause();
             stopFileTrack();
             stopDrone();
             setMusicOn(false);
+            setMusicNote('');
             return;
           }
 
@@ -309,9 +319,12 @@
             const okFile = await startFileTrack();
             if (okFile) {
               setMusicOn(true);
+              setMusicNote('');
               return;
             }
-          } catch (_) {}
+          } catch (_) {
+            setMusicNote('音樂文件未成功播放，已切換到備用氛圍音。');
+          }
 
           const ok = await startDrone();
           setMusicOn(ok);
@@ -338,7 +351,6 @@
               cameraRef.current.stop();
               cameraRef.current = null;
             }
-            if (bgmRef.current) bgmRef.current.pause();
             stopFileTrack();
             stopDrone();
           };
@@ -511,14 +523,13 @@
             <div className="aurora-bg" />
             <div className="grain-overlay" />
 
-            <audio ref={bgmRef} loop preload="none" src="./assets/audio/spiritual-ambient.mp3" />
-
             <button
               onClick={toggleMusic}
               className="fixed right-5 top-5 z-[70] px-4 py-2 rounded-full border border-[#F7E7CE]/30 bg-[#0d0e1a]/50 backdrop-blur-md text-[11px] tracking-[0.2em] uppercase hover:border-[#F7E7CE] hover:bg-[#F7E7CE]/10 transition-all"
             >
               {musicOn ? '音樂：開啟' : '音樂：關閉'}
             </button>
+            {musicNote && <div className="fixed right-5 top-16 z-[70] text-[11px] text-[#F7E7CE]/80">{musicNote}</div>}
             <div className="relative z-10">
             {view === 'cover' && (
               <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-[#0d0e1a] via-[#1a1b3a] to-[#0d0e1a] z-50">
