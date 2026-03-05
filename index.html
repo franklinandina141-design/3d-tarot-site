@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intuitive Tarot Guidance</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&display=swap');
+      body { margin: 0; background: #0d0e1a; font-family: 'Cormorant Garamond', serif; }
+      .font-serif { font-family: 'Cormorant Garamond', serif; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect, useRef, useMemo } = React;
+
+      const TAROT_DATA = {
+        0: {
+          name: "愚者 (The Fool)",
+          image: "https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg",
+          upright: {
+            energy: "這是靈魂踏入物質世界的第一步。妳正處於一種純粹的潛能狀態，像是一張尚未著色的畫布。",
+            insight: "現在的宇宙正邀請妳放下所有的『預設』。恐懼往往來自於對未知的掌控欲，而這張牌告訴妳，當妳信任生命時，懸崖之下自有羽翼。",
+            action: "去嘗試一件妳完全不擅長的事，純粹為了快樂而做，不計成果。"
+          },
+          reversed: {
+            energy: "妳可能在盲目地跳躍，試圖透過改變外部環境來逃避內在的焦慮。",
+            insight: "自由不代表不負責任。現在的停滯或混亂，是在提醒妳檢查腳下的基石是否穩固。妳是在跟隨直覺，還是在逃避現實？",
+            action: "在做決定前先深呼吸三次，問問自己：這個選擇是出於熱愛，還是出於恐慌？"
+          }
+        },
+        1: {
+          name: "魔術師 (The Magician)",
+          image: "https://www.sacred-texts.com/tarot/pkt/img/ar01.jpg",
+          upright: {
+            energy: "妳擁有將靈感轉化為現實的所有工具。天、地、火、水、風的力量正在妳指尖交匯。",
+            insight: "這是一張『顯化』的牌。妳的意志就是導火線。當妳的內在願景與行動達成一致時，奇蹟就不再是偶然。",
+            action: "明確寫下妳的一項具體目標，並在今天為它踏出第一個實質性的、物理性的步驟。"
+          },
+          reversed: {
+            energy: "能量正在流失，或者是妳的才華被用在了錯誤的方向。妳可能感到有力無處使，或者在操縱某種局勢。",
+            insight: "當魔術師失效時，通常是因為我們試圖用大腦去控制靈魂。妳是否在試圖走捷徑，而忽略了事物的自然節奏？",
+            action: "清理妳的工作空間或居住環境，讓混亂的能量重新歸位，找回妳的專注力。"
+          }
+        },
+        2: {
+          name: "女祭司 (The High Priestess)",
+          image: "https://www.sacred-texts.com/tarot/pkt/img/ar02.jpg",
+          upright: {
+            energy: "妳正站在神祕與直覺的門檻上。此時，靜默比任何語言都更有力量。",
+            insight: "答案不在外面的世界，而在妳夢境與清醒之間的那個縫隙。這是一段『向內看』的時期，妳不需要急著給出答案。",
+            action: "今晚睡前進行一次 10 分鐘的靜坐，並在床頭放一張紙，記下妳醒來後的第一個夢境片段。"
+          },
+          reversed: {
+            energy: "妳可能過度依賴邏輯，或是被表面訊息所迷惑。內在的指南針因為外界的噪音而失去了準星。",
+            insight: "過度的理性有時是一種防禦機制。妳在害怕看見那個隱藏在黑暗中的真相嗎？秘密正呼之欲出。",
+            action: "停止向身邊的人尋求意見，獨處一小時，聽聽那個被妳壓抑已久的、最微弱的直覺聲響。"
+          }
+        }
+      };
+
+      const App = () => {
+        const [view, setView] = useState('cover');
+        const [deck, setDeck] = useState([]);
+        const [selectedCards, setSelectedCards] = useState([]);
+        const [handPos, setHandPos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+        const [isPinching, setIsPinching] = useState(false);
+
+        const scrollPosRef = useRef(0);
+        const targetScrollRef = useRef(0);
+        const pinchCooldownRef = useRef(false);
+        const selectedCardsRef = useRef([]);
+        const deckRef = useRef([]);
+        const videoRef = useRef(null);
+        const carouselWrapperRef = useRef(null);
+        const animationFrameRef = useRef(null);
+        const cameraRef = useRef(null);
+
+        useEffect(() => { selectedCardsRef.current = selectedCards; }, [selectedCards]);
+        useEffect(() => { deckRef.current = deck; }, [deck]);
+
+        const initializeDeck = () => {
+          const fullDeck = Array.from({ length: 78 }).map((_, index) => {
+            const baseData = TAROT_DATA[index] || {
+              name: `牌項 ${index}`,
+              image: `https://www.sacred-texts.com/tarot/pkt/img/ar${String(index % 22).padStart(2, '0')}.jpg`,
+              upright: { energy: "這是一段成長的契機。", insight: "宇宙在引導妳向善。", action: "保持覺察。" },
+              reversed: { energy: "這是一次內在的挑戰。", insight: "需要重新審視自我。", action: "尋求平靜。" }
+            };
+            return {
+              ...baseData,
+              uid: Math.random().toString(36).slice(2, 11),
+              isReversed: Math.random() > 0.5
+            };
+          }).sort(() => Math.random() - 0.5);
+
+          setDeck(fullDeck);
+          const init = Math.max(0, (fullDeck.length * 220 - window.innerWidth) / 2);
+          scrollPosRef.current = init;
+          targetScrollRef.current = init;
+        };
+
+        useEffect(() => {
+          const loop = () => {
+            const diff = targetScrollRef.current - scrollPosRef.current;
+            scrollPosRef.current += diff * 0.08;
+            if (carouselWrapperRef.current) {
+              carouselWrapperRef.current.style.transform = `translate3d(${-scrollPosRef.current}px, 0, 0)`;
+            }
+            animationFrameRef.current = requestAnimationFrame(loop);
+          };
+
+          if (view === 'reading') {
+            startHandTracking();
+            animationFrameRef.current = requestAnimationFrame(loop);
+          }
+
+          return () => {
+            if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+            if (cameraRef.current && typeof cameraRef.current.stop === 'function') {
+              cameraRef.current.stop();
+              cameraRef.current = null;
+            }
+          };
+        }, [view, deck.length]);
+
+        const startHandTracking = async () => {
+          if (typeof window.Hands === 'undefined' || typeof window.Camera === 'undefined' || !videoRef.current) return;
+
+          const hands = new window.Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+          });
+
+          hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.6,
+            minTrackingConfidence: 0.6
+          });
+
+          hands.onResults((results) => {
+            if (!(results.multiHandLandmarks && results.multiHandLandmarks.length > 0)) {
+              setIsPinching(false);
+              pinchCooldownRef.current = false;
+              return;
+            }
+
+            const landmark = results.multiHandLandmarks[0];
+            const indexTip = landmark[8];
+            const thumbTip = landmark[4];
+
+            setHandPos({ x: (1 - indexTip.x) * window.innerWidth, y: indexTip.y * window.innerHeight });
+
+            const offset = (indexTip.x - 0.5) * 2;
+            targetScrollRef.current += offset * 45;
+
+            const maxScroll = (deckRef.current.length * 220) - window.innerWidth;
+            targetScrollRef.current = Math.max(-window.innerWidth / 4, Math.min(targetScrollRef.current, maxScroll));
+
+            const dist = Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y);
+            const activePinch = dist < 0.04;
+            setIsPinching(activePinch);
+
+            if (activePinch && !pinchCooldownRef.current && selectedCardsRef.current.length < 3) {
+              handleCardSelect();
+            }
+          });
+
+          const camera = new window.Camera(videoRef.current, {
+            onFrame: async () => await hands.send({ image: videoRef.current }),
+            width: 640,
+            height: 480
+          });
+          cameraRef.current = camera;
+          await camera.start();
+        };
+
+        const handleCardSelect = () => {
+          pinchCooldownRef.current = true;
+
+          const centerIdx = Math.round((scrollPosRef.current + window.innerWidth / 2) / 220);
+          const safeIdx = Math.max(0, Math.min(deckRef.current.length - 1, centerIdx));
+          let picked = deckRef.current[safeIdx];
+
+          const used = new Set(selectedCardsRef.current.map((c) => c.uid));
+          if (picked && used.has(picked.uid)) {
+            for (let i = 1; i < deckRef.current.length; i += 1) {
+              const probe = deckRef.current[(safeIdx + i) % deckRef.current.length];
+              if (!used.has(probe.uid)) {
+                picked = probe;
+                break;
+              }
+            }
+          }
+
+          if (picked && !used.has(picked.uid)) {
+            setSelectedCards((prev) => {
+              const next = [...prev, picked];
+              if (next.length === 3) setTimeout(() => setView('result'), 1000);
+              return next;
+            });
+          }
+
+          setTimeout(() => { pinchCooldownRef.current = false; }, 1200);
+        };
+
+        const generateSoulSummary = () => {
+          if (selectedCards.length < 3) return null;
+          const [p, n, f] = selectedCards;
+          return (
+            <div className="space-y-8 text-[#d1d5db] font-light leading-relaxed">
+              <p className="text-lg italic">
+                「妳所走過的【{p.name}】已沉澱為靈魂的基石。在那個階段，妳學會了如何面對{p.isReversed ? '隱藏的失衡' : '內在的力量'}。
+                而此刻，【{n.name}】的能量正包圍著妳，這是一個宇宙邀請妳進行{n.isReversed ? '深度反思' : '勇敢顯化'}的時刻。
+                展望未來，【{f.name}】預示著當妳帶著覺知行動時，那份屬於妳的{f.isReversed ? '課題將會解開' : '恩典將會降臨'}。」
+              </p>
+              <div className="pt-6 border-t border-[#F7E7CE]/20">
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">宇宙最終建議</h4>
+                <p>
+                  綜合來看，目前最重要的轉化是：不要急於在外部世界尋求證明，而是要將焦點拉回到呼吸與當下的感受。
+                  妳所擔憂的事物，正隨著妳內在頻率的提升而自動重組。信任這份指引，妳本就是光的本身。
+                </p>
+              </div>
+            </div>
+          );
+        };
+
+        const memoizedCards = useMemo(() => {
+          return deck.map((card) => (
+            <div key={card.uid} className="relative flex-shrink-0 w-[180px] h-[280px] mx-[20px] rounded-xl border border-[#F7E7CE]/10 bg-gradient-to-b from-[#2a2a40] to-[#1a1a2e] flex items-center justify-center">
+              <div className="opacity-10 scale-150 rotate-45">✨</div>
+              <div className="absolute bottom-4 text-[8px] tracking-[0.3em] opacity-20 uppercase">Mystic Portal</div>
+            </div>
+          ));
+        }, [deck]);
+
+        return (
+          <div className="min-h-screen bg-[#0d0e1a] text-[#F7E7CE] overflow-hidden font-serif">
+            {view === 'cover' && (
+              <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-[#0d0e1a] via-[#1a1b3a] to-[#0d0e1a] z-50">
+                <h1 className="text-6xl md:text-8xl font-extralight tracking-[0.3em] mb-6 drop-shadow-[0_0_20px_rgba(247,231,206,0.3)]">
+                  Intuitive Tarot<br/>Guidance
+                </h1>
+                <p className="text-[#9d85c4] italic text-xl mb-12 opacity-80 tracking-widest">
+                  "傾聽靈魂深處的低語，在光影中找尋妳的真實指引。"
+                </p>
+                <button
+                  onClick={() => { initializeDeck(); setSelectedCards([]); setView('reading'); }}
+                  className="px-16 py-4 rounded-full border border-[#F7E7CE]/30 hover:border-[#F7E7CE] hover:shadow-[0_0_40px_rgba(247,231,206,0.4)] transition-all duration-700 tracking-[0.5em] text-lg uppercase bg-white/5 backdrop-blur-md"
+                >
+                  開啟靈魂儀式
+                </button>
+              </div>
+            )}
+
+            {view === 'reading' && (
+              <div className="relative h-screen flex flex-col items-center justify-center">
+                <video ref={videoRef} className="hidden" playsInline muted />
+
+                <div className="absolute top-12 flex gap-8 z-30">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className={`w-16 h-24 rounded-lg border transition-all duration-700 flex items-center justify-center ${selectedCards[i] ? 'border-[#F7E7CE] shadow-[0_0_20px_#F7E7CE55] bg-[#F7E7CE]/10' : 'border-[#F7E7CE]/20 bg-white/5'}`}>
+                      {selectedCards[i] ? <span className="text-[10px] text-center px-1">{selectedCards[i].name}</span> : <div className="w-1.5 h-1.5 rounded-full bg-[#F7E7CE]/20 animate-pulse" />}
+                    </div>
+                  ))}
+                </div>
+
+                <div ref={carouselWrapperRef} className="flex items-center will-change-transform mt-20">
+                  {memoizedCards}
+                </div>
+
+                <div className="fixed pointer-events-none z-50 transition-transform duration-75" style={{ left: handPos.x, top: handPos.y, transform: `translate(-50%, -50%) scale(${isPinching ? 0.6 : 1})` }}>
+                  <div className={`w-10 h-10 rounded-full border border-[#F7E7CE] flex items-center justify-center ${isPinching ? 'bg-[#F7E7CE]/40 shadow-[0_0_40px_#F7E7CE]' : 'bg-[#F7E7CE]/5'}`}>
+                    <div className="w-1 h-1 bg-white rounded-full animate-ping" />
+                  </div>
+                </div>
+
+                <div className="absolute bottom-16 text-[10px] tracking-[0.4em] opacity-40 uppercase">揮動手掌感應能量 · 捏合指尖選取啟示</div>
+              </div>
+            )}
+
+            {view === 'result' && selectedCards.length === 3 && (
+              <div className="min-h-screen p-8 md:p-20 flex flex-col items-center bg-[#0d0e1a] overflow-y-auto">
+                <h2 className="text-3xl md:text-5xl font-light tracking-[0.4em] text-[#F7E7CE] mb-20 uppercase">三位一體之啟示</h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-7xl w-full mb-24">
+                  {selectedCards.map((card, i) => {
+                    const info = card.isReversed ? card.reversed : card.upright;
+                    return (
+                      <div key={card.uid} className="flex flex-col items-center group">
+                        <span className="text-[11px] tracking-[0.5em] text-[#9d85c4] mb-6 uppercase">{i === 0 ? '過去 - 根基' : i === 1 ? '現在 - 脈動' : '未來 - 指引'}</span>
+                        <div className="relative w-full max-w-[240px] aspect-[2/3.5] rounded-3xl overflow-hidden border border-[#F7E7CE]/30 shadow-2xl transition-transform hover:scale-105 duration-700">
+                          <img src={card.image} className={`w-full h-full object-cover transition-opacity duration-1000 ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e1a] via-transparent to-transparent opacity-80" />
+                          <div className="absolute bottom-8 w-full text-center px-4">
+                            <p className="text-xl tracking-[0.15em] text-[#F7E7CE] mb-2">{card.name}</p>
+                            <p className="text-[10px] tracking-[0.2em] opacity-60 uppercase">{card.isReversed ? 'Shadow (逆位)' : 'Light (正位)'}</p>
+                          </div>
+                        </div>
+
+                        <div className="mt-10 space-y-4 text-center px-2 max-w-[300px]">
+                          <div className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
+                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">能量觀察</h4>
+                            <p className="text-sm font-light leading-relaxed opacity-80">{info.energy}</p>
+                          </div>
+                          <div className="p-4 bg-[#F7E7CE]/5 rounded-2xl border border-[#F7E7CE]/10">
+                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">轉化建議</h4>
+                            <p className="text-sm italic leading-relaxed opacity-90">「{info.action}」</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="max-w-4xl w-full p-12 md:p-16 rounded-[60px] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/10 backdrop-blur-3xl shadow-2xl">
+                  <h3 className="text-[#F7E7CE] text-2xl font-light tracking-[0.4em] mb-12 text-center uppercase">靈魂指引總結</h3>
+                  {generateSoulSummary()}
+                  <div className="flex justify-center mt-16">
+                    <button
+                      onClick={() => { setView('cover'); setSelectedCards([]); selectedCardsRef.current = []; pinchCooldownRef.current = false; }}
+                      className="px-14 py-4 rounded-full border border-[#F7E7CE]/20 text-[10px] tracking-[0.6em] hover:bg-[#F7E7CE]/10 transition-all uppercase"
+                    >
+                      完成儀式並回歸
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>

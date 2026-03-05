@@ -1,0 +1,246 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap");
+
+:root {
+  --bg-main: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #4b3b5e 100%);
+  --gold-accent: #f7e7ce;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg-main);
+  overflow: hidden;
+  font-family: "Cormorant Garamond", serif;
+  cursor: crosshair;
+}
+
+.nebula,
+.gold-dust,
+.ornament-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.nebula {
+  background:
+    radial-gradient(circle at 22% 28%, rgba(111, 82, 173, 0.35), transparent 42%),
+    radial-gradient(circle at 78% 68%, rgba(212, 175, 55, 0.12), transparent 42%);
+  filter: blur(6px);
+}
+
+.gold-dust {
+  background-image:
+    radial-gradient(circle at 12% 22%, rgba(247, 231, 206, 0.7) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 78% 26%, rgba(247, 231, 206, 0.6) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 34% 72%, rgba(247, 231, 206, 0.55) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 84% 84%, rgba(247, 231, 206, 0.58) 0 1px, transparent 1.5px);
+  animation: twinkle 8s ease-in-out infinite;
+}
+
+.ornament-layer {
+  opacity: 0.25;
+  mix-blend-mode: screen;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 360 360'%3E%3Cg fill='none' stroke='%23f7e7ce' stroke-opacity='0.26'%3E%3Cpath d='M57 82c18-16 39-15 48 4-12 6-23 10-34 14-10-4-13-11-14-18z'/%3E%3Cpath d='M57 82c-18-16-39-15-48 4 12 6 23 10 34 14 10-4 13-11 14-18z' transform='translate(114 0)'/%3E%3Ccircle cx='88' cy='205' r='18'/%3E%3Cpath d='M88 172v66M55 205h66M65 182l46 46M111 182l-46 46'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 360px 360px;
+  animation: drift 46s linear infinite;
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  align-items: center;
+}
+
+.marquee-wrap {
+  overflow: hidden;
+  display: block;
+  transform: perspective(980px) rotateX(5deg);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 12px;
+  padding: 10px 12px;
+  will-change: transform;
+}
+
+.card {
+  width: clamp(68px, 8.8vw, 108px);
+  flex: 0 0 auto;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(247, 231, 206, 0.36);
+  box-shadow: 0 0 16px rgba(247, 231, 206, 0.16);
+  background: linear-gradient(160deg, #2a2a40, #1f2338 55%, #35284b);
+  position: relative;
+  aspect-ratio: 2 / 3.35;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(247, 231, 206, 0.4);
+  border-radius: 10px;
+}
+
+.card::after {
+  content: "✶";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--gold-accent);
+  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+  text-shadow: 0 0 10px rgba(247, 231, 206, 0.6);
+}
+
+.hand-panel {
+  position: fixed;
+  right: 16px;
+  top: 16px;
+  z-index: 10;
+  display: grid;
+  gap: 8px;
+  width: clamp(190px, 24vw, 290px);
+}
+
+#gesture-toggle {
+  background: transparent;
+  border: 1px solid var(--gold-accent);
+  color: var(--gold-accent);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+#gesture-toggle:hover {
+  background: rgba(247, 231, 206, 0.1);
+  box-shadow: 0 0 20px rgba(247, 231, 206, 0.45);
+}
+
+#statusText {
+  color: #e5dbf9;
+  font-size: 0.9rem;
+  text-align: right;
+  line-height: 1.35;
+}
+
+.hand-view {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  border-radius: 16px;
+  border: 1px solid rgba(247, 231, 206, 0.24);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+#handVideo { display: none; }
+
+#handCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hand-particle {
+  position: fixed;
+  pointer-events: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gold-accent);
+  border-radius: 50%;
+  filter: blur(1px);
+  box-shadow: 0 0 8px var(--gold-accent);
+  z-index: 999;
+  animation: particleFade 0.75s ease-out forwards;
+}
+
+.picked-panel {
+  position: fixed;
+  left: 16px;
+  bottom: 14px;
+  width: min(380px, calc(100vw - 32px));
+  z-index: 10;
+  border: 1px solid rgba(247, 231, 206, 0.24);
+  border-radius: 14px;
+  background: rgba(16, 12, 32, 0.7);
+  backdrop-filter: blur(8px);
+  padding: 8px;
+}
+
+.picked-panel h2 {
+  margin: 0 0 6px;
+  color: var(--gold-accent);
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.picked-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.picked-card {
+  border: 1px solid rgba(247, 231, 206, 0.32);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.picked-card img {
+  width: 100%;
+  aspect-ratio: 2 / 3.35;
+  object-fit: cover;
+  display: block;
+}
+
+.picked-card p {
+  margin: 4px 5px 6px;
+  font-size: 0.64rem;
+  color: #efe7fb;
+  line-height: 1.25;
+}
+
+.picked-empty {
+  display: grid;
+  place-items: center;
+  border: 1px dashed rgba(247, 231, 206, 0.35);
+  border-radius: 10px;
+  min-height: 70px;
+  color: #d8cdef;
+  font-size: 0.75rem;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-110px, -80px, 0); }
+}
+
+@keyframes particleFade {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to { opacity: 0; transform: scale(0.2) translateY(-14px); }
+}
+
+@media (max-width: 760px) {
+  .hand-panel {
+    width: min(88vw, 300px);
+  }
+}

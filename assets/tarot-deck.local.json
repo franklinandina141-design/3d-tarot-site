@@ -1,0 +1,630 @@
+{
+  "source": "https://tarotapi.dev/api/v1/cards",
+  "generated_at": "2026-03-04T10:49:46.514Z",
+  "cards": [
+    {
+      "id": "ar01",
+      "name": "魔术师",
+      "name_en": "The Magician",
+      "up": "Skill, diplomacy, address, subtlety",
+      "down": "Physician, Magus, mental disease, disgrace, disquiet.",
+      "image_url": "./assets/cards/ar01.jpg"
+    },
+    {
+      "id": "ar02",
+      "name": "女祭司",
+      "name_en": "The High Priestess",
+      "up": "Secrets, mystery, the future as yet unrevealed",
+      "down": "Passion, moral or physical ardour, conceit, surface knowledge.",
+      "image_url": "./assets/cards/ar02.jpg"
+    },
+    {
+      "id": "ar03",
+      "name": "皇后",
+      "name_en": "The Empress",
+      "up": "Fruitfulness, action, initiative, length of days",
+      "down": "Light, truth, the unravelling of involved matters, public rejoicings",
+      "image_url": "./assets/cards/ar03.jpg"
+    },
+    {
+      "id": "ar04",
+      "name": "皇帝",
+      "name_en": "The Emperor",
+      "up": "Stability, power, protection, realization",
+      "down": "Benevolence, compassion, credit",
+      "image_url": "./assets/cards/ar04.jpg"
+    },
+    {
+      "id": "ar05",
+      "name": "教皇",
+      "name_en": "The Hierophant",
+      "up": "Marriage, alliance, captivity, servitude",
+      "down": "Society, good understanding, concord, overkindness, weakness.",
+      "image_url": "./assets/cards/ar05.jpg"
+    },
+    {
+      "id": "ar06",
+      "name": "恋人",
+      "name_en": "The Lovers",
+      "up": "Attraction, love, beauty, trials overcome.",
+      "down": "Failure, foolish designs. Another account speaks of marriage frustrated and contrarieties of all kinds.",
+      "image_url": "./assets/cards/ar06.jpg"
+    },
+    {
+      "id": "ar07",
+      "name": "战车",
+      "name_en": "The Chariot",
+      "up": "Succour, providence also war, triumph, presumption, vengeance, trouble.",
+      "down": "Riot, quarrel, dispute, litigation, defeat.",
+      "image_url": "./assets/cards/ar07.jpg"
+    },
+    {
+      "id": "ar08",
+      "name": "Fortitude",
+      "name_en": "Fortitude",
+      "up": "Power, energy, action, courage, magnanimity",
+      "down": "Despotism, abuse if power, weakness, discord, sometimes even disgrace.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/RWS%20Tarot%2008%20Fortitude.jpg"
+    },
+    {
+      "id": "ar09",
+      "name": "隐士",
+      "name_en": "The Hermit",
+      "up": "Prudence, circumspection",
+      "down": "Concealment, disguise, policy, fear, unreasoned caution.",
+      "image_url": "./assets/cards/ar09.jpg"
+    },
+    {
+      "id": "ar10",
+      "name": "Wheel Of Fortune",
+      "name_en": "Wheel Of Fortune",
+      "up": "Destiny, fortune, success, elevation, luck, felicity.",
+      "down": "Increase, abundance, superfluity.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/RWS%20Tarot%2010%20Wheel%20Of%20Fortune.jpg"
+    },
+    {
+      "id": "ar11",
+      "name": "正义",
+      "name_en": "Justice",
+      "up": "Equity, rightness, probity, executive",
+      "down": "Law in all its departments, legal complications, bigotry, bias, excessive severity.",
+      "image_url": "./assets/cards/ar11.jpg"
+    },
+    {
+      "id": "ar12",
+      "name": "倒吊人",
+      "name_en": "The Hanged Man",
+      "up": "Wisdom, circumspection, discernment, trials, sacrifice, intuition, divination, prophecy.",
+      "down": "Selfishness, the crowd, body politic.",
+      "image_url": "./assets/cards/ar12.jpg"
+    },
+    {
+      "id": "ar13",
+      "name": "死神",
+      "name_en": "Death",
+      "up": "End, mortality, destruction, corruption also, for a man, the loss of a benefactor for a woman, many contrarieties",
+      "down": "Inertia, sleep, lethargy, petrifaction, somnambulism",
+      "image_url": "./assets/cards/ar13.jpg"
+    },
+    {
+      "id": "ar14",
+      "name": "节制",
+      "name_en": "Temperance",
+      "up": "Economy, moderation, frugality, management, accommodation.",
+      "down": "Things connected with churches, religions, sects, the priesthood, sometimes even the priest who will marry the Querent",
+      "image_url": "./assets/cards/ar14.jpg"
+    },
+    {
+      "id": "ar15",
+      "name": "恶魔",
+      "name_en": "The Devil",
+      "up": "Ravage, violence, vehemence, extraordinary efforts, force, fatality",
+      "down": "Evil fatality, weakness, pettiness, blindness.",
+      "image_url": "./assets/cards/ar15.jpg"
+    },
+    {
+      "id": "ar16",
+      "name": "高塔",
+      "name_en": "The Tower",
+      "up": "Misery, distress, indigence, adversity, calamity, disgrace, deception, ruin. It is a card in particular of unforeseen catastrophe.",
+      "down": "According to one account, the same in a lesser degree also oppression, imprisonment, tyranny.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/RWS%20Tarot%2016%20Tower.jpg"
+    },
+    {
+      "id": "ar17",
+      "name": "星星",
+      "name_en": "The Star",
+      "up": "Loss, theft, privation, abandonment",
+      "down": "Arrogance, haughtiness, impotence.",
+      "image_url": "./assets/cards/ar17.jpg"
+    },
+    {
+      "id": "ar18",
+      "name": "月亮",
+      "name_en": "The Moon",
+      "up": "Hidden enemies, danger, calumny, darkness, terror, deception, occult forces, error.",
+      "down": "Instability, inconstancy, silence, lesser degrees of deception and error.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/RWS%20Tarot%2018%20Moon.jpg"
+    },
+    {
+      "id": "ar19",
+      "name": "太阳",
+      "name_en": "The Sun",
+      "up": "Material happiness, fortunate marriage, contentment.",
+      "down": "The same in a lesser sense.",
+      "image_url": "./assets/cards/ar19.jpg"
+    },
+    {
+      "id": "ar20",
+      "name": "The Last Judgment",
+      "name_en": "The Last Judgment",
+      "up": "Change of position, renewal, outcome. Another account specifies total loss though lawsuit.",
+      "down": "Weakness, pusillanimity, simplicity",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/RWS%20Tarot%2020%20Last%20Judgment.jpg"
+    },
+    {
+      "id": "ar00",
+      "name": "愚者",
+      "name_en": "The Fool",
+      "up": "Folly, mania, extravagance, intoxication, delirium, frenzy, bewrayment.",
+      "down": "Negligence, absence, distribution, carelessness, apathy, nullity, vanity.",
+      "image_url": "./assets/cards/ar00.jpg"
+    },
+    {
+      "id": "ar21",
+      "name": "世界",
+      "name_en": "The World",
+      "up": "Assured success, recompense, voyage, route, emigration, flight, change of place.",
+      "down": "Inertia, fixity, stagnation, permanence.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/RWS%20Tarot%2021%20World.jpg"
+    },
+    {
+      "id": "wapa",
+      "name": "Page of Wands",
+      "name_en": "Page of Wands",
+      "up": "Dark young man, faithful, a lover, an envoy, a postman. Beside a man, he will bear favourable testimony concerning him. A dangerous rival, if followed by the Page of Cups. Has the chief qualities of his suit. He may signify family intelligence.",
+      "down": "Anecdotes, announcements, evil news. Also indecision and the instability which accompanies it.",
+      "image_url": "./assets/cards/wapa.jpg"
+    },
+    {
+      "id": "wakn",
+      "name": "Knight of Wands",
+      "name_en": "Knight of Wands",
+      "up": "Departure, absence, flight, emigration. A dark young man, friendly. Change of residence.",
+      "down": "Rupture, division, interruption, discord.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wands12.jpg"
+    },
+    {
+      "id": "waqu",
+      "name": "Queen of Wands",
+      "name_en": "Queen of Wands",
+      "up": "A dark woman, countrywoman, friendly, chaste, loving, honourable. If the card beside her signifies a man, she is well disposed towards him",
+      "down": "Good, economical, obliging, serviceable. Signifies also--but in certain positions and in the neighbourhood of other cards tending in such directions--opposition, jealousy, even deceit and infidelity.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wands13.jpg"
+    },
+    {
+      "id": "waki",
+      "name": "King of Wands",
+      "name_en": "King of Wands",
+      "up": "Dark man, friendly, countryman, generally married, honest and conscientious. The card always signifies honesty, and may mean news concerning an unexpected heritage to fall in before very long.",
+      "down": "Good, but severe",
+      "image_url": "./assets/cards/waki.jpg"
+    },
+    {
+      "id": "waac",
+      "name": "Ace of Wands",
+      "name_en": "Ace of Wands",
+      "up": "Creation, invention, enterprise, the powers which result in these",
+      "down": "Fall, decadence, ruin, perdition, to perish also a certain clouded joy.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wands01.jpg"
+    },
+    {
+      "id": "wa02",
+      "name": "Two of Wands",
+      "name_en": "Two of Wands",
+      "up": "Between the alternative readings there is no marriage possible",
+      "down": "Surprise, wonder, enchantment, emotion, trouble, fear.",
+      "image_url": "./assets/cards/wa02.jpg"
+    },
+    {
+      "id": "wa03",
+      "name": "Three of Wands",
+      "name_en": "Three of Wands",
+      "up": "He symbolizes established strength, enterprise, effort, trade, commerce, discovery",
+      "down": "The end of troubles, suspension or cessation of adversity, toil and disappointment.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wands03.jpg"
+    },
+    {
+      "id": "wa04",
+      "name": "Four of Wands",
+      "name_en": "Four of Wands",
+      "up": "They are for once almost on the surface--country life, haven of refuge, a species of domestic harvest-home, repose, concord, harmony, prosperity, peace, and the perfected work of these.",
+      "down": "The meaning remains unaltered",
+      "image_url": "./assets/cards/wa04.jpg"
+    },
+    {
+      "id": "wa05",
+      "name": "Five of Wands",
+      "name_en": "Five of Wands",
+      "up": "Imitation, as, for example, sham fight, but also the strenuous competition and struggle of the search after riches and fortune. In this sense it connects with the battle of life. Hence some attributions say that it is a card of gold, gain, opulence.",
+      "down": "Litigation, disputes, trickery, contradiction.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wands05.jpg"
+    },
+    {
+      "id": "wa06",
+      "name": "Six of Wands",
+      "name_en": "Six of Wands",
+      "up": "The card has been so designed that it can cover several significations",
+      "down": "Apprehension, fear, as of a victorious enemy at the gate",
+      "image_url": "./assets/cards/wa06.jpg"
+    },
+    {
+      "id": "wa07",
+      "name": "Seven of Wands",
+      "name_en": "Seven of Wands",
+      "up": "It is a card of valour, for, on the surface, six are attacking one, who has, however, the vantage position. On the intellectual plane, it signifies discussion, wordy strife",
+      "down": "Perplexity, embarrassments, anxiety. It is also a caution against indecision.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wands07.jpg"
+    },
+    {
+      "id": "wa08",
+      "name": "Eight of Wands",
+      "name_en": "Eight of Wands",
+      "up": "Activity in undertakings, the path of such activity, swiftness, as that of an express messenger",
+      "down": "Arrows of jealousy, internal dispute, stingings of conscience, quarrels",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wands08.jpg"
+    },
+    {
+      "id": "wa09",
+      "name": "Nine of Wands",
+      "name_en": "Nine of Wands",
+      "up": "The card signifies strength in opposition. If attacked, the person will meet an onslaught boldly",
+      "down": "Obstacles, adversity, calamity.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wands09.jpg"
+    },
+    {
+      "id": "wa10",
+      "name": "Ten of Wands",
+      "name_en": "Ten of Wands",
+      "up": "A card of many significances, and some of the readings cannot be harmonized. I set aside that which connects it with honour and good faith. The chief meaning is oppression simply, but it is also fortune, gain, any kind of success, and then it is the oppression of these things. It is also a card of false-seeming, disguise, perfidy. The place which the figure is approaching may suffer from the rods that he carries. Success is stultified if the Nine of Swords follows, and if it is a question of a lawsuit, there will be certain loss.",
+      "down": "Contrarieties, difficulties, intrigues, and their analogies.",
+      "image_url": "./assets/cards/wa10.jpg"
+    },
+    {
+      "id": "cupa",
+      "name": "Page of Cups",
+      "name_en": "Page of Cups",
+      "up": "Fair young man, one impelled to render service and with whom the Querent will be connected",
+      "down": "Taste, inclination, attachment, seduction, deception, artifice.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cups11.jpg"
+    },
+    {
+      "id": "cukn",
+      "name": "Knight of Cups",
+      "name_en": "Knight of Cups",
+      "up": "Arrival, approach--sometimes that of a messenger",
+      "down": "Trickery, artifice, subtlety, swindling, duplicity, fraud.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cups12.jpg"
+    },
+    {
+      "id": "cuqu",
+      "name": "Queen of Cups",
+      "name_en": "Queen of Cups",
+      "up": "Good, fair woman",
+      "down": "The accounts vary",
+      "image_url": "./assets/cards/cuqu.jpg"
+    },
+    {
+      "id": "cuki",
+      "name": "King of Cups",
+      "name_en": "King of Cups",
+      "up": "Fair man, man of business, law, or divinity",
+      "down": "Dishonest, double-dealing man",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cups14.jpg"
+    },
+    {
+      "id": "cuac",
+      "name": "Ace of Cups",
+      "name_en": "Ace of Cups",
+      "up": "House of the true heart, joy, content, abode, nourishment, abundance, fertility",
+      "down": "House of the false heart, mutation, instability, revolution.",
+      "image_url": "./assets/cards/cuac.jpg"
+    },
+    {
+      "id": "cu02",
+      "name": "Two of Cups",
+      "name_en": "Two of Cups",
+      "up": "Love, passion, friendship, affinity, union, concord, sympathy, the interrelation of the sexes, and--as a suggestion apart from all offices of divination--that desire which is not in Nature, but by which Nature is sanctified.",
+      "down": "Lust, cupidity, jealousy, wish, desire, but the card may also give, says W., \"that desire which is not in nature, but by which nature is sanctified.\"",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cups02.jpg"
+    },
+    {
+      "id": "cu03",
+      "name": "Three of Cups",
+      "name_en": "Three of Cups",
+      "up": "The conclusion of any matter in plenty, perfection and merriment",
+      "down": "Expedition, dispatch, achievement, end. It signifies also the side of excess in physical enjoyment, and the pleasures of the senses.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cups03.jpg"
+    },
+    {
+      "id": "cu04",
+      "name": "Four of Cups",
+      "name_en": "Four of Cups",
+      "up": "Weariness, disgust, aversion, imaginary vexations, as if the wine of this world had caused satiety only",
+      "down": "Novelty, presage, new instruction, new relations.",
+      "image_url": "./assets/cards/cu04.jpg"
+    },
+    {
+      "id": "cu05",
+      "name": "Five of Cups",
+      "name_en": "Five of Cups",
+      "up": "A dark, cloaked figure, looking sideways at three prone cups two others stand upright behind him",
+      "down": "News, alliances, affinity, consanguinity, ancestry, return, false projects.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cups05.jpg"
+    },
+    {
+      "id": "cu06",
+      "name": "Six of Cups",
+      "name_en": "Six of Cups",
+      "up": "A card of the past and of memories, looking back, as--for example--on childhood",
+      "down": "The future, renewal, that which will come to pass presently.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cups06.jpg"
+    },
+    {
+      "id": "cu07",
+      "name": "Seven of Cups",
+      "name_en": "Seven of Cups",
+      "up": "Fairy favours, images of reflection, sentiment, imagination, things seen in the glass of contemplation",
+      "down": "Desire, will, determination, project.",
+      "image_url": "./assets/cards/cu07.jpg"
+    },
+    {
+      "id": "cu08",
+      "name": "Eight of Cups",
+      "name_en": "Eight of Cups",
+      "up": "The card speaks for itself on the surface, but other readings are entirely antithetical--giving joy, mildness, timidity, honour, modesty. In practice, it is usually found that the card shews the decline of a matter, or that a matter which has been thought to be important is really of slight consequence--either for good or evil.",
+      "down": "Great joy, happiness, feasting.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cups08.jpg"
+    },
+    {
+      "id": "cu09",
+      "name": "Nine of Cups",
+      "name_en": "Nine of Cups",
+      "up": "Concord, contentment, physical bien-être",
+      "down": "Truth, loyalty, liberty",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cups09.jpg"
+    },
+    {
+      "id": "cu10",
+      "name": "Ten of Cups",
+      "name_en": "Ten of Cups",
+      "up": "Contentment, repose of the entire heart",
+      "down": "Repose of the false heart, indignation, violence.",
+      "image_url": "./assets/cards/cu10.jpg"
+    },
+    {
+      "id": "pepa",
+      "name": "Page of Pentacles",
+      "name_en": "Page of Pentacles",
+      "up": "Application, study, scholarship, reflection another reading says news, messages and the bringer thereof",
+      "down": "Prodigality, dissipation, liberality, luxury",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pents11.jpg"
+    },
+    {
+      "id": "pekn",
+      "name": "Knight of Pentacles",
+      "name_en": "Knight of Pentacles",
+      "up": "Utility, serviceableness, interest, responsibility, rectitude-all on the normal and external plane.",
+      "down": "inertia, idleness, repose of that kind, stagnation",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pents12.jpg"
+    },
+    {
+      "id": "pequ",
+      "name": "Queen of Pentacles",
+      "name_en": "Queen of Pentacles",
+      "up": "Opulence, generosity, magnificence, security, liberty.",
+      "down": "Evil, suspicion, suspense, fear, mistrust.",
+      "image_url": "./assets/cards/pequ.jpg"
+    },
+    {
+      "id": "peki",
+      "name": "King of Pentacles",
+      "name_en": "King of Pentacles",
+      "up": "Valour, realizing intelligence, business and normal intellectual aptitude, sometimes mathematical gifts and attainments of this kind",
+      "down": "Vice, weakness, ugliness, perversity, corruption, peril.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pents14.jpg"
+    },
+    {
+      "id": "peac",
+      "name": "Ace of Pentacles",
+      "name_en": "Ace of Pentacles",
+      "up": "Perfect contentment, felicity, ecstasy",
+      "down": "The evil side of wealth, bad intelligence",
+      "image_url": "./assets/cards/peac.jpg"
+    },
+    {
+      "id": "pe02",
+      "name": "Two of Pentacles",
+      "name_en": "Two of Pentacles",
+      "up": "On the one hand it is represented as a card of gaiety, recreation and its connexions, which is the subject of the design",
+      "down": "Enforced gaiety, simulated enjoyment, literal sense, handwriting, composition, letters of exchange.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pents02.jpg"
+    },
+    {
+      "id": "pe03",
+      "name": "Three of Pentacles",
+      "name_en": "Three of Pentacles",
+      "up": "Métier, trade, skilled labour",
+      "down": "Mediocrity, in work and otherwise, puerility, pettiness, weakness.",
+      "image_url": "./assets/cards/pe03.jpg"
+    },
+    {
+      "id": "pe04",
+      "name": "Four of Pentacles",
+      "name_en": "Four of Pentacles",
+      "up": "The surety of possessions, cleaving to that which one has, gift, legacy, inheritance.",
+      "down": "Suspense, delay, opposition.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pents04.jpg"
+    },
+    {
+      "id": "pe05",
+      "name": "Five of Pentacles",
+      "name_en": "Five of Pentacles",
+      "up": "The card foretells material trouble above all, whether in the form illustrated--that is, destitution--or otherwise. For some cartomancists, it is a card of love and lovers-wife, husband, friend, mistress",
+      "down": "Disorder, chaos, ruin, discord, profligacy.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pents05.jpg"
+    },
+    {
+      "id": "pe06",
+      "name": "Six of Pentacles",
+      "name_en": "Six of Pentacles",
+      "up": "Presents, gifts, gratification another account says attention, vigilance now is the accepted time, present prosperity, etc.",
+      "down": "Desire, cupidity, envy, jealousy, illusion.",
+      "image_url": "./assets/cards/pe06.jpg"
+    },
+    {
+      "id": "pe07",
+      "name": "Seven of Pentacles",
+      "name_en": "Seven of Pentacles",
+      "up": "These are exceedingly contradictory",
+      "down": "Cause for anxiety regarding money which it may be proposed to lend.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pents07.jpg"
+    },
+    {
+      "id": "pe08",
+      "name": "Eight of Pentacles",
+      "name_en": "Eight of Pentacles",
+      "up": "Work, employment, commission, craftsmanship, skill in craft and business, perhaps in the preparatory stage.",
+      "down": "Voided ambition, vanity, cupidity, exaction, usury. It may also signify the possession of skill, in the sense of the ingenious mind turned to cunning and intrigue.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pents08.jpg"
+    },
+    {
+      "id": "pe09",
+      "name": "Nine of Pentacles",
+      "name_en": "Nine of Pentacles",
+      "up": "Prudence, safety, success, accomplishment, certitude, discernment.",
+      "down": "Roguery, deception, voided project, bad faith.",
+      "image_url": "./assets/cards/pe09.jpg"
+    },
+    {
+      "id": "pe10",
+      "name": "Ten of Pentacles",
+      "name_en": "Ten of Pentacles",
+      "up": "Gain, riches",
+      "down": "Chance, fatality, loss, robbery, games of hazard",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pents10.jpg"
+    },
+    {
+      "id": "swpa",
+      "name": "Page of Swords",
+      "name_en": "Page of Swords",
+      "up": "Authority, overseeing, secret service, vigilance, spying, examination, and the qualities thereto belonging.",
+      "down": "More evil side of these qualities",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Swords11.jpg"
+    },
+    {
+      "id": "swkn",
+      "name": "Knight of Swords",
+      "name_en": "Knight of Swords",
+      "up": "Skill, bravery, capacity, defence, address, enmity, wrath, war, destruction, opposition, resistance, ruin. There is therefore a sense in which the card signifies death, but it carries this meaning only in its proximity to other cards of fatality.",
+      "down": "Imprudence, incapacity, extravagance.",
+      "image_url": "./assets/cards/swkn.jpg"
+    },
+    {
+      "id": "swqu",
+      "name": "Queen of Swords",
+      "name_en": "Queen of Swords",
+      "up": "Widowhood, female sadness and embarrassment, absence, sterility, mourning, privation, separation.",
+      "down": "Malice, bigotry, artifice, prudery, bale, deceit.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Swords13.jpg"
+    },
+    {
+      "id": "swki",
+      "name": "King of Swords",
+      "name_en": "King of Swords",
+      "up": "Whatsoever arises out of the idea of judgment and all its connexions-power, command, authority, militant intelligence, law, offices of the crown, and so forth.",
+      "down": "Cruelty, perversity, barbarity, perfidy, evil intention.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Swords14.jpg"
+    },
+    {
+      "id": "swac",
+      "name": "Ace of Swords",
+      "name_en": "Ace of Swords",
+      "up": "Triumph, the excessive degree in everything, conquest, triumph of force. It is a card of great force, in love as well as in hatred. The crown may carry a much higher significance than comes usually within the sphere of fortune-telling.",
+      "down": "The same, but the results are disastrous",
+      "image_url": "./assets/cards/swac.jpg"
+    },
+    {
+      "id": "sw02",
+      "name": "Two of Swords",
+      "name_en": "Two of Swords",
+      "up": "Conformity and the equipoise which it suggests, courage, friendship, concord in a state of arms",
+      "down": "Imposture, falsehood, duplicity, disloyalty.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Swords02.jpg"
+    },
+    {
+      "id": "sw03",
+      "name": "Three of Swords",
+      "name_en": "Three of Swords",
+      "up": "Removal, absence, delay, division, rupture, dispersion, and all that the design signifies naturally, being too simple and obvious to call for specific enumeration.",
+      "down": "Mental alienation, error, loss, distraction, disorder, confusion.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Swords03.jpg"
+    },
+    {
+      "id": "sw04",
+      "name": "Four of Swords",
+      "name_en": "Four of Swords",
+      "up": "Vigilance, retreat, solitude, hermit's repose, exile, tomb and coffin. It is these last that have suggested the design.",
+      "down": "Wise administration, circumspection, economy, avarice, precaution, testament.",
+      "image_url": "./assets/cards/sw04.jpg"
+    },
+    {
+      "id": "sw05",
+      "name": "Five of Swords",
+      "name_en": "Five of Swords",
+      "up": "Degradation, destruction, revocation, infamy, dishonour, loss, with the variants and analogues of these.",
+      "down": "The same",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Swords05.jpg"
+    },
+    {
+      "id": "sw06",
+      "name": "Six of Swords",
+      "name_en": "Six of Swords",
+      "up": "Journey by water, route, way, envoy, commissionary, expedient.",
+      "down": "Declaration, confession, publicity",
+      "image_url": "./assets/cards/sw06.jpg"
+    },
+    {
+      "id": "sw07",
+      "name": "Seven of Swords",
+      "name_en": "Seven of Swords",
+      "up": "Design, attempt, wish, hope, confidence",
+      "down": "Good advice, counsel, instruction, slander, babbling.",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Swords07.jpg"
+    },
+    {
+      "id": "sw08",
+      "name": "Eight of Swords",
+      "name_en": "Eight of Swords",
+      "up": "Bad news, violent chagrin, crisis, censure, power in trammels, conflict, calumny",
+      "down": "Disquiet, difficulty, opposition, accident, treachery",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Swords08.jpg"
+    },
+    {
+      "id": "sw09",
+      "name": "Nine of Swords",
+      "name_en": "Nine of Swords",
+      "up": "Death, failure, miscarriage, delay, deception, disappointment, despair.",
+      "down": "Imprisonment, suspicion, doubt, reasonable fear, shame.",
+      "image_url": "./assets/cards/sw09.jpg"
+    },
+    {
+      "id": "sw10",
+      "name": "Ten of Swords",
+      "name_en": "Ten of Swords",
+      "up": "Whatsoever is intimated by the design",
+      "down": "Advantage, profit, success, favour, but none of these are permanent",
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Swords10.jpg"
+    }
+  ]
+}
