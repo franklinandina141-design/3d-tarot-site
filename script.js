@@ -1,5 +1,6 @@
 const TAROT_API_URL = "https://tarotapi.dev/api/v1/cards";
 const LOCAL_DECK_URL = "./assets/tarot-deck.local.json";
+const DRAW_API_URL = "/api/draw";
 const COMMONS_FILEPATH = "https://commons.wikimedia.org/wiki/Special:FilePath/";
 
 const trackA = document.getElementById("trackA");
@@ -11,7 +12,6 @@ const pickedList = document.getElementById("pickedList");
 
 let cards = [];
 let picked = [];
-const orientationMap = new Map();
 let offset = 0;
 let cycleWidth = 0;
 let cardStep = 110;
@@ -202,7 +202,7 @@ function renderPicked() {
   pickedList.appendChild(frag);
 }
 
-function tryPickCenterCard() {
+async function tryPickCenterCard() {
   if (picked.length >= 3) {
     statusText.textContent = "已选满 3 张，可刷新重新开始";
     return;
@@ -217,14 +217,38 @@ function tryPickCenterCard() {
     return;
   }
 
-  const reversed = orientationMap.get(card.id) === true;
-  picked.push({
-    ...card,
-    orient: reversed ? "逆位" : "正位",
-    meaning: reversed ? card.down : card.up
-  });
-  renderPicked();
-  statusText.textContent = `已选择第 ${picked.length} 张：${card.name}（${reversed ? "逆位" : "正位"}）`;
+  const pickedIds = picked.map((x) => x.id);
+
+  try {
+    const res = await fetch(DRAW_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cardId: card.id, pickedIds })
+    });
+
+    if (!res.ok) throw new Error(`draw api failed: ${res.status}`);
+    const payload = await res.json();
+    const drawn = payload?.card;
+    if (!drawn?.id) throw new Error("invalid draw response");
+
+    picked.push({
+      ...drawn,
+      orient: drawn.orient || "正位",
+      meaning: drawn.meaning || drawn.up || "保持觉察，顺势而为。"
+    });
+
+    renderPicked();
+    statusText.textContent = `已选择第 ${picked.length} 张：${drawn.name}（${drawn.orient || "正位"}）`;
+  } catch (error) {
+    const reversed = Math.random() < 0.5;
+    picked.push({
+      ...card,
+      orient: reversed ? "逆位" : "正位",
+      meaning: reversed ? card.down : card.up
+    });
+    renderPicked();
+    statusText.textContent = `已选择第 ${picked.length} 张：${card.name}（${reversed ? "逆位" : "正位"}）`;
+  }
 }
 
 function onHandResults(results) {
@@ -376,11 +400,6 @@ async function loadCards() {
     }
 
     if (cards.length < 1) throw new Error("empty deck");
-    orientationMap.clear();
-    cards.forEach((card) => {
-      orientationMap.set(card.id, Math.random() < 0.5);
-    });
-
     setupTrack();
     renderPicked();
     statusText.textContent = "食指滑动控制滚动；捏合选3张（正逆位已全牌打乱）";
@@ -392,8 +411,6 @@ async function loadCards() {
       up: "保持觉察，顺势而为。",
       down: "暂缓行动，先回到内在。"
     }));
-    orientationMap.clear();
-    cards.forEach((card) => orientationMap.set(card.id, Math.random() < 0.5));
     setupTrack();
     renderPicked();
     statusText.textContent = "离线模式：捏合选3张（正逆位已全牌打乱）";
