@@ -453,29 +453,59 @@
 
           const stance = (card) => (card.isReversed ? '逆位' : '正位');
           const info = (card) => (card.isReversed ? card.reversed : card.upright);
-
           const q = (submittedQuestion || '').toLowerCase();
-          const names = `${p.name} ${n.name} ${f.name}`;
+
+          const elementOf = (card) => {
+            const id = card.id || '';
+            if (id.startsWith('wa')) return '火';
+            if (id.startsWith('cu')) return '水';
+            if (id.startsWith('sw')) return '風';
+            if (id.startsWith('pe')) return '土';
+            if (id.startsWith('ar')) {
+              const num = Number(id.slice(2));
+              if ([0,1,7,8,19].includes(num)) return '火';
+              if ([2,6,12,18].includes(num)) return '水';
+              if ([5,9,11,17,20].includes(num)) return '風';
+              return '土';
+            }
+            return '土';
+          };
+
+          const counts = { 火: 0, 水: 0, 風: 0, 土: 0 };
+          [p, n, f].forEach((c) => { counts[elementOf(c)] += 1; });
+          const sortedElements = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+          const topEl = sortedElements[0][0];
+          const weakEl = sortedElements[sortedElements.length - 1][0];
+
+          const activeScore = [p, n, f].reduce((acc, c) => acc + (c.isReversed ? -1 : 1), 0);
+          const energyTone = activeScore >= 2 ? '積極進取' : activeScore <= -1 ? '停滯警示' : '內省修復';
+
+          const mirrorShadow = n.isReversed
+            ? '你內在對失控的焦慮正在放大，於是傾向延後決策或反覆確認安全感。'
+            : '你其實知道該往哪走，但仍在等待「完美時機」才敢全面投入。';
+          const mirrorBlind = n.isReversed
+            ? '你看見了問題，但不想承認自己也在餵養它（例如拖延、討好、過度自我保護）。'
+            : '你看見了機會，卻低估了持續行動的重要性。';
+
+          const linkText = `從【${p.name}】到【${n.name}】的因果鏈，是你從「${info(p).energy}」過渡到「${info(n).energy}」。`;
+          const pivotText = `而要從【${n.name}】跨向【${f.name}】，關鍵心理轉變是：把「被動等待」改為「有邊界的主動選擇」。`;
+
           const isLove = /感情|戀|爱情|关系|复合|曖昧/.test(q);
           const isCareer = /工作|事業|创业|職場|面試|升職|生意/.test(q);
           const isMoney = /金錢|财|收入|投資|债|花费/.test(q);
 
-          let actionPlan = '每天做一件最小行動：早晨 5 分鐘靜心 + 晚上 3 行日記（今天覺察、今天停止、明天行動）。';
-          let finalAdvice = '不要急於在外部世界尋求證明，而是把焦點拉回呼吸與當下感受。先穩住節奏，再推進選擇。';
+          let mindsetAdvice = '先停止用「結果」評價自己，改以「是否持續對齊價值」作為判準。';
+          let actionAdvice = '未來 7 天，每天固定 30 分鐘完成一件最小可驗證行動，並在晚間做 3 句復盤。';
 
           if (isLove) {
-            actionPlan = '7天內先做「情緒降噪」：第1-2天不追問結果，第3-4天梳理界線與需求，第5-7天只做一次真誠對話，不重複拉扯。';
-            finalAdvice = '這組牌在關係上提醒你：先確認你要的是「被愛」還是「被回應」。當你把界線說清楚，關係才有機會走向穩定。';
+            mindsetAdvice = '把「害怕失去」轉為「建立界線」：愛不是討好，而是清晰表達需求。';
+            actionAdvice = '本週只做一次高品質溝通：先寫下需求、底線、可妥協區，再進行對話。';
           } else if (isCareer || isMoney) {
-            actionPlan = '7天行動聚焦在一件可量化目標：拆成每日 30 分鐘深度推進，並在第7天復盤「投入時間 / 產出結果 / 下一步」。';
-            finalAdvice = '這組牌對事業與金錢的訊號是：避免一次做太多，先穩現金流與核心技能，再擴張。穩定比衝動更重要。';
-          } else if (/死神|高塔|惡魔|月亮/.test(names)) {
-            actionPlan = '接下來 7 天先做斷捨離：每天清理一項消耗（人、事、習慣），騰出空間給真正想發展的方向。';
-            finalAdvice = '這組牌偏「深層轉化」：不是壞，而是要你停止舊模式。當你願意放手，新的秩序才會進來。';
-          } else if (/太陽|星星|世界|命運之輪/.test(names)) {
-            actionPlan = '7天內把機會具體化：每天固定輸出一個成果（內容、溝通、提案），讓好運有落地容器。';
-            finalAdvice = '這組牌偏「順風期」：你已在正確軌道上，重點是持續與節奏，不要因為害怕失去而自我設限。';
+            mindsetAdvice = '把焦點從焦慮轉到可控槓桿：技能、節奏、輸出。';
+            actionAdvice = '做一次資源盤點（時間/現金流/能力），刪掉一個低回報任務，集中到一個高價值目標。';
           }
+
+          const elementSpeech = `在你的能量矩陣中，出現較強的「${topEl}元素」，而「${weakEl}元素」相對不足，整體調性偏向「${energyTone}」。`;
 
           return (
             <div className="space-y-8 text-[#d1d5db] font-light leading-relaxed">
@@ -487,34 +517,39 @@
               )}
 
               <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">三張牌總覽</h4>
-                <p className="text-sm md:text-base">
-                  過去【{p.name}・{stance(p)}】→ 現在【{n.name}・{stance(n)}】→ 未來【{f.name}・{stance(f)}】
-                </p>
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">1. 能量特質分析（Elemental & Archetype）</h4>
+                <p className="text-sm md:text-base">元素比例：火 {counts['火']} / 水 {counts['水']} / 風 {counts['風']} / 土 {counts['土']}</p>
+                <p className="text-sm mt-2">{elementSpeech}</p>
               </div>
 
-              <p className="text-lg italic">
-                「你走過的【{p.name}】正在提醒你：{info(p).insight}
-                此刻的【{n.name}】指出核心課題是：{info(n).insight}
-                而未來的【{f.name}】給出的方向是：{info(f).insight}」
-              </p>
+              <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">2. 現狀深度解碼（Deep Dive: The Mirror）</h4>
+                <p className="text-sm">現在位【{n.name}・{stance(n)}】映照：{mirrorShadow}</p>
+                <p className="text-sm mt-2">盲點提示：{mirrorBlind}</p>
+              </div>
+
+              <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">3. 牌陣動力鏈結（The Narrative Link）</h4>
+                <p className="text-sm">{linkText}</p>
+                <p className="text-sm mt-2">{pivotText}</p>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-2xl border border-[#F7E7CE]/15 bg-[#F7E7CE]/5">
-                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE] mb-2">綜合關鍵訊息</h5>
-                  <p className="text-sm leading-relaxed">當下最重要的不是一次做對所有選擇，而是先把注意力收回到你真正可控的行動。過去在塑造你，現在在考驗你，未來在回應你。</p>
+                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE] mb-2">4. 戰略級建議（Practical Alchemy）</h5>
+                  <p className="text-sm leading-relaxed">心理建議：{mindsetAdvice}</p>
+                  <p className="text-sm leading-relaxed mt-2">行動建議：{actionAdvice}</p>
                 </div>
                 <div className="p-4 rounded-2xl border border-[#9d85c4]/25 bg-[#9d85c4]/10">
-                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#d9c7ff] mb-2">7天落地行動</h5>
-                  <p className="text-sm leading-relaxed">{actionPlan}</p>
+                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#d9c7ff] mb-2">三張牌總覽</h5>
+                  <p className="text-sm">過去【{p.name}・{stance(p)}】→ 現在【{n.name}・{stance(n)}】→ 未來【{f.name}・{stance(f)}】</p>
                 </div>
               </div>
 
               <div className="pt-6 border-t border-[#F7E7CE]/20">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">宇宙最終建議</h4>
-                <p>
-                  {finalAdvice}
-                </p>
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">5. 權威結語與倫理聲明</h4>
+                <p>牌面揭示的是趨勢，不是判決。當你開始看見自己的恐懼與慣性，轉機就已啟動；決定權始終在你手中。</p>
+                <p className="text-xs mt-3 opacity-80">本解讀僅供自我覺察參考，不取代醫療、法律、財務或其他專業決策建議。</p>
               </div>
             </div>
           );
