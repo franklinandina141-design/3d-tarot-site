@@ -45,6 +45,15 @@
         0% { transform: translate3d(-2%, -1%, 0) scale(1); }
         100% { transform: translate3d(2%, 1%, 0) scale(1.08); }
       }
+
+      @keyframes cardRevealSpin {
+        0% { opacity: 0; transform: perspective(900px) rotateY(-22deg) rotateX(6deg) scale(0.92); }
+        100% { opacity: 1; transform: perspective(900px) rotateY(0deg) rotateX(0deg) scale(1); }
+      }
+
+      .card-reveal {
+        animation: cardRevealSpin 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
     </style>
   </head>
   <body>
@@ -549,7 +558,7 @@
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-7xl w-full mb-24">
                   {selectedCards.map((card, i) => (
-                    <div key={card.uid} className="flex flex-col items-center group">
+                    <div key={card.uid} className="flex flex-col items-center group card-reveal" style={{ animationDelay: `${i * 120}ms` }}>
                       <span className="text-[11px] tracking-[0.5em] text-[#9d85c4] mb-6 uppercase">{i === 0 ? '過去 - 根基' : i === 1 ? '現在 - 脈動' : '未來 - 指引'}</span>
                       <div className="relative w-full max-w-[240px] aspect-[2/3.5] rounded-3xl overflow-hidden border border-[#F7E7CE]/30 shadow-lg">
                         <img src={card.image} loading="lazy" decoding="async" onError={(e) => { e.currentTarget.src = './assets/cards/ar00.jpg'; }} className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
