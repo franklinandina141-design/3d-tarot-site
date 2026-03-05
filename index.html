@@ -120,7 +120,8 @@
 
       function resolveCardImage(cardId = '', remote = '', fallback = '') {
         const local = cardId ? `./assets/cards/${cardId}.jpg` : '';
-        return local || remote || fallback || './assets/cards/ar00.jpg';
+        // 只優先使用本地卡圖，避免外部來源牌圖錯配
+        return local || fallback || remote || './assets/cards/ar00.jpg';
       }
 
       function buildCardByIndex(index) {
@@ -211,41 +212,41 @@
         }, []);
 
         const initializeDeck = () => {
-          const fullDeck = Array.from({ length: 78 }).map((_, index) => {
-            const source = deckCatalog[index];
-            const baseData = source
-              ? (() => {
-                  const upBits = splitMeaning(source.up || '');
-                  const downBits = splitMeaning(source.down || '');
-                  const upMain = upBits[0] || 'inner alignment';
-                  const upExtra = upBits[1] || upBits[0] || 'clarity';
-                  const downMain = downBits[0] || 'imbalance';
-                  const downExtra = downBits[1] || downBits[0] || 'pause';
-                  const fallback = buildCardByIndex(index);
-                  return {
-                    id: source.id || fallback.id,
-                    name: source.name ? `${source.name}${source.name_en ? ` (${source.name_en})` : ''}` : (source.name_en || fallback.name),
-                    image: resolveCardImage(source.id || fallback.id, source.image_url, fallback.image),
-                    upright: {
-                      energy: `Rider-Waite 提示：${upMain}。這是一張偏向「順流但需要覺察」的訊號。`,
-                      insight: `在你的議題裡，它更指向 ${upExtra}。你可以把它理解為「可前進，但要保持誠實」。`,
-                      action: actionByCardId(source.id || fallback.id)
-                    },
-                    reversed: {
-                      energy: `逆位核心：${downMain}。通常不是失敗，而是節奏與方向需要修正。`,
-                      insight: `這張逆位常見陰影是 ${downExtra}。先停下自我拉扯，再重建優先順序。`,
-                      action: actionByCardId(source.id || fallback.id)
-                    }
-                  };
-                })()
-              : buildCardByIndex(index);
+          const fullDeck = (deckCatalog.length > 0
+            ? deckCatalog.map((source, index) => {
+                const upBits = splitMeaning(source.up || '');
+                const downBits = splitMeaning(source.down || '');
+                const upMain = upBits[0] || 'inner alignment';
+                const upExtra = upBits[1] || upBits[0] || 'clarity';
+                const downMain = downBits[0] || 'imbalance';
+                const downExtra = downBits[1] || downBits[0] || 'pause';
+                const fallback = buildCardByIndex(index);
+                const cardId = source.id || fallback.id;
 
-            return {
-              ...baseData,
-              uid: Math.random().toString(36).slice(2, 11),
-              isReversed: Math.random() > 0.5
-            };
-          }).sort(() => Math.random() - 0.5);
+                return {
+                  id: cardId,
+                  name: source.name ? `${source.name}${source.name_en ? ` (${source.name_en})` : ''}` : (source.name_en || fallback.name),
+                  image: resolveCardImage(cardId, source.image_url, fallback.image),
+                  upright: {
+                    energy: `Rider-Waite 提示：${upMain}。這是一張偏向「順流但需要覺察」的訊號。`,
+                    insight: `在你的議題裡，它更指向 ${upExtra}。你可以把它理解為「可前進，但要保持誠實」。`,
+                    action: actionByCardId(cardId)
+                  },
+                  reversed: {
+                    energy: `逆位核心：${downMain}。通常不是失敗，而是節奏與方向需要修正。`,
+                    insight: `這張逆位常見陰影是 ${downExtra}。先停下自我拉扯，再重建優先順序。`,
+                    action: actionByCardId(cardId)
+                  },
+                  uid: Math.random().toString(36).slice(2, 11),
+                  isReversed: Math.random() > 0.5
+                };
+              })
+            : Array.from({ length: 78 }).map((_, index) => ({
+                ...buildCardByIndex(index),
+                uid: Math.random().toString(36).slice(2, 11),
+                isReversed: Math.random() > 0.5
+              }))
+          ).sort(() => Math.random() - 0.5);
 
           setDeck(fullDeck);
           const init = Math.max(0, (fullDeck.length * 220 - window.innerWidth) / 2);
