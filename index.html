@@ -47,12 +47,13 @@
       }
 
       @keyframes cardRevealSpin {
-        0% { opacity: 0; transform: perspective(900px) rotateY(-22deg) rotateX(6deg) scale(0.92); }
-        100% { opacity: 1; transform: perspective(900px) rotateY(0deg) rotateX(0deg) scale(1); }
+        0% { opacity: 0; transform: translateY(14px) rotate(-8deg) scale(0.96); }
+        100% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
       }
 
       .card-reveal {
-        animation: cardRevealSpin 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        will-change: transform, opacity;
+        animation: cardRevealSpin 520ms ease-out both;
       }
     </style>
   </head>
@@ -238,7 +239,7 @@
                   },
                   reversed: {
                     energy: `逆位核心：${downMain}。通常不是失敗，而是節奏與方向需要修正。`,
-                    insight: `這張逆位常見陰影是 ${downExtra}。先停下自我拉扯，再重建優先順序。`,
+                    insight: `這張逆位常見卡點是 ${downExtra}。先停下自我拉扯，再重建優先順序。`,
                     action: actionByCardId(cardId)
                   },
                   uid: Math.random().toString(36).slice(2, 11),
@@ -422,22 +423,23 @@
           const isMoney = /金錢|财|收入|投資|债|花费/.test(q);
           const isGrowth = /自我|成长|療癒|疗愈|焦慮|焦虑|內在|阴影|榮格|jung/.test(q);
 
+          const userTopic = submittedQuestion || '你當下最在意的議題';
           let profile = '綜合';
-          let mindsetAdvice = '先停止用「結果」評價自己，改以「是否持續對齊價值」作為判準。';
-          let actionAdvice = '未來 7 天，每天固定 30 分鐘完成一件最小可驗證行動，並在晚間做 3 句復盤。';
+          let mindsetAdvice = `先把「${userTopic}」拆成可控與不可控兩部分，停止用結果焦慮推動自己。`;
+          let actionAdvice = `未來 7 天，圍繞「${userTopic}」每天固定 30 分鐘做一件可驗證小行動，晚間做 3 句復盤。`;
 
           if (isLove) {
             profile = '感情向';
-            mindsetAdvice = '把「害怕失去」轉為「建立界線」：愛不是討好，而是清晰表達需求。';
+            mindsetAdvice = `在「${userTopic}」上，先把害怕失去改成建立界線：愛不是討好，而是清晰表達需求。`;
             actionAdvice = '本週只做一次高品質溝通：先寫下需求、底線、可妥協區，再進行對話。';
           } else if (isCareer || isMoney) {
             profile = '事業/財務向';
-            mindsetAdvice = '把焦點從焦慮轉到可控槓桿：技能、節奏、輸出。';
+            mindsetAdvice = `關於「${userTopic}」，把焦點從焦慮轉到可控槓桿：技能、節奏、輸出。`;
             actionAdvice = '做一次資源盤點（時間/現金流/能力），刪掉一個低回報任務，集中到一個高價值目標。';
           } else if (isGrowth) {
             profile = '自我成長向';
-            mindsetAdvice = '把「我是不是不夠好」改寫成「我正在整合哪一部分陰影」，停止自我攻擊。';
-            actionAdvice = '連續 7 天進行「主動想像」：每天 10 分鐘寫下夢境/情緒觸發，再提煉一個可行動的覺察。';
+            mindsetAdvice = `在「${userTopic}」這題上，先停下自我否定，改用覺察與記錄來看清模式。`;
+            actionAdvice = '連續 7 天做 10 分鐘情緒日記：寫下觸發事件、感受、你下一步要做的調整。';
           }
 
           const elementHintMap = {
@@ -456,7 +458,6 @@
                 <div className="p-5 rounded-2xl border border-[#F7E7CE]/20 bg-[#F7E7CE]/5">
                   <p className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE]/80 mb-2">本次提問主題</p>
                   <p className="text-base">{submittedQuestion}</p>
-                  <p className="text-xs mt-2 opacity-80">解析語氣：{profile}</p>
                 </div>
               )}
 
@@ -468,10 +469,10 @@
               </div>
 
               <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">2. 現狀深度解碼（Jungian Mirror）</h4>
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">2. 現狀深度解碼</h4>
                 <p className="text-sm">現在位【{n.name}・{stance(n)}】映照：{mirrorShadow}</p>
                 <p className="text-sm mt-2">盲點提示：{mirrorBlind}</p>
-                <p className="text-sm mt-2">榮格視角：這張牌觸發的原型課題，正在要求你整合「人格面具（Persona）」與「陰影（Shadow）」，避免把內在衝突投射到外部關係。</p>
+                <p className="text-sm mt-2">重點是先把情緒與事實分開：先確認你真正擔心的是什麼，再決定下一步怎麼做。</p>
               </div>
 
               <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
@@ -482,10 +483,10 @@
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-2xl border border-[#F7E7CE]/15 bg-[#F7E7CE]/5">
-                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE] mb-2">4. 戰略級建議（Tarot × Jung Integration）</h5>
+                  <h5 className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE] mb-2">4. 戰略級建議</h5>
                   <p className="text-sm leading-relaxed">心理建議：{mindsetAdvice}</p>
                   <p className="text-sm leading-relaxed mt-2">行動建議：{actionAdvice}</p>
-                  <p className="text-sm leading-relaxed mt-2">專業整合：先完成一次「陰影命名」(寫下你最害怕發生的事)，再做一個具體動詞行動，讓無意識內容進入可管理的現實層。</p>
+                  <p className="text-sm leading-relaxed mt-2">執行原則：只做一個最關鍵動作，先把局面穩住，再擴大節奏。</p>
                 </div>
                 <div className="p-4 rounded-2xl border border-[#9d85c4]/25 bg-[#9d85c4]/10">
                   <h5 className="text-xs tracking-[0.2em] uppercase text-[#d9c7ff] mb-2">關鍵轉化錨點</h5>
@@ -495,7 +496,7 @@
 
               <div className="pt-6 border-t border-[#F7E7CE]/20">
                 <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">5. 權威結語與倫理聲明</h4>
-                <p>作為塔羅與榮格取向整合解讀，牌面揭示的是「心理趨勢與能量方向」，不是命運判決。當你開始覺察投射與陰影，個體化歷程就已啟動；決定權始終在你手中。</p>
+                <p>牌面揭示的是趨勢與提醒，不是命運判決。當你願意面對真正的問題並採取行動，轉機就會開始；決定權始終在你手中。</p>
                 <p className="text-xs mt-3 opacity-80">本解讀僅供自我覺察與成長參考，不取代醫療、法律、財務或其他專業決策建議；若處於心理危機，請優先尋求專業心理支持。</p>
               </div>
             </div>
