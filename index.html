@@ -478,6 +478,17 @@
           const secondEl = sortedElements[1][0];
           const weakEl = sortedElements[sortedElements.length - 1][0];
 
+          const total = 3;
+          const dominantCount = counts[topEl];
+          const missingElements = Object.entries(counts).filter(([, v]) => v === 0).map(([k]) => k);
+          let balanceReport = '';
+          if (dominantCount > total / 2) {
+            balanceReport += `【能量過熱】當前牌陣中「${topEl}元素」佔據主導，顯示你目前主要被這股能量推動。`;
+          }
+          if (missingElements.length > 0) {
+            balanceReport += `${balanceReport ? ' ' : ''}【能量缺失】牌陣中缺乏「${missingElements.join('、')}元素」，你可能忽略了對應視角與策略。`;
+          }
+
           const activeScore = [p, n, f].reduce((acc, c) => acc + (c.isReversed ? -1 : 1), 0);
           const energyTone = activeScore >= 2 ? '積極進取' : activeScore <= -1 ? '停滯警示' : '內省修復';
 
@@ -529,6 +540,7 @@
                 <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">1. 能量特質分析（Elemental & Archetype）</h4>
                 <p className="text-sm md:text-base">元素比例：火 {counts['火']} / 水 {counts['水']} / 風 {counts['風']} / 土 {counts['土']}</p>
                 <p className="text-sm mt-2">{elementSpeech}</p>
+                {balanceReport && <p className="text-sm mt-2 text-[#f3dede]">{balanceReport}</p>}
               </div>
 
               <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
