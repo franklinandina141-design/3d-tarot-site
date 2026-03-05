@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Intuitive Tarot Guidance</title>
+    <title>靈感塔羅指引</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -144,7 +144,7 @@
             name,
             image: `https://www.sacred-texts.com/tarot/pkt/img/ar${String(index).padStart(2, '0')}.jpg`,
             upright: {
-              energy: `在 Rider-Waite 圖像裡，${arc.symbol} 對應「${arc.light}」。這不是抽象玄學，而是你當下可被啟動的心理資源。`,
+              energy: `在偉特塔羅圖像裡，${arc.symbol} 對應「${arc.light}」。這不是抽象玄學，而是你當下可被啟動的心理資源。`,
               insight: `若放在現實議題，這張牌鼓勵你用「${kw[1]}」來處理眼前選擇：先看清事實，再決定投入。`,
               action: `把 ${kw[2]} 轉成行動：今天完成一件可衡量的小步，讓能量開始流動。`
             },
@@ -221,10 +221,10 @@
             ? deckCatalog.map((source, index) => {
                 const upBits = splitMeaning(source.up || '');
                 const downBits = splitMeaning(source.down || '');
-                const upMain = upBits[0] || 'inner alignment';
-                const upExtra = upBits[1] || upBits[0] || 'clarity';
-                const downMain = downBits[0] || 'imbalance';
-                const downExtra = downBits[1] || downBits[0] || 'pause';
+                const upMain = upBits[0] || '內在對齊';
+                const upExtra = upBits[1] || upBits[0] || '方向清晰';
+                const downMain = downBits[0] || '節奏失衡';
+                const downExtra = downBits[1] || downBits[0] || '暫停調整';
                 const fallback = buildCardByIndex(index);
                 const cardId = source.id || fallback.id;
 
@@ -233,7 +233,7 @@
                   name: source.name ? `${source.name}${source.name_en ? ` (${source.name_en})` : ''}` : (source.name_en || fallback.name),
                   image: resolveCardImage(cardId, source.image_url, fallback.image),
                   upright: {
-                    energy: `Rider-Waite 提示：${upMain}。這是一張偏向「順流但需要覺察」的訊號。`,
+                    energy: `偉特牌義提示：${upMain}。這是一張偏向「順流但需要覺察」的訊號。`,
                     insight: `在你的議題裡，它更指向 ${upExtra}。你可以把它理解為「可前進，但要保持誠實」。`,
                     action: actionByCardId(cardId)
                   },
@@ -424,22 +424,22 @@
           const isGrowth = /自我|成长|療癒|疗愈|焦慮|焦虑|內在|阴影|榮格|jung/.test(q);
 
           const userTopic = submittedQuestion || '你當下最在意的議題';
-          let profile = '綜合';
           let mindsetAdvice = `先把「${userTopic}」拆成可控與不可控兩部分，停止用結果焦慮推動自己。`;
           let actionAdvice = `未來 7 天，圍繞「${userTopic}」每天固定 30 分鐘做一件可驗證小行動，晚間做 3 句復盤。`;
+          let anchorText = `圍繞「${userTopic}」，今天先完成一個最小但明確的行動，讓局面先從卡住轉為流動。`;
 
           if (isLove) {
-            profile = '感情向';
             mindsetAdvice = `在「${userTopic}」上，先把害怕失去改成建立界線：愛不是討好，而是清晰表達需求。`;
             actionAdvice = '本週只做一次高品質溝通：先寫下需求、底線、可妥協區，再進行對話。';
+            anchorText = `關於「${userTopic}」，你的關鍵不是立刻得到答案，而是把需求說清楚，讓關係回到真實互動。`;
           } else if (isCareer || isMoney) {
-            profile = '事業/財務向';
             mindsetAdvice = `關於「${userTopic}」，把焦點從焦慮轉到可控槓桿：技能、節奏、輸出。`;
             actionAdvice = '做一次資源盤點（時間/現金流/能力），刪掉一個低回報任務，集中到一個高價值目標。';
+            anchorText = `圍繞「${userTopic}」，先守住最重要的產出節奏；只要今天有清晰推進，壓力就會明顯下降。`;
           } else if (isGrowth) {
-            profile = '自我成長向';
             mindsetAdvice = `在「${userTopic}」這題上，先停下自我否定，改用覺察與記錄來看清模式。`;
             actionAdvice = '連續 7 天做 10 分鐘情緒日記：寫下觸發事件、感受、你下一步要做的調整。';
+            anchorText = `在「${userTopic}」上，真正的轉化不是逼自己立刻改變，而是每天多一點清醒與穩定。`;
           }
 
           const elementHintMap = {
@@ -488,7 +488,7 @@
                 </div>
                 <div className="p-4 rounded-2xl border border-[#9d85c4]/25 bg-[#9d85c4]/10">
                   <h5 className="text-xs tracking-[0.2em] uppercase text-[#d9c7ff] mb-2">關鍵轉化錨點</h5>
-                  <p className="text-sm">把注意力放在「現在位」的修正動作上：只要你今天完成一個具體動詞（整理、溝通、學習、刪減），未來位能量就會開始鬆動。</p>
+                  <p className="text-sm">{anchorText}</p>
                 </div>
               </div>
 
@@ -505,7 +505,7 @@
           return deck.map((card) => (
             <div key={card.uid} className="relative flex-shrink-0 w-[180px] h-[280px] mx-[20px] rounded-xl border border-[#F7E7CE]/10 bg-gradient-to-b from-[#2a2a40] to-[#1a1a2e] flex items-center justify-center">
               <div className="opacity-10 scale-150 rotate-45">✨</div>
-              <div className="absolute bottom-4 text-[8px] tracking-[0.3em] opacity-20 uppercase">Mystic Portal</div>
+              <div className="absolute bottom-4 text-[8px] tracking-[0.3em] opacity-20">靈性之門</div>
             </div>
           ));
         }, [deck]);
@@ -516,7 +516,7 @@
             {view === 'cover' && (
               <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-[#0d0e1a] via-[#1a1b3a] to-[#0d0e1a] z-50">
                 <h1 className="text-6xl md:text-8xl font-extralight tracking-[0.3em] mb-6 drop-shadow-[0_0_20px_rgba(247,231,206,0.3)]">
-                  Intuitive Tarot<br/>Guidance
+                  靈感塔羅<br/>指引
                 </h1>
                 <p className="text-[#9d85c4] italic text-xl mb-8 opacity-80 tracking-widest">
                   "傾聽靈魂深處的低語，在光影中找尋妳的真實指引。"
