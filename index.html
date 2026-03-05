@@ -76,6 +76,8 @@
         const [selectedCards, setSelectedCards] = useState([]);
         const [handPos, setHandPos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
         const [isPinching, setIsPinching] = useState(false);
+        const [question, setQuestion] = useState('');
+        const [submittedQuestion, setSubmittedQuestion] = useState('');
 
         const scrollPosRef = useRef(0);
         const targetScrollRef = useRef(0);
@@ -215,11 +217,37 @@
           setTimeout(() => { pinchCooldownRef.current = false; }, 1200);
         };
 
+        const buildDeepInterpretation = (card, index) => {
+          const position = index === 0 ? '過去根基' : index === 1 ? '現在脈動' : '未來指引';
+          const info = card.isReversed ? card.reversed : card.upright;
+          const focusMap = {
+            0: '你正在整合過去經驗，讓舊模式轉化為新的底氣。',
+            1: '你此刻的選擇正在重塑關係與自我價值感。',
+            2: '接下來 2~4 週，最重要的是讓行動與內在節奏一致。'
+          };
+
+          return {
+            position,
+            energy: info.energy,
+            insight: info.insight || '當下最重要的是誠實面對自己的真實感受。',
+            action: info.action,
+            focus: focusMap[index],
+            warning: card.isReversed ? '先慢一拍，不要在焦慮下做決定。' : '避免分心，把能量放在一個最核心目標。',
+            journal: `如果我願意真正尊重自己，${position} 這張牌要我立刻停止哪件事？`
+          };
+        };
+
         const generateSoulSummary = () => {
           if (selectedCards.length < 3) return null;
           const [p, n, f] = selectedCards;
           return (
             <div className="space-y-8 text-[#d1d5db] font-light leading-relaxed">
+              {submittedQuestion && (
+                <div className="p-5 rounded-2xl border border-[#F7E7CE]/20 bg-[#F7E7CE]/5">
+                  <p className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE]/80 mb-2">本次提問主題</p>
+                  <p className="text-base">{submittedQuestion}</p>
+                </div>
+              )}
               <p className="text-lg italic">
                 「妳所走過的【{p.name}】已沉澱為靈魂的基石。在那個階段，妳學會了如何面對{p.isReversed ? '隱藏的失衡' : '內在的力量'}。
                 而此刻，【{n.name}】的能量正包圍著妳，這是一個宇宙邀請妳進行{n.isReversed ? '深度反思' : '勇敢顯化'}的時刻。
@@ -229,7 +257,7 @@
                 <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">宇宙最終建議</h4>
                 <p>
                   綜合來看，目前最重要的轉化是：不要急於在外部世界尋求證明，而是要將焦點拉回到呼吸與當下的感受。
-                  妳所擔憂的事物，正隨著妳內在頻率的提升而自動重組。信任這份指引，妳本就是光的本身。
+                  妳所擔憂的事物，正隨著妳內在頻率的提升而自動重組。請用 7 天去驗證這份指引：每天完成一個微小而真實的行動。
                 </p>
               </div>
             </div>
@@ -252,11 +280,17 @@
                 <h1 className="text-6xl md:text-8xl font-extralight tracking-[0.3em] mb-6 drop-shadow-[0_0_20px_rgba(247,231,206,0.3)]">
                   Intuitive Tarot<br/>Guidance
                 </h1>
-                <p className="text-[#9d85c4] italic text-xl mb-12 opacity-80 tracking-widest">
+                <p className="text-[#9d85c4] italic text-xl mb-8 opacity-80 tracking-widest">
                   "傾聽靈魂深處的低語，在光影中找尋妳的真實指引。"
                 </p>
+                <textarea
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="先寫下你此刻最想釐清的一個問題（例如：這段關係還值得投入嗎？）"
+                  className="w-full max-w-2xl h-28 mb-8 rounded-2xl bg-white/5 border border-[#F7E7CE]/20 px-5 py-4 text-[#F7E7CE] placeholder:text-[#F7E7CE]/40 outline-none focus:border-[#F7E7CE]/60"
+                />
                 <button
-                  onClick={() => { initializeDeck(); setSelectedCards([]); setView('reading'); }}
+                  onClick={() => { initializeDeck(); setSelectedCards([]); selectedCardsRef.current = []; setSubmittedQuestion(question.trim()); setView('reading'); }}
                   className="px-16 py-4 rounded-full border border-[#F7E7CE]/30 hover:border-[#F7E7CE] hover:shadow-[0_0_40px_rgba(247,231,206,0.4)] transition-all duration-700 tracking-[0.5em] text-lg uppercase bg-white/5 backdrop-blur-md"
                 >
                   開啟靈魂儀式
@@ -296,7 +330,7 @@
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-7xl w-full mb-24">
                   {selectedCards.map((card, i) => {
-                    const info = card.isReversed ? card.reversed : card.upright;
+                    const detail = buildDeepInterpretation(card, i);
                     return (
                       <div key={card.uid} className="flex flex-col items-center group">
                         <span className="text-[11px] tracking-[0.5em] text-[#9d85c4] mb-6 uppercase">{i === 0 ? '過去 - 根基' : i === 1 ? '現在 - 脈動' : '未來 - 指引'}</span>
@@ -309,14 +343,30 @@
                           </div>
                         </div>
 
-                        <div className="mt-10 space-y-4 text-center px-2 max-w-[300px]">
+                        <div className="mt-10 space-y-4 text-left px-2 max-w-[320px]">
                           <div className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
                             <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">能量觀察</h4>
-                            <p className="text-sm font-light leading-relaxed opacity-80">{info.energy}</p>
+                            <p className="text-sm font-light leading-relaxed opacity-90">{detail.energy}</p>
+                          </div>
+                          <div className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
+                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">深層洞察</h4>
+                            <p className="text-sm font-light leading-relaxed opacity-90">{detail.insight}</p>
                           </div>
                           <div className="p-4 bg-[#F7E7CE]/5 rounded-2xl border border-[#F7E7CE]/10">
-                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">轉化建議</h4>
-                            <p className="text-sm italic leading-relaxed opacity-90">「{info.action}」</p>
+                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">行動建議</h4>
+                            <p className="text-sm italic leading-relaxed opacity-95">「{detail.action}」</p>
+                          </div>
+                          <div className="p-4 bg-[#9d85c4]/10 rounded-2xl border border-[#9d85c4]/20">
+                            <h4 className="text-[10px] tracking-widest text-[#d9c7ff] mb-3 uppercase">本位焦點</h4>
+                            <p className="text-sm leading-relaxed opacity-90">{detail.focus}</p>
+                          </div>
+                          <div className="p-4 bg-[#ffd5d5]/5 rounded-2xl border border-[#ffd5d5]/20">
+                            <h4 className="text-[10px] tracking-widest text-[#ffd5d5] mb-3 uppercase">提醒</h4>
+                            <p className="text-sm leading-relaxed opacity-85">{detail.warning}</p>
+                          </div>
+                          <div className="p-4 bg-[#F7E7CE]/5 rounded-2xl border border-[#F7E7CE]/10">
+                            <h4 className="text-[10px] tracking-widest text-[#F7E7CE] mb-3 uppercase">日記提問</h4>
+                            <p className="text-sm italic leading-relaxed opacity-90">{detail.journal}</p>
                           </div>
                         </div>
                       </div>
@@ -329,7 +379,7 @@
                   {generateSoulSummary()}
                   <div className="flex justify-center mt-16">
                     <button
-                      onClick={() => { setView('cover'); setSelectedCards([]); selectedCardsRef.current = []; pinchCooldownRef.current = false; }}
+                      onClick={() => { setView('cover'); setSelectedCards([]); selectedCardsRef.current = []; pinchCooldownRef.current = false; setSubmittedQuestion(''); }}
                       className="px-14 py-4 rounded-full border border-[#F7E7CE]/20 text-[10px] tracking-[0.6em] hover:bg-[#F7E7CE]/10 transition-all uppercase"
                     >
                       完成儀式並回歸
