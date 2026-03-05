@@ -221,23 +221,40 @@
           if (ctx.state === 'suspended') await ctx.resume();
 
           const master = ctx.createGain();
-          master.gain.value = 0.02;
+          master.gain.value = 0.035;
           master.connect(ctx.destination);
 
-          const freqs = [174.61, 261.63, 392.0];
-          const nodes = [];
-          freqs.forEach((f) => {
+          const lowpass = ctx.createBiquadFilter();
+          lowpass.type = 'lowpass';
+          lowpass.frequency.value = 520;
+          lowpass.Q.value = 0.8;
+          lowpass.connect(master);
+
+          const lfo = ctx.createOscillator();
+          const lfoGain = ctx.createGain();
+          lfo.type = 'sine';
+          lfo.frequency.value = 0.08;
+          lfoGain.gain.value = 40;
+          lfo.connect(lfoGain);
+          lfoGain.connect(lowpass.frequency);
+
+          const freqs = [110, 146.83, 196];
+          const nodes = [lfo, lfoGain, master, lowpass];
+
+          freqs.forEach((f, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            osc.type = 'sine';
+            osc.type = 'triangle';
             osc.frequency.value = f;
-            gain.gain.value = 0.08;
+            osc.detune.value = i === 0 ? -4 : i === 2 ? 4 : 0;
+            gain.gain.value = 0.03;
             osc.connect(gain);
-            gain.connect(master);
+            gain.connect(lowpass);
             osc.start();
             nodes.push(osc, gain);
           });
 
+          lfo.start();
           droneNodesRef.current = nodes;
           return true;
         };
