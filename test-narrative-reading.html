@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>叙事式解读测试</title>
+  <style>
+    body {
+      background: #0d0e1a;
+      color: #F7E7CE;
+      font-family: 'Cormorant Garamond', serif;
+      padding: 40px;
+      line-height: 1.8;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      letter-spacing: 0.3em;
+      margin-bottom: 40px;
+    }
+    #output {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔮 叙事式解读测试</h1>
+    <div id="output"></div>
+  </div>
+
+  <script src="./tarot-detailed-database.js"></script>
+  <script src="./direct-reading-generator.js"></script>
+  
+  <script>
+    // 模拟三张牌（过去：太阳逆位，现在：宝剑4，未来：命运之轮）
+    const testCards = [
+      {
+        id: 'ar19',
+        name: '太陽 (The Sun)',
+        image: './assets/cards/ar19.jpg',
+        isReversed: true
+      },
+      {
+        id: 'ar03',
+        name: '女皇 (The Empress)',
+        image: './assets/cards/ar03.jpg',
+        isReversed: false
+      },
+      {
+        id: 'ar10',
+        name: '命運之輪 (Wheel of Fortune)',
+        image: './assets/cards/ar10.jpg',
+        isReversed: false
+      }
+    ];
+    
+    const topic = 'finance';
+    const question = '我的财务状况还要多久才改善';
+    
+    console.log('开始生成叙事式解读...');
+    
+    if (window.DirectReadingGenerator) {
+      const html = window.DirectReadingGenerator.generateFullHTML(testCards, topic, question);
+      document.getElementById('output').innerHTML = html;
+      console.log('✅ 解读生成成功');
+    } else {
+      document.getElementById('output').innerHTML = '<p style="color: red;">DirectReadingGenerator 未加载</p>';
+      console.error('❌ DirectReadingGenerator 未加载');
+    }
+  </script>
+</body>
+</html>
