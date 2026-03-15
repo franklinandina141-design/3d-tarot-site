@@ -73,14 +73,8 @@ const TarotAI = {
    * 取得解讀 API 的 URL（Vercel 同源 或 Worker）
    */
   _getApiUrl() {
-    // 若當前網站是 Vercel 部署，一律用同源 API（不依賴 useVercelApi 是否被正確部署）
+    // 瀏覽器環境一律用同源 /api/tarot-reading（Vercel、自訂網域、localhost 都走這裡）
     if (typeof window !== 'undefined' && window.location && window.location.origin) {
-      const origin = window.location.origin;
-      if (origin.includes('vercel.app') || origin.includes('localhost')) {
-        return origin + '/api/tarot-reading';
-      }
-    }
-    if (this.config.useVercelApi && typeof window !== 'undefined' && window.location && window.location.origin) {
       return window.location.origin + '/api/tarot-reading';
     }
     if (this.config.workerUrl && !this.config.workerUrl.includes('YOUR-WORKER')) {

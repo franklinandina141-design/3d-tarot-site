@@ -645,11 +645,75 @@
                   placeholder="先寫下你此刻最想釐清的一個問題（例如：這段關係還值得投入嗎？）"
                   className="w-full max-w-2xl h-28 mb-8 rounded-2xl bg-white/5 border border-[#F7E7CE]/20 px-5 py-4 text-[#F7E7CE] placeholder:text-[#F7E7CE]/40 outline-none focus:border-[#F7E7CE]/60"
                 />
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                  <button
+                    onClick={() => { initializeDeck(); setSelectedCards([]); selectedCardsRef.current = []; setSubmittedQuestion(question.trim()); setView('pick'); }}
+                    className="px-16 py-4 rounded-full border border-[#F7E7CE]/30 hover:border-[#F7E7CE] hover:shadow-[0_0_40px_rgba(247,231,206,0.4)] transition-all duration-700 tracking-[0.4em] text-lg uppercase bg-white/5 backdrop-blur-md"
+                  >
+                    點擊選牌
+                  </button>
+                  <button
+                    onClick={() => { initializeDeck(); setSelectedCards([]); selectedCardsRef.current = []; setSubmittedQuestion(question.trim()); setView('reading'); }}
+                    className="px-10 py-3 rounded-full border border-[#F7E7CE]/20 hover:border-[#F7E7CE]/50 transition-all tracking-[0.3em] text-sm uppercase bg-white/5 text-[#F7E7CE]/80"
+                  >
+                    手勢選牌
+                  </button>
+                </div>
+                <p className="mt-4 text-[10px] tracking-[0.3em] text-[#F7E7CE]/40 uppercase">建議使用「點擊選牌」，在畫面中點選三張牌即可</p>
+              </div>
+            )}
+
+            {view === 'pick' && (
+              <div className="min-h-screen py-12 px-4 flex flex-col items-center bg-gradient-to-b from-[#120A21] via-[#1e1030] to-[#120A21]">
+                <h2 className="text-2xl md:text-3xl font-light tracking-[0.3em] text-[#F7E7CE] mb-6 uppercase">請點選三張牌</h2>
+                <div className="flex gap-4 mb-8">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className={`w-16 h-24 rounded-lg border transition-all flex items-center justify-center ${selectedCards[i] ? 'border-[#F7E7CE] shadow-[0_0_20px_rgba(247,231,206,0.4)] bg-[#F7E7CE]/10' : 'border-[#F7E7CE]/20 bg-white/5'}`}>
+                      {selectedCards[i] ? <span className="text-[10px] text-center px-1">{selectedCards[i].name.split(' ')[0]}</span> : <div className="w-1.5 h-1.5 rounded-full bg-[#F7E7CE]/20 animate-pulse" />}
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 max-w-4xl mb-10">
+                  {deck.map((card) => {
+                    const isSelected = selectedCards.some((c) => c.uid === card.uid);
+                    return (
+                      <button
+                        key={card.uid}
+                        type="button"
+                        onClick={() => {
+                          if (isSelected) {
+                            setSelectedCards((prev) => prev.filter((c) => c.uid !== card.uid));
+                          } else if (selectedCards.length < 3) {
+                            setSelectedCards((prev) => [...prev, card]);
+                          }
+                        }}
+                        className={`relative flex-shrink-0 w-14 h-20 sm:w-16 sm:h-24 rounded-lg border transition-all duration-300 flex items-center justify-center overflow-hidden ${isSelected ? 'border-[#F7E7CE] ring-2 ring-[#F7E7CE]/60 shadow-[0_0_20px_rgba(247,231,206,0.3)]' : 'border-[#F7E7CE]/20 hover:border-[#F7E7CE]/50 bg-gradient-to-b from-[#2a2a40] to-[#1a1a2e]'}`}
+                      >
+                        {isSelected ? (
+                          <span className="text-[8px] sm:text-[9px] text-center px-0.5 leading-tight text-[#F7E7CE]">{card.name.split(' ')[0]}</span>
+                        ) : (
+                          <>
+                            <div className="opacity-20 scale-125 rotate-45">✨</div>
+                            <div className="absolute bottom-1 text-[6px] tracking-widest opacity-30">?</div>
+                          </>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                {selectedCards.length === 3 && (
+                  <button
+                    onClick={() => setView('result')}
+                    className="px-14 py-4 rounded-full border border-[#F7E7CE]/40 hover:border-[#F7E7CE] hover:shadow-[0_0_30px_rgba(247,231,206,0.35)] transition-all tracking-[0.4em] text-sm uppercase bg-[#F7E7CE]/10"
+                  >
+                    開始解讀
+                  </button>
+                )}
                 <button
-                  onClick={() => { initializeDeck(); setSelectedCards([]); selectedCardsRef.current = []; setSubmittedQuestion(question.trim()); setView('reading'); }}
-                  className="px-16 py-4 rounded-full border border-[#F7E7CE]/30 hover:border-[#F7E7CE] hover:shadow-[0_0_40px_rgba(247,231,206,0.4)] transition-all duration-700 tracking-[0.5em] text-lg uppercase bg-white/5 backdrop-blur-md"
+                  onClick={() => { setView('cover'); setSelectedCards([]); selectedCardsRef.current = []; }}
+                  className="mt-6 text-[10px] tracking-[0.3em] text-[#F7E7CE]/50 hover:text-[#F7E7CE]/80 uppercase"
                 >
-                  開啟靈魂儀式
+                  返回重選
                 </button>
               </div>
             )}
