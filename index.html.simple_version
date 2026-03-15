@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Tarot Reading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { margin: 0; background: #0d0e1a; font-family: Arial, sans-serif; color: #fff; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        function App() {
+            const [cards, setCards] = useState([]);
+            const [selectedCards, setSelectedCards] = useState([]);
+            const [view, setView] = useState('select');
+            const [question, setQuestion] = useState('');
+            
+            useEffect(() => {
+                fetch('./assets/tarot-deck.local.json')
+                    .then(r => r.json())
+                    .then(data => {
+                        console.log('✅ 加载了', data.cards.length, '张牌');
+                        setCards(data.cards);
+                    })
+                    .catch(e => console.error('❌ 加载失败:', e));
+            }, []);
+            
+            const selectCard = (card) => {
+                if (selectedCards.length < 3 && !selectedCards.find(c => c.card_id === card.card_id)) {
+                    const newSelected = [...selectedCards, card];
+                    setSelectedCards(newSelected);
+                    console.log('已选择', newSelected.length, '张牌');
+                    
+                    if (newSelected.length === 3) {
+                        setTimeout(() => {
+                            console.log('切换到解读视图');
+                            setView('result');
+                        }, 500);
+                    }
+                }
+            };
+            
+            const reset = () => {
+                setSelectedCards([]);
+                setView('select');
+                setQuestion('');
+            };
+            
+            if (view === 'select') {
+                return (
+                    <div style={{padding: '40px', minHeight: '100vh'}}>
+                        <h1 style={{textAlign: 'center', fontSize: '2.5rem', marginBottom: '20px', color: '#F7E7CE'}}>
+                            塔罗解读
+                        </h1>
+                        <p style={{textAlign: 'center', marginBottom: '40px', color: '#9d85c4'}}>
+                            已选择 {selectedCards.length}/3 张牌
+                        </p>
+                        
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+                            gap: '15px',
+                            maxWidth: '1200px',
+                            margin: '0 auto'
+                        }}>
+                            {cards.map((card, i) => {
+                                const isSelected = selectedCards.find(c => c.card_id === card.card_id);
+                                return (
+                                    <button
+                                        key={i}
+                                        onClick={() => selectCard(card)}
+                                        style={{
+                                            padding: '15px 10px',
+                                            background: isSelected ? '#4CAF50' : '#2d2d3d',
+                                            color: '#fff',
+                                            border: isSelected ? '2px solid #66BB6A' : '1px solid #444',
+                                            borderRadius: '8px',
+                                            cursor: isSelected ? 'default' : 'pointer',
+                                            opacity: isSelected ? 0.7 : 1,
+                                            fontSize: '14px'
+                                        }}
+                                        disabled={isSelected}
+                                    >
+                                        {card.name || card.card_id}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                );
+            }
+            
+            // 结果视图
+            return (
+                <div style={{padding: '40px', minHeight: '100vh', maxWidth: '1000px', margin: '0 auto'}}>
+                    <h1 style={{textAlign: 'center', fontSize: '2.5rem', marginBottom: '40px', color: '#F7E7CE'}}>
+                        你的塔罗解读
+                    </h1>
+                    
+                    {/* 显示选中的3张牌 */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '20px',
+                        marginBottom: '40px'
+                    }}>
+                        {selectedCards.map((card, i) => (
+                            <div key={i} style={{
+                                background: '#2d2d3d',
+                                padding: '20px',
+                                borderRadius: '12px',
+                                border: '1px solid #444'
+                            }}>
+                                <div style={{
+                                    fontSize: '12px',
+                                    color: '#9d85c4',
+                                    marginBottom: '10px',
+                                    textAlign: 'center'
+                                }}>
+                                    {i === 0 ? '过去' : i === 1 ? '现在' : '未来'}
+                                </div>
+                                <h3 style={{fontSize: '16px', marginBottom: '10px', textAlign: 'center', color: '#F7E7CE'}}>
+                                    {card.name || card.card_id}
+                                </h3>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    {/* 解读内容 */}
+                    {selectedCards.map((card, i) => (
+                        <div key={i} style={{
+                            background: '#2d2d3d',
+                            padding: '30px',
+                            borderRadius: '12px',
+                            marginBottom: '20px',
+                            border: '1px solid #444'
+                        }}>
+                            <h2 style={{fontSize: '20px', marginBottom: '15px', color: '#F7E7CE'}}>
+                                {i === 0 ? '过去：' : i === 1 ? '现在：' : '未来：'} {card.name}
+                            </h2>
+                            
+                            <div style={{marginBottom: '15px'}}>
+                                <h3 style={{fontSize: '16px', color: '#9d85c4', marginBottom: '10px'}}>
+                                    正位解读：
+                                </h3>
+                                <p style={{lineHeight: '1.8', color: '#d1d5db'}}>
+                                    {card.up || '暂无解读'}
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <h3 style={{fontSize: '16px', color: '#9d85c4', marginBottom: '10px'}}>
+                                    逆位解读：
+                                </h3>
+                                <p style={{lineHeight: '1.8', color: '#d1d5db'}}>
+                                    {card.down || '暂无解读'}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                    
+                    <button
+                        onClick={reset}
+                        style={{
+                            display: 'block',
+                            margin: '40px auto 0',
+                            padding: '15px 40px',
+                            background: '#4CAF50',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        重新选择
+                    </button>
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

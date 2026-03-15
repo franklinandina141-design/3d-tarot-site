@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Tarot Reading - 手势控制</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <style>
+        body { margin: 0; background: #0d0e1a; font-family: Arial, sans-serif; color: #fff; }
+        .card-item {
+            transition: transform 0.3s, background 0.2s;
+        }
+        .card-item:hover {
+            transform: scale(1.05);
+        }
+        .card-item.selected {
+            background: #4CAF50 !important;
+            border-color: #66BB6A !important;
+            transform: scale(1.1);
+        }
+        .camera-view {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 240px;
+            height: 180px;
+            border: 2px solid #F7E7CE;
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+        .gesture-hint {
+            position: fixed;
+            top: 210px;
+            right: 20px;
+            background: rgba(45, 45, 61, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #F7E7CE;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <div class="camera-view" id="camera-container" style="display: none;">
+        <video id="video" autoplay playsinline></video>
+    </div>
+    <div class="gesture-hint" id="gesture-hint" style="display: none;">
+        👋 张开手掌选牌
+    </div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        function App() {
+            const [allCards, setAllCards] = useState([]);
+            const [availableCards, setAvailableCards] = useState([]);
+            const [selectedCards, setSelectedCards] = useState([]);
+            const [view, setView] = useState('select');
+            const [gestureEnabled, setGestureEnabled] = useState(false);
+            const [hoveredCard, setHoveredCard] = useState(null);
+            
+            const lastGestureTime = useRef(0);
+            const handsRef = useRef(null);
+            
+            useEffect(() => {
+                // 加载数据
+                fetch('./assets/tarot-deck.local.json')
+                    .then(r => r.json())
+                    .then(data => {
+                        console.log('✅ 加载了', data.cards.length, '张牌');
+                        setAllCards(data.cards);
+                        // ✅ 现在所有78张牌都有真实图片！
+                        setAvailableCards(data.cards);
+                        console.log('✅ 显示完整78张塔罗牌（全部真实图片）');
+                    })
+                    .catch(e => console.error('❌ 加载失败:', e));
+            }, []);
+            
+            // 初始化手势识别
+            const initGesture = async () => {
+                try {
+                    const video = document.getElementById('video');
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream;
+                    
+                    const hands = new window.Hands({
+                        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+                    });
+                    
+                    hands.setOptions({
+                        maxNumHands: 1,
+                        modelComplexity: 1,
+                        minDetectionConfidence: 0.6,
+                        minTrackingConfidence: 0.5
+                    });
+                    
+                    hands.onResults((results) => {
+                        if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                            const landmarks = results.multiHandLandmarks[0];
+                            
+                            // 检测张开手掌（简化版）
+                            const isOpen = checkHandOpen(landmarks);
+                            
+                            if (isOpen) {
+                                const now = Date.now();
+                                // 防抖：1秒内只触发一次
+                                if (now - lastGestureTime.current > 1000) {
+                                    lastGestureTime.current = now;
+                                    if (hoveredCard && selectedCards.length < 3) {
+                                        selectCard(hoveredCard);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    handsRef.current = hands;
+                    
+                    const camera = new window.Camera(video, {
+                        onFrame: async () => {
+                            await hands.send({ image: video });
+                        },
+                        width: 640,
+                        height: 480
+                    });
+                    
+                    camera.start();
+                    
+                    document.getElementById('camera-container').style.display = 'block';
+                    document.getElementById('gesture-hint').style.display = 'block';
+                    setGestureEnabled(true);
+                    
+                    console.log('✅ 手势识别已启动');
+                } catch (error) {
+                    console.error('❌ 手势识别启动失败:', error);
+                }
+            };
+            
+            // 检测手掌是否张开
+            const checkHandOpen = (landmarks) => {
+                // 简化版：检查五指是否展开
+                const fingerTips = [8, 12, 16, 20]; // 食指、中指、无名指、小指的指尖
+                const fingerBases = [5, 9, 13, 17]; // 对应的指根
+                
+                let openCount = 0;
+                for (let i = 0; i < fingerTips.length; i++) {
+                    const tip = landmarks[fingerTips[i]];
+                    const base = landmarks[fingerBases[i]];
+                    
+                    // 如果指尖比指根高（y值更小），说明手指展开
+                    if (tip.y < base.y) {
+                        openCount++;
+                    }
+                }
+                
+                // 至少3根手指展开
+                return openCount >= 3;
+            };
+            
+            const selectCard = (card) => {
+                if (selectedCards.length < 3 && !selectedCards.find(c => c.card_id === card.card_id)) {
+                    const newSelected = [...selectedCards, card];
+                    setSelectedCards(newSelected);
+                    console.log('已选择', newSelected.length, '张牌');
+                    
+                    if (newSelected.length === 3) {
+                        setTimeout(() => {
+                            console.log('切换到解读视图');
+                            setView('result');
+                        }, 500);
+                    }
+                }
+            };
+            
+            const reset = () => {
+                setSelectedCards([]);
+                setView('select');
+            };
+            
+            if (view === 'select') {
+                return (
+                    <div style={{padding: '40px 40px 40px 40px', minHeight: '100vh'}}>
+                        <h1 style={{textAlign: 'center', fontSize: '2.5rem', marginBottom: '10px', color: '#F7E7CE'}}>
+                            塔罗解读
+                        </h1>
+                        <p style={{textAlign: 'center', marginBottom: '20px', color: '#9d85c4', fontSize: '14px'}}>
+                            已选择 {selectedCards.length}/3 张牌 | 可用 {availableCards.length} 张
+                        </p>
+                        
+                        {!gestureEnabled && (
+                            <div style={{textAlign: 'center', marginBottom: '20px'}}>
+                                <button
+                                    onClick={initGesture}
+                                    style={{
+                                        padding: '10px 20px',
+                                        background: '#9d85c4',
+                                        color: '#fff',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '14px'
+                                    }}
+                                >
+                                    启用手势控制
+                                </button>
+                            </div>
+                        )}
+                        
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+                            gap: '15px',
+                            maxWidth: '1400px',
+                            margin: '0 auto'
+                        }}>
+                            {availableCards.map((card, i) => {
+                                const isSelected = selectedCards.find(c => c.card_id === card.card_id);
+                                const imagePath = `./assets/cards/${card.card_id}.jpg`;
+                                
+                                return (
+                                    <div
+                                        key={i}
+                                        onClick={() => !isSelected && selectCard(card)}
+                                        onMouseEnter={() => setHoveredCard(card)}
+                                        onMouseLeave={() => setHoveredCard(null)}
+                                        className={`card-item ${isSelected ? 'selected' : ''}`}
+                                        style={{
+                                            padding: '10px',
+                                            background: isSelected ? '#4CAF50' : '#2d2d3d',
+                                            color: '#fff',
+                                            border: isSelected ? '2px solid #66BB6A' : hoveredCard === card ? '2px solid #F7E7CE' : '1px solid #444',
+                                            borderRadius: '12px',
+                                            cursor: isSelected ? 'default' : 'pointer',
+                                            opacity: isSelected ? 0.8 : 1,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <img 
+                                            src={imagePath}
+                                            alt={card.name}
+                                            style={{
+                                                width: '100%',
+                                                height: '180px',
+                                                objectFit: 'cover',
+                                                borderRadius: '8px',
+                                                marginBottom: '8px'
+                                            }}
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                            }}
+                                        />
+                                        <div style={{fontSize: '12px', textAlign: 'center', lineHeight: '1.4'}}>
+                                            {card.name || card.card_id}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                );
+            }
+            
+            // 结果视图（保持不变）
+            return (
+                <div style={{padding: '40px', minHeight: '100vh', maxWidth: '1000px', margin: '0 auto'}}>
+                    <h1 style={{textAlign: 'center', fontSize: '2.5rem', marginBottom: '40px', color: '#F7E7CE'}}>
+                        你的塔罗解读
+                    </h1>
+                    
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '20px',
+                        marginBottom: '40px'
+                    }}>
+                        {selectedCards.map((card, i) => (
+                            <div key={i} style={{
+                                background: '#2d2d3d',
+                                padding: '20px',
+                                borderRadius: '12px',
+                                border: '1px solid #444',
+                                textAlign: 'center'
+                            }}>
+                                <div style={{fontSize: '12px', color: '#9d85c4', marginBottom: '10px'}}>
+                                    {i === 0 ? '过去' : i === 1 ? '现在' : '未来'}
+                                </div>
+                                <img 
+                                    src={`./assets/cards/${card.card_id}.jpg`}
+                                    alt={card.name}
+                                    style={{
+                                        width: '100%',
+                                        maxWidth: '200px',
+                                        height: 'auto',
+                                        borderRadius: '8px',
+                                        marginBottom: '10px'
+                                    }}
+                                />
+                                <h3 style={{fontSize: '16px', marginBottom: '10px', color: '#F7E7CE'}}>
+                                    {card.name || card.card_id}
+                                </h3>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    {selectedCards.map((card, i) => (
+                        <div key={i} style={{
+                            background: '#2d2d3d',
+                            padding: '30px',
+                            borderRadius: '12px',
+                            marginBottom: '20px',
+                            border: '1px solid #444'
+                        }}>
+                            <h2 style={{fontSize: '20px', marginBottom: '15px', color: '#F7E7CE'}}>
+                                {i === 0 ? '过去：' : i === 1 ? '现在：' : '未来：'} {card.name}
+                            </h2>
+                            
+                            <div style={{marginBottom: '15px'}}>
+                                <h3 style={{fontSize: '16px', color: '#9d85c4', marginBottom: '10px'}}>
+                                    正位解读：
+                                </h3>
+                                <p style={{lineHeight: '1.8', color: '#d1d5db'}}>
+                                    {card.up || '暂无解读'}
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <h3 style={{fontSize: '16px', color: '#9d85c4', marginBottom: '10px'}}>
+                                    逆位解读：
+                                </h3>
+                                <p style={{lineHeight: '1.8', color: '#d1d5db'}}>
+                                    {card.down || '暂无解读'}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                    
+                    <button
+                        onClick={reset}
+                        style={{
+                            display: 'block',
+                            margin: '40px auto 0',
+                            padding: '15px 40px',
+                            background: '#4CAF50',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        重新选择
+                    </button>
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

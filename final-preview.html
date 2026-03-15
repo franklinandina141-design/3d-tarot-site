@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 最终剪辑成品</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #0d0e1a 0%, #1a1b3a 100%);
+            color: #F7E7CE;
+            font-family: system-ui, -apple-system, sans-serif;
+            text-align: center;
+        }
+        h1 { 
+            font-size: 48px; 
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(157, 133, 196, 0.5);
+        }
+        .subtitle {
+            font-size: 20px;
+            color: #9d85c4;
+            margin-bottom: 40px;
+        }
+        .video-container {
+            max-width: 400px;
+            margin: 0 auto 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(247, 231, 206, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        video {
+            width: 100%;
+            border-radius: 12px;
+            background: black;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px auto;
+            max-width: 800px;
+        }
+        .stat {
+            background: rgba(157, 133, 196, 0.1);
+            border: 1px solid rgba(157, 133, 196, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #9d85c4;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+        .download-btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, rgba(157, 133, 196, 0.2), rgba(123, 104, 238, 0.3));
+            border: 2px solid #9d85c4;
+            border-radius: 12px;
+            color: #F7E7CE;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .download-btn:hover {
+            background: linear-gradient(135deg, rgba(157, 133, 196, 0.4), rgba(123, 104, 238, 0.5));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(157, 133, 196, 0.3);
+        }
+        .features {
+            text-align: left;
+            max-width: 600px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(247, 231, 206, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 16px;
+        }
+        .feature-item::before {
+            content: "✨";
+            margin-right: 12px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 塔罗网站短视频</h1>
+    <div class="subtitle">清新治愈风 × 专业剪辑</div>
+    
+    <div class="video-container">
+        <h3 style="margin-top: 0;">📱 竖屏版（抖音/小红书）</h3>
+        <video controls autoplay loop muted>
+            <source src="tarot_vertical.mp4" type="video/mp4">
+        </video>
+    </div>
+    
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value">23秒</div>
+            <div class="stat-label">黄金时长</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">5场景</div>
+            <div class="stat-label">专业分镜</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">1.0 MB</div>
+            <div class="stat-label">文件大小</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">9:16</div>
+            <div class="stat-label">竖屏比例</div>
+        </div>
+    </div>
+    
+    <div>
+        <a href="tarot_vertical.mp4" download class="download-btn">📱 下载竖屏版</a>
+        <a href="tarot_with_music.mp4" download class="download-btn">🎵 下载带音乐版</a>
+    </div>
+    
+    <div class="features">
+        <h3>✨ 剪辑特色</h3>
+        <div class="feature-item">5个精心设计的场景</div>
+        <div class="feature-item">慢动作与加速结合</div>
+        <div class="feature-item">治愈系氛围音乐（432Hz）</div>
+        <div class="feature-item">适配抖音/小红书/Instagram</div>
+        <div class="feature-item">竖屏优化（1080x1920）</div>
+        <div class="feature-item">自动化专业剪辑</div>
+    </div>
+    
+    <div style="margin-top: 40px; opacity: 0.6; font-size: 14px;">
+        <p>💡 建议发布标题：</p>
+        <p>「用AI做了个塔罗网站，治愈到哭😭」</p>
+        <p>「当科技遇见玄学，这个必须试！🔮」</p>
+    </div>
+</body>
+</html>

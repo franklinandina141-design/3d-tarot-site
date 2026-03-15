@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无音乐版本预览</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #0d0e1a;
+            color: #F7E7CE;
+            font-family: system-ui;
+            text-align: center;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 40px;
+        }
+        .video-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(247, 231, 206, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+        }
+        video {
+            width: 100%;
+            border-radius: 12px;
+            background: black;
+        }
+        .info {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(157, 133, 196, 0.1);
+            border: 1px solid rgba(157, 133, 196, 0.2);
+            border-radius: 12px;
+            text-align: left;
+        }
+        .download-btn {
+            display: inline-block;
+            margin: 20px 10px;
+            padding: 12px 24px;
+            background: rgba(157, 133, 196, 0.2);
+            border: 2px solid #9d85c4;
+            border-radius: 8px;
+            color: #F7E7CE;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .download-btn:hover {
+            background: rgba(157, 133, 196, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 塔罗网站短视频（无音乐版）</h1>
+    
+    <div class="video-container">
+        <video controls autoplay loop>
+            <source src="tarot_no_music_vertical.mp4" type="video/mp4">
+        </video>
+    </div>
+    
+    <div>
+        <a href="tarot_no_music_vertical.mp4" download class="download-btn">📱 下载竖屏版</a>
+        <a href="tarot_no_music.mp4" download class="download-btn">📦 下载完整版</a>
+    </div>
+    
+    <div class="info">
+        <h3>✨ 视频特色</h3>
+        <ul>
+            <li><strong>时长：</strong>23秒（黄金时长）</li>
+            <li><strong>格式：</strong>竖屏 1080x1920 (9:16)</li>
+            <li><strong>剪辑：</strong>5个精心设计的场景</li>
+            <li><strong>速度：</strong>慢动作+加速结合</li>
+            <li><strong>音乐：</strong>无（可自己添加）</li>
+            <li><strong>大小：</strong>706 KB（超小！）</li>
+        </ul>
+        
+        <h3 style="margin-top: 30px;">🎵 添加音乐建议</h3>
+        <p>可以在剪映中添加：</p>
+        <ul>
+            <li>Lo-fi 轻音乐</li>
+            <li>冥想/疗愈音乐</li>
+            <li>抖音/小红书热门BGM</li>
+            <li>自然音效（鸟鸣、溪流）</li>
+        </ul>
+        
+        <h3 style="margin-top: 30px;">📱 发布建议</h3>
+        <p><strong>抖音：</strong>直接上传，选择平台热门音乐</p>
+        <p><strong>小红书：</strong>添加清新治愈风音乐</p>
+        <p><strong>Instagram：</strong>使用Reels音乐库</p>
+    </div>
+</body>
+</html>

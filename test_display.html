@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>测试解读显示</title>
+</head>
+<body>
+    <h1>测试数据加载</h1>
+    <div id="result"></div>
+    
+    <script>
+        fetch('./assets/tarot-deck.local.json')
+            .then(r => r.json())
+            .then(data => {
+                const result = document.getElementById('result');
+                
+                result.innerHTML = `
+                    <h2>✅ 数据加载成功</h2>
+                    <p>总牌数：${data.cards.length}</p>
+                    <p>第一张牌：${data.cards[0].card_id} - ${data.cards[0].name}</p>
+                    <p>up内容：${data.cards[0].up ? data.cards[0].up.substring(0, 100) + '...' : '❌ 无内容'}</p>
+                    <p>down内容：${data.cards[0].down ? data.cards[0].down.substring(0, 100) + '...' : '❌ 无内容'}</p>
+                `;
+            })
+            .catch(e => {
+                document.getElementById('result').innerHTML = `
+                    <h2>❌ 数据加载失败</h2>
+                    <p>错误：${e.message}</p>
+                `;
+            });
+    </script>
+</body>
+</html>

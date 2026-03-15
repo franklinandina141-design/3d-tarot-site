@@ -1,0 +1,1660 @@
+{
+  "source": "Professional Tarot Consultant - 20 Years Experience",
+  "format_version": "2.0",
+  "total_cards": 78,
+  "current_cards": 55,
+  "status": "小阿卡纳55张已完成，大阿卡纳23张待整合",
+  "description": "完整78张专业塔罗数据",
+  "cards": [
+    {
+      "card_id": "wa02",
+      "name": "权杖2",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa03",
+      "name": "权杖3",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa04",
+      "name": "权杖4",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa05",
+      "name": "权杖5",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa06",
+      "name": "权杖6",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa07",
+      "name": "权杖7",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa08",
+      "name": "权杖8",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa09",
+      "name": "权杖9",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa10",
+      "name": "权杖10",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa11",
+      "name": "权杖侍从",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa12",
+      "name": "权杖骑士",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa13",
+      "name": "权杖王后",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "wa14",
+      "name": "权杖国王",
+      "upright": {
+        "psychological_state": "你处于行动和热情活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，行动能量帮助你推进目标。",
+          "love": "在感情中，热情为关系带来活力。",
+          "wealth": "在财务上，创造影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的行动能量采取行动。",
+          "在热情方面保持觉察。",
+          "专注于创造相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "火元素失衡，行动过度或不足。",
+        "scenarios": {
+          "career": "工作上在行动方面遇到阻碍。",
+          "love": "感情中热情表达失衡。",
+          "wealth": "财务需要重新审视创造。"
+        },
+        "actionable_steps": [
+          "检查行动是否平衡。",
+          "在热情方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu01",
+      "name": "圣杯1",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu02",
+      "name": "圣杯2",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu03",
+      "name": "圣杯3",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu04",
+      "name": "圣杯4",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu05",
+      "name": "圣杯5",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu06",
+      "name": "圣杯6",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu07",
+      "name": "圣杯7",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu08",
+      "name": "圣杯8",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu09",
+      "name": "圣杯9",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu10",
+      "name": "圣杯10",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu11",
+      "name": "圣杯侍从",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu12",
+      "name": "圣杯骑士",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu13",
+      "name": "圣杯王后",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "cu14",
+      "name": "圣杯国王",
+      "upright": {
+        "psychological_state": "你处于情感和关系活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，情感能量帮助你推进目标。",
+          "love": "在感情中，关系为关系带来活力。",
+          "wealth": "在财务上，直觉影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的情感能量采取行动。",
+          "在关系方面保持觉察。",
+          "专注于直觉相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "水元素失衡，情感过度或不足。",
+        "scenarios": {
+          "career": "工作上在情感方面遇到阻碍。",
+          "love": "感情中关系表达失衡。",
+          "wealth": "财务需要重新审视直觉。"
+        },
+        "actionable_steps": [
+          "检查情感是否平衡。",
+          "在关系方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw01",
+      "name": "宝剑1",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw02",
+      "name": "宝剑2",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw03",
+      "name": "宝剑3",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw04",
+      "name": "宝剑4",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw05",
+      "name": "宝剑5",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw06",
+      "name": "宝剑6",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw07",
+      "name": "宝剑7",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw08",
+      "name": "宝剑8",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw09",
+      "name": "宝剑9",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw10",
+      "name": "宝剑10",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw11",
+      "name": "宝剑侍从",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw12",
+      "name": "宝剑骑士",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw13",
+      "name": "宝剑王后",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "sw14",
+      "name": "宝剑国王",
+      "upright": {
+        "psychological_state": "你处于思考和沟通活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，思考能量帮助你推进目标。",
+          "love": "在感情中，沟通为关系带来活力。",
+          "wealth": "在财务上，真相影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的思考能量采取行动。",
+          "在沟通方面保持觉察。",
+          "专注于真相相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "风元素失衡，思考过度或不足。",
+        "scenarios": {
+          "career": "工作上在思考方面遇到阻碍。",
+          "love": "感情中沟通表达失衡。",
+          "wealth": "财务需要重新审视真相。"
+        },
+        "actionable_steps": [
+          "检查思考是否平衡。",
+          "在沟通方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe01",
+      "name": "星币1",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe02",
+      "name": "星币2",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe03",
+      "name": "星币3",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe04",
+      "name": "星币4",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe05",
+      "name": "星币5",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe06",
+      "name": "星币6",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe07",
+      "name": "星币7",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe08",
+      "name": "星币8",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe09",
+      "name": "星币9",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe10",
+      "name": "星币10",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe11",
+      "name": "星币侍从",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe12",
+      "name": "星币骑士",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe13",
+      "name": "星币王后",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    },
+    {
+      "card_id": "pe14",
+      "name": "星币国王",
+      "upright": {
+        "psychological_state": "你处于物质和财富活跃的状态。",
+        "scenarios": {
+          "career": "在工作上，物质能量帮助你推进目标。",
+          "love": "在感情中，财富为关系带来活力。",
+          "wealth": "在财务上，实际影响你的决策。"
+        },
+        "actionable_steps": [
+          "利用当前的物质能量采取行动。",
+          "在财富方面保持觉察。",
+          "专注于实际相关事务。"
+        ]
+      },
+      "reversed": {
+        "psychological_state": "土元素失衡，物质过度或不足。",
+        "scenarios": {
+          "career": "工作上在物质方面遇到阻碍。",
+          "love": "感情中财富表达失衡。",
+          "wealth": "财务需要重新审视实际。"
+        },
+        "actionable_steps": [
+          "检查物质是否平衡。",
+          "在财富方面重新对齐。",
+          "寻求外部视角。"
+        ]
+      }
+    }
+  ]
+}

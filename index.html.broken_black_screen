@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intuitive Tarot Guidance</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&display=swap');
+      body { margin: 0; background: #0d0e1a; font-family: 'Cormorant Garamond', serif; }
+      .font-serif { font-family: 'Cormorant Garamond', serif; }
+
+      .aurora-bg {
+        position: fixed;
+        inset: -20%;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 20% 30%, rgba(157, 133, 196, 0.22), transparent 40%),
+          radial-gradient(circle at 78% 18%, rgba(247, 231, 206, 0.16), transparent 36%),
+          radial-gradient(circle at 50% 82%, rgba(123, 104, 238, 0.18), transparent 42%);
+        filter: blur(40px);
+        animation: auroraShift 16s ease-in-out infinite alternate;
+      }
+
+      .grain-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.08;
+        background-image: radial-gradient(rgba(255,255,255,0.9) 0.35px, transparent 0.35px);
+        background-size: 3px 3px;
+      }
+
+      @keyframes auroraShift {
+        0% { transform: translate3d(-2%, -1%, 0) scale(1); }
+        100% { transform: translate3d(2%, 1%, 0) scale(1.08); }
+      }
+
+      @keyframes cardRevealSpin {
+        0% { opacity: 0; transform: translateY(14px) rotate(-8deg) scale(0.96); }
+        100% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+      }
+
+      .card-reveal {
+        will-change: transform, opacity;
+        animation: cardRevealSpin 520ms ease-out both;
+      }
+      
+      /* 性能优化：GPU加速 */
+      .carousel-wrapper {
+        will-change: transform;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect, useRef, useMemo } = React;
+
+      const MAJOR_ARCANA = [
+        "愚者 (The Fool)", "魔術師 (The Magician)", "女祭司 (The High Priestess)", "女皇 (The Empress)", "皇帝 (The Emperor)",
+        "教皇 (The Hierophant)", "戀人 (The Lovers)", "戰車 (The Chariot)", "力量 (Strength)", "隱者 (The Hermit)",
+        "命運之輪 (Wheel of Fortune)", "正義 (Justice)", "倒吊人 (The Hanged Man)", "死神 (Death)", "節制 (Temperance)",
+        "惡魔 (The Devil)", "高塔 (The Tower)", "星星 (The Star)", "月亮 (The Moon)", "太陽 (The Sun)",
+        "審判 (Judgement)", "世界 (The World)"
+      ];
+
+      const MAJOR_KEYWORDS = {
+        0: ["新旅程", "信任未知", "天真與風險"], 1: ["意志顯化", "資源整合", "行動力"], 2: ["直覺", "潛意識", "靜默智慧"],
+        3: ["滋養", "豐盛", "創造"], 4: ["秩序", "邊界", "責任"], 5: ["傳統", "信念系統", "導師"],
+        6: ["關係選擇", "價值一致", "承諾"], 7: ["掌舵", "自律", "突破"], 8: ["溫柔力量", "耐心", "本能整合"],
+        9: ["退隱", "獨處反思", "內在明燈"], 10: ["週期轉折", "命運節點", "順勢"], 11: ["因果平衡", "誠實", "清晰判斷"],
+        12: ["停看轉化", "視角翻轉", "放下控制"], 13: ["結束與重生", "斷捨離", "深層更新"], 14: ["調和", "節奏", "療癒整合"],
+        15: ["慾望束縛", "依附", "自我覺察"], 16: ["真相揭露", "結構崩塌", "重建"], 17: ["希望", "修復", "靈感"],
+        18: ["投射", "不安", "潛在真相"], 19: ["生命力", "清晰", "喜悅"], 20: ["召喚", "復盤", "覺醒"], 21: ["完成", "整合", "新階段"],
+      };
+
+      const MAJOR_ARCHETYPES = {
+        0: { symbol: '行囊、白犬與懸崖', light: '允許自己以初心前進', shadow: '衝動逃避現實' },
+        1: { symbol: '法器四元素', light: '把想法化為結果', shadow: '操控或空轉' },
+        2: { symbol: '黑白柱與帷幕', light: '相信直覺', shadow: '過度封閉' },
+        3: { symbol: '麥田與石榴', light: '滋養關係與創造力', shadow: '過度溺愛或依賴' },
+        4: { symbol: '王座與鎧甲', light: '建立邊界與秩序', shadow: '控制慾過強' },
+        5: { symbol: '聖殿儀軌', light: '向傳統學習', shadow: '盲從規訓' },
+        6: { symbol: '天使見證的結盟', light: '價值一致的選擇', shadow: '把激情誤認承諾' },
+        7: { symbol: '黑白雙獸戰車', light: '帶著意志前進', shadow: '方向分裂' },
+        8: { symbol: '徒手馴獅', light: '溫柔而堅定', shadow: '壓抑本能' },
+        9: { symbol: '提燈者', light: '內在導航', shadow: '孤立與退縮' },
+        10: { symbol: '命運輪轉', light: '掌握時機', shadow: '把責任交給運氣' },
+        11: { symbol: '天秤與寶劍', light: '公平與因果', shadow: '自我辯解' },
+        12: { symbol: '倒懸之人', light: '換角度即轉機', shadow: '無效等待' },
+        13: { symbol: '白馬骷髏騎士', light: '結束帶來新生', shadow: '抗拒轉化' },
+        14: { symbol: '兩杯調和', light: '節奏整合', shadow: '失衡與過量' },
+        15: { symbol: '鎖鏈與慾望', light: '看見依附模式', shadow: '上癮與自困' },
+        16: { symbol: '雷擊高塔', light: '拆除虛假結構', shadow: '恐懼改變' },
+        17: { symbol: '星夜水瓶', light: '信心回流', shadow: '過度理想化' },
+        18: { symbol: '月光、狼與犬', light: '辨識潛意識', shadow: '被投射牽引' },
+        19: { symbol: '太陽與孩童', light: '真誠與生命力', shadow: '過度自我中心' },
+        20: { symbol: '號角召喚', light: '人生復盤與覺醒', shadow: '困在舊身份' },
+        21: { symbol: '花環中的舞者', light: '完成與整合', shadow: '完結焦慮' },
+      };
+
+      const SUITS = ["權杖", "聖杯", "寶劍", "錢幣"];
+      const RANKS = ["A", "二", "三", "四", "五", "六", "七", "八", "九", "十", "侍者", "騎士", "皇后", "國王"];
+
+      function splitMeaning(text = '') {
+        return String(text).split(/[;,]/).map((s) => s.trim()).filter(Boolean);
+      }
+
+      function actionByCardId(id = '') {
+        if (id.startsWith('ar')) {
+          const n = Number(id.slice(2));
+          if ([13, 16].includes(n)) return '做一次結構清理：刪掉一個已不再適合你的承諾。';
+          if ([17, 19, 21].includes(n)) return '把好狀態變成輸出：今天公開一個你真正相信的觀點。';
+          if ([2, 9, 12].includes(n)) return '減少輸入，增加靜心，給自己至少 20 分鐘獨處。';
+          return '用「一件最小行動」把這張牌的提醒落地，不求完美只求完成。';
+        }
+        if (id.startsWith('wa')) return '先動起來：今天把最重要任務推進 30 分鐘，避免空想。';
+        if (id.startsWith('cu')) return '優先處理情緒誠實：寫下你真正的需求，再去溝通。';
+        if (id.startsWith('sw')) return '先釐清判斷標準，再做決策；避免在情緒高點回覆關鍵訊息。';
+        if (id.startsWith('pe')) return '把資源盤點清楚：時間、金錢、精力三者至少守住兩項。';
+        return '先完成一個最小可驗證步驟。';
+      }
+
+      function resolveCardImage(cardId = '', remote = '', fallback = '') {
+        const local = cardId ? `./assets/cards/${cardId}.jpg` : '';
+        return local || remote || fallback || './assets/cards/ar00.jpg';
+      }
+
+      function buildCardByIndex(index) {
+        if (index < 22) {
+          const name = MAJOR_ARCANA[index];
+          const kw = MAJOR_KEYWORDS[index] || ['轉化', '覺察', '行動'];
+          const arc = MAJOR_ARCHETYPES[index] || { symbol: '原型', light: '覺察', shadow: '失衡' };
+          return {
+            id: `ar${String(index).padStart(2, '0')}`,
+            name,
+            image: `https://www.sacred-texts.com/tarot/pkt/img/ar${String(index).padStart(2, '0')}.jpg`,
+            upright: {
+              energy: `在偉特塔羅圖像裡，${arc.symbol} 對應「${arc.light}」。這不是抽象玄學，而是你當下可被啟動的心理資源。`,
+              insight: `若放在現實議題，這張牌鼓勵你用「${kw[1]}」來處理眼前選擇：先看清事實，再決定投入。`,
+              action: `把 ${kw[2]} 轉成行動：今天完成一件可衡量的小步，讓能量開始流動。`
+            },
+            reversed: {
+              energy: `${name}逆位常落在「${arc.shadow}」。重點不是你不行，而是舊模式還在主導。`,
+              insight: `這張牌提醒你修正 ${kw[1]} 的盲點：先降噪，再做選擇；先穩定，再求速度。`,
+              action: `先停下 20 分鐘，把「我在逃避什麼」寫下來，再做一個最小可執行決定。`
+            }
+          };
+        }
+
+        const minorIndex = index - 22;
+        const suit = SUITS[Math.floor(minorIndex / 14)] || '權杖';
+        const rank = RANKS[minorIndex % 14] || 'A';
+        const name = `${suit}${rank}`;
+        const suitTheme = {
+          權杖: '行動與企圖',
+          聖杯: '情感與連結',
+          寶劍: '思維與決策',
+          錢幣: '現實與資源'
+        };
+
+        return {
+          id: `${['wa','cu','sw','pe'][Math.floor(minorIndex / 14)]}${String((minorIndex % 14) + 1).padStart(2, '0')}`,
+          name,
+          image: `https://www.sacred-texts.com/tarot/pkt/img/ar${String(minorIndex % 22).padStart(2, '0')}.jpg`,
+          upright: {
+            energy: `${name}（韋特體系）關注「${suitTheme[suit]}」。眼下主題是把分散的能量收束成一條主線。`,
+            insight: `這張牌提醒你：情緒與現實要同時被看見。只談感受或只談效率，都會失衡。`,
+            action: `設定一個 7 天可完成的小目標，並每天固定同一時間推進。`
+          },
+          reversed: {
+            energy: `${name}逆位通常顯示「${suitTheme[suit]}」卡住，可能是用力過猛或完全放掉。`,
+            insight: `先辨識真正阻力：是外部條件，還是你內在對失敗的恐懼。`,
+            action: `減少一半目標量，先恢復節奏感，再逐步加碼。`
+          }
+        };
+      }
+
+      const App = () => {
+        const [view, setView] = useState('cover');
+        const [deckCatalog, setDeckCatalog] = useState([]);
+        const [deck, setDeck] = useState([]);
+        const [selectedCards, setSelectedCards] = useState([]);
+        const [handPos, setHandPos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+        const [isPinching, setIsPinching] = useState(false);
+        const [question, setQuestion] = useState('');
+        const [submittedQuestion, setSubmittedQuestion] = useState('');
+
+        const scrollPosRef = useRef(0);
+        const targetScrollRef = useRef(0);
+        const pinchCooldownRef = useRef(false);
+        const selectedCardsRef = useRef([]);
+        const deckRef = useRef([]);
+        const videoRef = useRef(null);
+        const carouselWrapperRef = useRef(null);
+        const animationFrameRef = useRef(null);
+        const cameraRef = useRef(null);
+
+        useEffect(() => { selectedCardsRef.current = selectedCards; }, [selectedCards]);
+        useEffect(() => { deckRef.current = deck; }, [deck]);
+
+        useEffect(() => {
+          fetch('./assets/tarot-deck.local.json', { cache: 'no-store' })
+            .then((res) => (res.ok ? res.json() : null))
+            .then((json) => {
+              if (json && Array.isArray(json.cards)) setDeckCatalog(json.cards);
+            })
+            .catch(() => {});
+        }, []);
+
+        const initializeDeck = () => {
+          const fullDeck = (deckCatalog.length > 0
+            ? deckCatalog.map((source, index) => {
+                const upBits = splitMeaning(source.up || '');
+                const downBits = splitMeaning(source.down || '');
+                const upMain = upBits[0] || '內在對齊';
+                const upExtra = upBits[1] || upBits[0] || '方向清晰';
+                const downMain = downBits[0] || '節奏失衡';
+                const downExtra = downBits[1] || downBits[0] || '暫停調整';
+                const fallback = buildCardByIndex(index);
+                const cardId = source.id || fallback.id;
+
+                return {
+                  id: cardId,
+                  name: source.name ? `${source.name}${source.name_en ? ` (${source.name_en})` : ''}` : (source.name_en || fallback.name),
+                  image: resolveCardImage(cardId, source.image_url, fallback.image),
+                  backupImage: source.image_url || fallback.image || './assets/cards/ar00.jpg',
+                  upright: {
+                    energy: `偉特牌義提示：${upMain}。這是一張偏向「順流但需要覺察」的訊號。`,
+                    insight: `在你的議題裡，它更指向 ${upExtra}。你可以把它理解為「可前進，但要保持誠實」。`,
+                    action: actionByCardId(cardId)
+                  },
+                  reversed: {
+                    energy: `逆位核心：${downMain}。通常不是失敗，而是節奏與方向需要修正。`,
+                    insight: `這張逆位常見卡點是 ${downExtra}。先停下自我拉扯，再重建優先順序。`,
+                    action: actionByCardId(cardId)
+                  },
+                  uid: Math.random().toString(36).slice(2, 11),
+                  isReversed: Math.random() > 0.5
+                };
+              })
+            : Array.from({ length: 78 }).map((_, index) => ({
+                ...buildCardByIndex(index),
+                backupImage: buildCardByIndex(index).image,
+                uid: Math.random().toString(36).slice(2, 11),
+                isReversed: Math.random() > 0.5
+              }))
+          ).sort(() => Math.random() - 0.5);
+
+          setDeck(fullDeck);
+          const init = Math.max(0, (fullDeck.length * 220 - window.innerWidth) / 2);
+          scrollPosRef.current = init;
+          targetScrollRef.current = init;
+        };
+
+        useEffect(() => {
+          const loop = () => {
+            const diff = targetScrollRef.current - scrollPosRef.current;
+            scrollPosRef.current += diff * 0.15;
+            if (carouselWrapperRef.current) {
+              carouselWrapperRef.current.style.transform = `translate3d(${-scrollPosRef.current}px, 0, 0)`;
+            }
+            animationFrameRef.current = requestAnimationFrame(loop);
+          };
+
+          if (view === 'reading') {
+            startHandTracking();
+            animationFrameRef.current = requestAnimationFrame(loop);
+          }
+
+          return () => {
+            if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+            if (cameraRef.current && typeof cameraRef.current.stop === 'function') {
+              cameraRef.current.stop();
+              cameraRef.current = null;
+            }
+          };
+        }, [view, deck.length]);
+
+        const startHandTracking = async () => {
+          if (typeof window.Hands === 'undefined' || typeof window.Camera === 'undefined' || !videoRef.current) return;
+
+          const hands = new window.Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+          });
+
+          hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 0,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+          });
+
+          hands.onResults((results) => {
+            if (!(results.multiHandLandmarks && results.multiHandLandmarks.length > 0)) {
+              setIsPinching(false);
+              pinchCooldownRef.current = false;
+              return;
+            }
+
+            const landmark = results.multiHandLandmarks[0];
+            const indexTip = landmark[8];
+            const thumbTip = landmark[4];
+
+            setHandPos({ x: (1 - indexTip.x) * window.innerWidth, y: indexTip.y * window.innerHeight });
+
+            const offset = (indexTip.x - 0.5) * 2;
+            targetScrollRef.current += offset * 70;
+
+            const maxScroll = (deckRef.current.length * 220) - window.innerWidth;
+            targetScrollRef.current = Math.max(-window.innerWidth / 4, Math.min(targetScrollRef.current, maxScroll));
+
+            const dist = Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y);
+            const activePinch = dist < 0.06;
+            setIsPinching(activePinch);
+
+            if (activePinch && !pinchCooldownRef.current && selectedCardsRef.current.length < 3) {
+              handleCardSelect();
+            }
+          });
+
+          const camera = new window.Camera(videoRef.current, {
+            onFrame: async () => await hands.send({ image: videoRef.current }),
+            width: 640,
+            height: 480
+          });
+          cameraRef.current = camera;
+          await camera.start();
+        };
+
+        const handleCardSelect = () => {
+          pinchCooldownRef.current = true;
+
+          const centerIdx = Math.round((scrollPosRef.current + window.innerWidth / 2) / 220);
+          const safeIdx = Math.max(0, Math.min(deckRef.current.length - 1, centerIdx));
+          let picked = deckRef.current[safeIdx];
+
+          const used = new Set(selectedCardsRef.current.map((c) => c.uid));
+          if (picked && used.has(picked.uid)) {
+            for (let i = 1; i < deckRef.current.length; i += 1) {
+              const probe = deckRef.current[(safeIdx + i) % deckRef.current.length];
+              if (!used.has(probe.uid)) {
+                picked = probe;
+                break;
+              }
+            }
+          }
+
+          if (picked && !used.has(picked.uid)) {
+            setSelectedCards((prev) => {
+              const next = [...prev, picked];
+              if (next.length === 3) setTimeout(() => setView('result'), 1000);
+              return next;
+            });
+          }
+
+          setTimeout(() => { pinchCooldownRef.current = false; }, 1200);
+        };
+
+
+
+
+        // ========== 資深塔羅分析師系統（20年經驗） ==========
+        // 風格：心理占卜 + 內在轉化 + 深度逆位解讀
+        // 語氣：溫柔的鏡子 - 引導面對真相而非恐懼
+
+        // 获取牌的核心信息
+        const getCardEssence = (card) => {
+          const id = card.id || '';
+          const isMajor = id.startsWith('ar');
+          const cardNumber = isMajor ? Number(id.slice(2)) : null;
+          
+          // 逆位核心轉化系統
+          const reversalCore = {
+            0: { from: 'Recklessness', to: 'Conscious Choice', lesson: '從魯莽到有意識的選擇' },
+            1: { from: 'Manipulation', to: 'Authentic Power', lesson: '從操控到真實力量' },
+            2: { from: 'Secrets', to: 'Inner Knowing', lesson: '從隱瞞到內在知曉' },
+            3: { from: 'Neglect', to: 'Self-Nurturing', lesson: '從忽略到自我滋養' },
+            4: { from: 'Rigidity', to: 'Flexible Authority', lesson: '從僵化到彈性權威' },
+            5: { from: 'Dogma', to: 'Personal Truth', lesson: '從教條到個人真理' },
+            6: { from: 'Codependency', to: 'Authentic Choice', lesson: '從共依附到真實選擇' },
+            7: { from: 'Forcing', to: 'Allowing', lesson: '從強迫到允許' },
+            8: { from: 'Control', to: 'Gentle Mastery', lesson: '從控制到溫柔駕馭' },
+            9: { from: 'Isolation', to: 'Inner Guidance', lesson: '從孤立到內在指引' },
+            10: { from: 'Resistance', to: 'Flow', lesson: '從抗拒到流動' },
+            11: { from: 'Judgment', to: 'Discernment', lesson: '從評判到洞察' },
+            12: { from: 'Martyrdom', to: 'Surrender', lesson: '從殉道到臣服' },
+            13: { from: 'Stagnation', to: 'Release', lesson: '從停滯到釋放' },
+            14: { from: 'Excess', to: 'Balance', lesson: '從過度到平衡' },
+            15: { from: 'Bondage', to: 'Liberation', lesson: '從束縛到解放' },
+            16: { from: 'Chaos', to: 'Awakening', lesson: '從混亂到覺醒' },
+            17: { from: 'Despair', to: 'Hope', lesson: '從絕望到希望' },
+            18: { from: 'Illusion', to: 'Clarity', lesson: '從幻覺到清晰' },
+            19: { from: 'Arrogance', to: 'Joy', lesson: '從傲慢到喜悅' },
+            20: { from: 'Self-Doubt', to: 'Calling', lesson: '從自我懷疑到召喚' },
+            21: { from: 'Incompletion', to: 'Integration', lesson: '從未完成到整合' }
+          };
+          
+          return {
+            isMajor,
+            cardNumber,
+            reversalCore: isMajor ? reversalCore[cardNumber] : null
+          };
+        };
+
+        // 1. 靈魂氣候總覽
+        const generateSoulClimate = (past, now, future) => {
+          const cards = [past, now, future];
+          const reversedCount = cards.filter(c => c.isReversed).length;
+          const majorCount = cards.filter(c => (c.id || '').startsWith('ar')).length;
+          
+          let climate = '';
+          
+          if (reversedCount === 3) {
+            climate = `好，先深呼吸一下——你抽到三张全逆位，这不是"倒霉"，反而是个信号：**现在不适合往外冲，该往内看看了**。\n\n`;
+            climate += `想象一下蝴蝶在茧里的状态，看起来什么都没发生，但其实正在发生最重要的转变。你现在就是这样。可能觉得闷、觉得卡，但其实你的内在正在重新整理过去的经验，为下一步做准备。\n\n`;
+            climate += `**说白了**：别急着证明自己、别急着出成果。现在是你跟自己好好相处的时候——听听内心真实的声音，修复那些一直没空处理的情绪，沉淀下来。这个阶段过了，你会发现自己不一样了。`;
+          } else if (reversedCount === 2) {
+            climate = `你的能量正在**调频中**——两张逆位意味着有些地方在踩刹车或转向。但这不是退步，更像是GPS重新规划路线。\n\n`;
+            climate += `逆位牌最常见的意思是：**那些你一直压着的、逃避的、或者拼命表现的部分，现在浮上来了**。它在说："嘿，我需要被看见。"这是个机会，让你诚实面对自己——不是你"应该"的样子，而是你"真实"的样子。`;
+          } else if (reversedCount === 1) {
+            const reversedCard = cards.find(c => c.isReversed);
+            const position = reversedCard === now ? '现在' : reversedCard === past ? '过去' : '未来';
+            climate = `整体来说，能量还算流畅，但有一张逆位在${position}位——【${reversedCard.name}】。它像个温柔的提醒：**这个地方需要你慢下来，看仔细点。**\n\n`;
+            climate += `逆位不是障碍，更像是一个"等等，这里有点不对劲"的信号。可能是需要重新思考、重新调整，或者只是提醒你别太用力了。`;
+          } else {
+            climate = `你现在处于**顺风期**——三张全正位，能量在往外流动。但是！顺不等于躺平，反而要抓紧机会主动出击。\n\n`;
+            climate += `很多人在顺境里会放松警惕，觉得"反正都挺顺的"。但真正的智慧是：**在顺的时候保持清醒，每个选择都问问自己——这真的是我想要的吗？**`;
+          }
+          
+          if (majorCount >= 2) {
+            climate += `\n\n**重点提示**：你的牌阵里有${majorCount}张大阿卡纳（就是那些比较"重量级"的牌），意思是——**这不是小事，是人生课题级别的**。这段时间的经历会深刻影响你未来的走向，所以认真对待，但也别给自己太大压力。`;
+          }
+          
+          return climate;
+        };
+
+        // 2. 現狀深度解碼
+        const generateCurrentDepth = (card) => {
+          const essence = getCardEssence(card);
+          const stance = card.isReversed ? '逆位' : '正位';
+          const energy = card.isReversed ? (card.reversed?.energy || '') : (card.upright?.energy || '');
+          
+          let depth = `**現在位：${card.name} (${card.nameEn || ''})・${stance}**\n\n`;
+          
+          if (card.isReversed) {
+            // 逆位深度心理剖析
+            if (essence.isMajor && essence.reversalCore) {
+              depth += `这张大阿卡纳逆位，说的是一场内在的转化——简单说就是从「${essence.reversalCore.from}」慢慢走向「${essence.reversalCore.to}」。\n\n`;
+              depth += `**你现在可能在经历以下其中一种状态**：\n`;
+              depth += `1. **能量往内收**：之前向外展现的东西，现在转为向内探索了\n`;
+              depth += `2. **时机还没到**：事情在酝酿中，宇宙在说"再等等，再准备准备"\n`;
+              depth += `3. **用力过猛**：太努力想做好这件事，反而失衡了\n\n`;
+            } else {
+              depth += `这张逆位牌像一面镜子，照出你内心某个真实的角落：\n\n`;
+            }
+            
+            depth += `**你可能有的焦虑**：${energy || '这个领域让你觉得不太确定，有点失控感'}\n\n`;
+            depth += `**心理防御雷达**：看看你是不是在用"忙得要死"、"追求完美"、"纯理性分析"这些方式，来避免真正去感受什么？\n\n`;
+            depth += `**说出来会怎样**：逆位常常揭示你真正想要的，但还不敢承认的东西。问自己：**如果不怕别人怎么看、不怕失败，我会怎么做？**`;
+            
+          } else {
+            // 正位深度解讀
+            depth += `这张正位牌显示，这个领域的能量在流动。但注意！**正位不等于完美**——它只是说能量在动，方向对不对还要看你怎么用。\n\n`;
+            depth += `**当前的能量状态**：${energy}\n\n`;
+            
+            if (essence.isMajor) {
+              depth += `这是张大阿卡纳，所以要问的不是"我做得对不对"，而是"**我真的在活出这个状态，还是只是表面上符合期待？**"\n\n`;
+              depth += `**真正的邀请是**：别完美地"扮演"这张牌，而是真实地"成为"它。有点抽象，但你懂的。`;
+            } else {
+              depth += `这是张小阿卡纳，提醒你：**生活的智慧藏在细节里**。这个领域稍微调整一下，可能就会有意想不到的变化。`;
+            }
+          }
+          
+          return depth;
+        };
+
+        // 3. 你的故事如何走到這裡
+        const generateStoryArc = (past, now, future) => {
+          const pastEssence = getCardEssence(past);
+          const nowEssence = getCardEssence(now);
+          const futureEssence = getCardEssence(future);
+          
+          let story = '**你的能量是怎么流动的**\n\n';
+          
+          // 过去→现在
+          story += `从【${past.name}】走到【${now.name}】，你经历了一场转变。\n\n`;
+          
+          if (past.isReversed && !now.isReversed) {
+            story += `你正在从过去的"内缩状态"走向现在的"外放流动"。之前那个逆位的${past.name}代表的挣扎、卡顿或内在整理，现在在${now.name}里找到了出口。\n\n`;
+            if (pastEssence.reversalCore) {
+              story += `用书里的话说，你从「${pastEssence.reversalCore.from}」迈向了「${pastEssence.reversalCore.to}」。这是个关键转折点。`;
+            }
+          } else if (!past.isReversed && now.isReversed) {
+            story += `你从过去相对顺畅的状态，进入了现在的"内省期"。**这不是退步**——${now.name}逆位是在要求你停下来，重新看看那些你以为已经处理好的事。\n\n`;
+            if (nowEssence.reversalCore) {
+              story += `现在的功课是从「${nowEssence.reversalCore.from}」蜕变成「${nowEssence.reversalCore.to}」。需要你诚实面对内在那些不太想看的部分。`;
+            }
+          } else {
+            const pastEnergy = past.isReversed ? (past.reversed?.energy || '') : (past.upright?.energy || '');
+            const nowEnergy = now.isReversed ? (now.reversed?.energy || '') : (now.upright?.energy || '');
+            story += `你的能量从「${pastEnergy}」演变成了「${nowEnergy}」。这个转变解释了你现在的感受和挑战。`;
+          }
+          
+          // 现在→未来
+          story += `\n\n**从现在到未来的关键**\n\n`;
+          story += `要从【${now.name}】走向【${future.name}】，核心不是"做更多"，而是"**调整节奏**"。\n\n`;
+          
+          if (now.isReversed && !future.isReversed) {
+            story += `好消息：未来的${future.name}是正位，意思是——只要你愿意在现在这个阶段诚实面对内在功课，能量会自然流向顺畅的展开。\n\n`;
+            story += `**转折点在哪**：从内在整理（逆位）到外在显化（正位）的桥梁，就是"自我诚实"。`;
+          } else if (!now.isReversed && future.isReversed) {
+            story += `未来的${future.name}逆位提醒你：就算现在感觉顺畅，未来还是需要你深化内在工作。这不是警告，是**预告**——更深的成长在等着你。`;
+          } else {
+            story += `延续当前的节奏，但要记住：**每个阶段都需要觉察和调整**。别僵化地重复，要灵活地回应变化。`;
+          }
+          
+          return story;
+        };
+
+        // 4. 你現在最需要的方向
+        const generateGuidance = (card, question) => {
+          const essence = getCardEssence(card);
+          
+          let guidance = {
+            mindShift: '',
+            action: '',
+            timing: ''
+          };
+          
+          if (card.isReversed) {
+            // 逆位的指引
+            guidance.mindShift = `**换个角度想**：别把"逆位"当成"不好"。${card.name}逆位是在邀请你更诚实地面对自己。问问自己：**我在这件事上，真正怕的是什么？**`;
+            
+            guidance.action = `**具体可以做的**：每天花10分钟，写下关于「${question || '这件事'}」的真实感受——不是你"应该"有的感受，而是你"真正"感受到的。写完不评判，就是看见它。`;
+            
+            guidance.timing = `**时机提醒**：逆位常常意味着"现在不是往外冲的时候"。给自己3-7天的沉淀时间，先向内整合，别急着做决定。`;
+            
+          } else {
+            // 正位的指引
+            if (essence.isMajor) {
+              guidance.mindShift = `**关键认知**：${card.name}正位不是让你"放心了"，而是说"**能量在流，但方向要自己把握**"。别让外在的顺利，掩盖了内心真正的声音。`;
+              
+              guidance.action = `**可以采取的行动**：选一个小的、具体的步骤，在接下来48小时内完成。不要大而空的计划，要能看得见结果的小行动。`;
+              
+              guidance.timing = `**时机建议**：能量在流动，但不等于要急。保持节奏，感受每一步，别因为"顺"就跑太快，失去了觉察。`;
+            } else {
+              const suit = (card.id || '').slice(0, 2);
+              const suitGuidance = {
+                wa: { mind: '别再想了，行动起来', action: '今天完成一个你拖了很久的小任务', timing: '行动的最佳时机就是现在' },
+                cu: { mind: '先处理情感，再谈逻辑', action: '跟某人来一次真实的对话（或写封不寄出的信）', timing: '给情感留点空间，别急着"解决"' },
+                sw: { mind: '理清思路再决定', action: '用纸笔列出问题的所有角度，给自己3天决策期限', timing: '可以思考，但别陷入分析瘫痪' },
+                pe: { mind: '脚踏实地，一步一个脚印', action: '盘点一下资源（时间/钱/能力），砍掉一个低回报的事', timing: '稳扎稳打——小步快跑比大跃进好' }
+              };
+              
+              const sg = suitGuidance[suit] || suitGuidance.pe;
+              guidance.mindShift = `**换个角度想**：${sg.mind}`;
+              guidance.action = `**具体可以做的**：${sg.action}`;
+              guidance.timing = `**时机提醒**：${sg.timing}`;
+            }
+          }
+          
+          return guidance;
+        };
+
+        // 5. 給你的溫柔結語
+        const generateGentleClosing = (past, now, future) => {
+          const reversedCount = [past, now, future].filter(c => c.isReversed).length;
+          
+          let closing = '';
+          
+          closing += `塔罗不是算命，它更像一面镜子——照出你内心已经知道、但可能还没意识到的东西。\n\n`;
+          
+          if (reversedCount >= 2) {
+            closing += `你的牌里有逆位，说明有些地方需要慢下来、往内看。别急，成长本来就不是匀速的。有时候看起来"卡住"，其实是在积累能量。\n\n`;
+          }
+          
+          closing += `**记住这句话**：塔罗给的不是答案，是提醒。真正的决定权、行动权，始终在你手上。\n\n`;
+          
+          closing += `**最重要的是**：别把牌义当成"宿命"，它只是现在这个时刻的能量快照。你的选择、你的行动，随时可以改变能量的流向。\n\n`;
+          
+          closing += `深呼吸，感受一下——你的直觉在说什么？那个才是真正的答案。`;
+          
+          return closing;
+        };
+
+        const generateSoulSummary = () => {
+          if (selectedCards.length < 3) return null;
+          const [p, n, f] = selectedCards;
+
+          return (
+            <div className="space-y-8 text-[#d1d5db] font-light leading-relaxed">
+              {submittedQuestion && (
+                <div className="p-5 rounded-2xl border border-[#F7E7CE]/20 bg-[#F7E7CE]/5">
+                  <p className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE]/80 mb-2">本次提問主題</p>
+                  <p className="text-base">{submittedQuestion}</p>
+                </div>
+              )}
+
+              <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">1. 靈魂氣候總覽</h4>
+                <div className="text-sm mt-2 whitespace-pre-line">{generateSoulClimate(p, n, f)}</div>
+              </div>
+
+              <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">2. 現狀深度解碼</h4>
+                <div className="text-sm whitespace-pre-line">{generateCurrentDepth(n)}</div>
+              </div>
+
+              <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">3. 你的故事如何走到這裡</h4>
+                <div className="text-sm whitespace-pre-line">{generateStoryArc(p, n, f)}</div>
+              </div>
+
+              <div className="p-4 rounded-2xl border border-[#F7E7CE]/15 bg-[#F7E7CE]/5">
+                <h5 className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE] mb-3">4. 你現在最需要的方向</h5>
+                <div className="text-sm leading-relaxed whitespace-pre-line">{(() => {
+                  const guidance = generateGuidance(n, submittedQuestion);
+                  return `${guidance.mindShift}\n\n${guidance.action}\n\n${guidance.timing}`;
+                })()}</div>
+              </div>
+
+              <div className="pt-6 border-t border-[#F7E7CE]/20">
+                <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">5. 給你的溫柔結語</h4>
+                <div className="whitespace-pre-line">{generateGentleClosing(p, n, f)}</div>
+                <p className="text-xs mt-4 opacity-60 italic">本解讀僅供自我覺察與成長參考，不取代醫療、法律、財務或其他專業決策建議。若處於心理危機，請優先尋求專業心理支持。</p>
+              </div>
+            </div>
+          );
+        };
+
+        const memoizedCards = useMemo(() => {
+          return deck.map((card) => (
+            <div key={card.uid} className="relative flex-shrink-0 w-[180px] h-[280px] mx-[20px] rounded-xl border border-[#F7E7CE]/10 bg-gradient-to-b from-[#2a2a40] to-[#1a1a2e] flex items-center justify-center">
+              <div className="opacity-10 scale-150 rotate-45">✨</div>
+              <div className="absolute bottom-4 text-[8px] tracking-[0.3em] opacity-20">靈性之門</div>
+            </div>
+          ));
+        }, [deck]);
+
+        return (
+          <div className="min-h-screen bg-[#0d0e1a] text-[#F7E7CE] overflow-hidden font-serif relative">
+            <div className="relative z-10">
+            {view === 'cover' && (
+              <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-[#0d0e1a] via-[#1a1b3a] to-[#0d0e1a] z-50">
+                <h1 className="text-6xl md:text-8xl font-extralight tracking-[0.3em] mb-6 drop-shadow-[0_0_20px_rgba(247,231,206,0.3)]">
+                  Intuitive Tarot<br/>Guidance
+                </h1>
+                <p className="text-[#9d85c4] italic text-xl mb-8 opacity-80 tracking-widest">
+                  "傾聽靈魂深處的低語，在光影中找尋妳的真實指引。"
+                </p>
+                <textarea
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="先寫下你此刻最想釐清的一個問題（例如：這段關係還值得投入嗎？）"
+                  className="w-full max-w-2xl h-28 mb-8 rounded-2xl bg-white/5 border border-[#F7E7CE]/20 px-5 py-4 text-[#F7E7CE] placeholder:text-[#F7E7CE]/40 outline-none focus:border-[#F7E7CE]/60"
+                />
+                <button
+                  onClick={() => { initializeDeck(); setSelectedCards([]); selectedCardsRef.current = []; setSubmittedQuestion(question.trim()); setView('reading'); }}
+                  className="px-16 py-4 rounded-full border border-[#F7E7CE]/30 hover:border-[#F7E7CE] hover:shadow-[0_0_40px_rgba(247,231,206,0.4)] transition-all duration-700 tracking-[0.5em] text-lg uppercase bg-white/5 backdrop-blur-md"
+                >
+                  開啟靈魂儀式
+                </button>
+              </div>
+            )}
+
+            {view === 'reading' && (
+              <div className="relative h-screen flex flex-col items-center justify-center">
+                <video ref={videoRef} className="hidden" playsInline muted />
+
+                <div className="absolute top-12 flex gap-8 z-30">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className={`w-16 h-24 rounded-lg border transition-all duration-700 flex items-center justify-center ${selectedCards[i] ? 'border-[#F7E7CE] shadow-[0_0_20px_#F7E7CE55] bg-[#F7E7CE]/10' : 'border-[#F7E7CE]/20 bg-white/5'}`}>
+                      {selectedCards[i] ? <span className="text-[10px] text-center px-1">{selectedCards[i].name}</span> : <div className="w-1.5 h-1.5 rounded-full bg-[#F7E7CE]/20 animate-pulse" />}
+                    </div>
+                  ))}
+                </div>
+
+                <div ref={carouselWrapperRef} className="carousel-wrapper flex items-center mt-20">
+                  {memoizedCards}
+                </div>
+
+                <div className="fixed pointer-events-none z-50 transition-transform duration-75" style={{ left: handPos.x, top: handPos.y, transform: `translate(-50%, -50%) scale(${isPinching ? 0.6 : 1})` }}>
+                  <div className={`w-10 h-10 rounded-full border border-[#F7E7CE] flex items-center justify-center ${isPinching ? 'bg-[#F7E7CE]/40 shadow-[0_0_40px_#F7E7CE]' : 'bg-[#F7E7CE]/5'}`}>
+                    <div className="w-1 h-1 bg-white rounded-full animate-ping" />
+                  </div>
+                </div>
+
+                <div className="absolute bottom-16 text-[10px] tracking-[0.4em] opacity-40 uppercase">揮動手掌感應能量 · 捏合指尖選取啟示</div>
+              </div>
+            )}
+
+            {view === 'result' && selectedCards.length === 3 && (
+              <div className="min-h-screen p-8 md:p-20 flex flex-col items-center bg-[#0d0e1a] overflow-y-auto">
+                <h2 className="text-3xl md:text-5xl font-light tracking-[0.4em] text-[#F7E7CE] mb-20 uppercase">三位一體之啟示</h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-7xl w-full mb-24">
+                  {selectedCards.map((card, i) => (
+                    <div key={card.uid} className="flex flex-col items-center group card-reveal" style={{ animationDelay: `${i * 120}ms` }}>
+                      <span className="text-[11px] tracking-[0.5em] text-[#9d85c4] mb-6 uppercase">{i === 0 ? '過去 - 根基' : i === 1 ? '現在 - 脈動' : '未來 - 指引'}</span>
+                      <div className="relative w-full max-w-[240px] aspect-[2/3.5] rounded-3xl overflow-hidden border border-[#F7E7CE]/30 shadow-lg">
+                        <img src={card.image} data-fallback={card.backupImage || ''} loading="lazy" decoding="async" onError={(e) => {
+                          const fb = e.currentTarget.dataset.fallback;
+                          if (fb && e.currentTarget.src !== fb) {
+                            e.currentTarget.src = fb;
+                          } else {
+                            e.currentTarget.src = './assets/cards/ar00.jpg';
+                          }
+                        }} className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180 brightness-75' : 'brightness-90'}`} alt={card.name} />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e1a] via-transparent to-transparent opacity-80" />
+                        <div className="absolute bottom-8 w-full text-center px-4">
+                          <p className="text-xl tracking-[0.15em] text-[#F7E7CE] mb-2">{card.name}</p>
+                          <p className="text-[10px] tracking-[0.2em] opacity-60 uppercase">{card.isReversed ? 'Shadow (逆位)' : 'Light (正位)'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="max-w-4xl w-full p-10 md:p-12 rounded-[48px] bg-gradient-to-b from-white/[0.04] to-transparent border border-white/10 shadow-lg">
+                  <h3 className="text-[#F7E7CE] text-2xl font-light tracking-[0.4em] mb-12 text-center uppercase">靈魂指引總結</h3>
+                  {generateSoulSummary()}
+
+                  <div className="mt-12 p-6 md:p-8 rounded-3xl border border-[#F7E7CE]/20 bg-[#F7E7CE]/5">
+                    <h4 className="text-[#F7E7CE] text-sm tracking-[0.35em] mb-4 uppercase text-center">預約引導</h4>
+                    <p className="text-center text-sm md:text-base text-[#e5e7eb] leading-relaxed">
+                      如果你希望我你的真實處境做更深入的一對一解讀，
+                      可直接私訊關鍵字 <span className="text-[#F7E7CE] font-semibold">「預約解讀」</span>。
+                    </p>
+
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="p-4 rounded-2xl border border-white/10 bg-white/5">
+                        <h5 className="text-[#F7E7CE] tracking-[0.2em] uppercase text-xs mb-3">服務說明</h5>
+                        <ul className="space-y-2 text-[#e5e7eb]/90 leading-relaxed">
+                          <li>• 一對一深度解讀（感情 / 事業 / 自我成長）</li>
+                          <li>• 解讀形式：文字整理 + 語音重點（依你偏好）</li>
+                        </ul>
+                      </div>
+                      <div className="p-4 rounded-2xl border border-[#ffd5d5]/20 bg-[#ffd5d5]/5">
+                        <h5 className="text-[#ffd5d5] tracking-[0.2em] uppercase text-xs mb-3">免責聲明</h5>
+                        <ul className="space-y-2 text-[#f3dede]/90 leading-relaxed">
+                          <li>• 本服務屬於心靈探索與自我覺察，不構成醫療、法律或投資建議。</li>
+                          <li>• 解讀結果僅供參考，實際決策請依你的現實情況與專業意見判斷。</li>
+                          <li>• 如你正處於嚴重心理壓力或危機，請優先尋求專業心理諮商與支持系統。</li>
+                          <li>• 預約即代表你理解並同意以上說明。</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 flex flex-col md:flex-row gap-3 justify-center">
+                      <button className="px-6 py-3 rounded-full border border-[#F7E7CE]/30 hover:border-[#F7E7CE] hover:bg-[#F7E7CE]/10 transition-all text-xs tracking-[0.2em] uppercase">
+                        私訊我：預約解讀
+                      </button>
+                      <button className="px-6 py-3 rounded-full border border-[#9d85c4]/40 hover:border-[#9d85c4] hover:bg-[#9d85c4]/10 transition-all text-xs tracking-[0.2em] uppercase text-[#d9c7ff]">
+                        查看完整服務流程
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center mt-12">
+                    <button
+                      onClick={() => { setView('cover'); setSelectedCards([]); selectedCardsRef.current = []; pinchCooldownRef.current = false; setSubmittedQuestion(''); }}
+                      className="px-14 py-4 rounded-full border border-[#F7E7CE]/20 text-[10px] tracking-[0.6em] hover:bg-[#F7E7CE]/10 transition-all uppercase"
+                    >
+                      完成儀式並回歸
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            </div>
+          </div>
+        );
+      };
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>

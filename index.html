@@ -15,7 +15,8 @@
 
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&display=swap');
-      body { margin: 0; background: #0d0e1a; font-family: 'Cormorant Garamond', serif; }
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap');
+      body { margin: 0; background: #120A21; font-family: 'Cormorant Garamond', serif; }
       .font-serif { font-family: 'Cormorant Garamond', serif; }
 
       .aurora-bg {
@@ -69,6 +70,8 @@
     <script src="./tarot-engine-integrated.js"></script>
     <script src="./tarot-detailed-database.js"></script>
     <script src="./direct-reading-generator.js"></script>
+    <script src="./tarot-ai-generator.js"></script>
+    <script src="./tarot-reading-wrapper.js"></script>
     <script src="./professional-reading-display.js"></script>
   </head>
   <body>
@@ -612,110 +615,8 @@
           // 🔥 教练模式开关
           const USE_COACH_MODE = true;
           
-          // 🌟 先进行能量分析（全域背景）
-          const energyAnalysis = window.analyzeTarotEnergy ? 
-            window.analyzeTarotEnergy([p, n, f]) : null;
-          
-          // 如果有能量分析结果，先展示
-          const energySection = energyAnalysis ? (
-            <div className="p-6 rounded-2xl border border-[#ffd700]/40 bg-[#ffd700]/10 mb-6">
-              <h4 className="text-[#ffd700] uppercase tracking-[0.2em] mb-3 text-sm">🌟 能量场诊断</h4>
-              <div className="space-y-2 text-sm">
-                <p><strong>核心问题：</strong>{energyAnalysis.coreIssue}</p>
-                <p><strong>能量模式：</strong>{energyAnalysis.energyPattern}</p>
-                <p><strong>核心建议：</strong>{energyAnalysis.recommendations}</p>
-              </div>
-            </div>
-          ) : null;
-          
-          // 如果启用教练模式且引擎可用
-          if (USE_COACH_MODE && window.CoachMode) {
-            try {
-              const coachReading = {
-                truth: window.CoachMode.generateBrutalTruth(p, n, f, submittedQuestion),
-                obstacles: window.CoachMode.generateHiddenObstacles(p, n, f),
-                causal: window.CoachMode.generateCausalChain(p, n, f, submittedQuestion),
-                action: window.CoachMode.generatePreciseAction(n, f, submittedQuestion)
-              };
-              
-              return (
-                <div className="space-y-6 text-[#d1d5db] font-light leading-relaxed">
-                  {energySection}
-                  {submittedQuestion && (
-                    <div className="p-5 rounded-2xl border border-[#F7E7CE]/20 bg-[#F7E7CE]/5">
-                      <p className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE]/80 mb-2">📋 你的问题</p>
-                      <p className="text-base">{submittedQuestion}</p>
-                    </div>
-                  )}
-                  
-                  <div className="p-5 rounded-2xl border border-[#ff9999]/30 bg-[#ff9999]/10">
-                    <pre className="text-sm whitespace-pre-wrap font-sans">{coachReading.truth}</pre>
-                  </div>
-                  
-                  <div className="p-5 rounded-2xl border border-[#9d85c4]/30 bg-[#9d85c4]/10">
-                    <pre className="text-sm whitespace-pre-wrap font-sans">{coachReading.obstacles}</pre>
-                  </div>
-                  
-                  <div className="p-5 rounded-2xl border border-[#F7E7CE]/30 bg-[#F7E7CE]/10">
-                    <pre className="text-sm whitespace-pre-wrap font-sans">{coachReading.causal}</pre>
-                  </div>
-                  
-                  <div className="p-5 rounded-2xl border border-[#7eb3d4]/30 bg-[#7eb3d4]/10">
-                    <pre className="text-sm whitespace-pre-wrap font-sans">{coachReading.action}</pre>
-                  </div>
-                  
-                  <div className="pt-6 border-t border-[#F7E7CE]/20 text-sm">
-                    <p className="mb-2">这不是fortune telling，这是<strong className="text-[#F7E7CE]">现状镜像</strong>。</p>
-                    <p className="mb-2">改变能量，结果就会改变。改变不是"想"出来的，是"做"出来的。</p>
-                  </div>
-                </div>
-              );
-            } catch (error) {
-              console.error('教练模式错误:', error);
-            }
-          }
-          
-          // 继续原版温和模式
-
-          return (
-            <div className="space-y-8 text-[#d1d5db] font-light leading-relaxed">
-              {submittedQuestion && (
-                <div className="p-5 rounded-2xl border border-[#F7E7CE]/20 bg-[#F7E7CE]/5">
-                  <p className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE]/80 mb-2">本次提問主題</p>
-                  <p className="text-base">{submittedQuestion}</p>
-                </div>
-              )}
-
-              <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">1. 靈魂氣候總覽</h4>
-                <div className="text-sm mt-2 whitespace-pre-line">{generateSoulClimate(p, n, f)}</div>
-              </div>
-
-              <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">2. 現狀深度解碼</h4>
-                <div className="text-sm whitespace-pre-line">{generateCurrentDepth(n)}</div>
-              </div>
-
-              <div className="p-5 rounded-2xl border border-white/10 bg-white/5">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.25em] mb-3 text-sm">3. 你的故事如何走到這裡</h4>
-                <div className="text-sm whitespace-pre-line">{generateStoryArc(p, n, f)}</div>
-              </div>
-
-              <div className="p-4 rounded-2xl border border-[#F7E7CE]/15 bg-[#F7E7CE]/5">
-                <h5 className="text-xs tracking-[0.2em] uppercase text-[#F7E7CE] mb-3">4. 你現在最需要的方向</h5>
-                <div className="text-sm leading-relaxed whitespace-pre-line">{(() => {
-                  const guidance = generateGuidance(n, submittedQuestion);
-                  return `${guidance.mindShift}\n\n${guidance.action}\n\n${guidance.timing}`;
-                })()}</div>
-              </div>
-
-              <div className="pt-6 border-t border-[#F7E7CE]/20">
-                <h4 className="text-[#F7E7CE] uppercase tracking-[0.2em] mb-4 text-sm">5. 給你的溫柔結語</h4>
-                <div className="whitespace-pre-line">{generateGentleClosing(p, n, f)}</div>
-                <p className="text-xs mt-4 opacity-60 italic">本解讀僅供自我覺察與成長參考，不取代醫療、法律、財務或其他專業決策建議。若處於心理危機，請優先尋求專業心理支持。</p>
-              </div>
-            </div>
-          );
+          // 只保留专业解读，无其他板块
+          return null;
         };
 
         const memoizedCards = useMemo(() => {
@@ -731,7 +632,7 @@
           <div className="min-h-screen bg-[#0d0e1a] text-[#F7E7CE] overflow-hidden font-serif relative">
             <div className="relative z-10">
             {view === 'cover' && (
-              <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-[#0d0e1a] via-[#1a1b3a] to-[#0d0e1a] z-50">
+              <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-[#120A21] via-[#1e1030] to-[#120A21] z-50">
                 <h1 className="text-6xl md:text-8xl font-extralight tracking-[0.3em] mb-6 drop-shadow-[0_0_20px_rgba(247,231,206,0.3)]">
                   Intuitive Tarot<br/>Guidance
                 </h1>
@@ -780,7 +681,7 @@
             )}
 
             {view === 'result' && selectedCards.length === 3 && (
-              <div className="min-h-screen p-8 md:p-20 flex flex-col items-center bg-[#0d0e1a] overflow-y-auto">
+              <div className="min-h-screen p-8 md:p-20 flex flex-col items-center bg-[#120A21] overflow-y-auto">
                 <h2 className="text-3xl md:text-5xl font-light tracking-[0.4em] text-[#F7E7CE] mb-20 uppercase">三位一體之啟示</h2>
 
                 {/* 🔮 专业解读区域 */}

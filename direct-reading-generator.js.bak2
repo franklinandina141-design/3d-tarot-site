@@ -1,0 +1,901 @@
+/**
+ * Direct Reading Generator V2 - 专业塔罗师风格
+ * 
+ * 核心原则（塔罗师准则）：
+ * 1. 禁用心理学术语（心理盲点、防禦機制、迴避型依戀、冒名頂替綜合症等）
+ * 2. 第一段直接回答问题核心（Answer First）
+ * 3. 三张牌编织成连贯叙事，不罗列"牌面证据"
+ * 4. 牌意与金钱动态挂钩（现金流、收割、投入、预算）
+ */
+
+window.DirectReadingGenerator = {
+  
+  /**
+   * 标签过滤协议 - 专业术语映射
+   */
+  TERM_MAPPING: {
+    finance: {
+      // 财务/事业必用词
+      required: [
+        '現金流', '資金動態', '資產增值', '預算紀律', 
+        '投入產出比', 'ROI', '職場競爭力', '收割期', 
+        '止損點', '決策執行力', '資金管控', '財務結構'
+      ],
+      // 禁用词（将被替换）
+      forbidden: {
+        '能量': '資金動態',
+        '情緒': '決策風險',
+        '依戀模式': '資金使用習慣',
+        '童年陰影': '過往財務經驗',
+        '內在小孩': '潛意識財務觀念',
+        '靈魂伴侶': '理想合作夥伴',
+        '冒名頂替綜合症': '能力低估',
+        '情感投射': '決策偏見'
+      }
+    },
+    love: {
+      // 感情/人际必用词
+      required: [
+        '溝通邊界', '情感流動', '價值觀共鳴', '承諾度',
+        '親密關係', '互動模式', '內在需求', '共情',
+        '情緒表達', '心靈連結'
+      ],
+      // 禁用词（将被替换）
+      forbidden: {
+        '投資回報': '情感回應',
+        '市場價值': '吸引力',
+        '季度結算': '階段回顧',
+        '成本核算': '情感付出',
+        '職場政治': '人際互動',
+        '現金流': '情感流動',
+        'ROI': '情感深度'
+      }
+    },
+    career: {
+      // 事业（使用财务类术语）
+      required: [
+        '職場競爭力', '決策執行力', '資源整合',
+        '投入產出比', '戰略定位', '行動力'
+      ],
+      forbidden: {
+        '能量': '執行力',
+        '情緒': '決策穩定性',
+        '靈魂伴侶': '理想團隊',
+        '內在小孩': '職業認知'
+      }
+    },
+    health: {
+      // 健康/能量必用词
+      required: [
+        '生命力', '恢復週期', '身心平衡', '精力和耗',
+        '修復', '作息調整', '感官覺知', '能量儲備'
+      ],
+      forbidden: {
+        '創業投資': '精力投入',
+        '浪漫化解讀': '情緒反應',
+        '職場競爭': '壓力狀態',
+        '資產負債': '能量收支'
+      }
+    },
+    general: {
+      required: [],
+      forbidden: {}
+    }
+  },
+  
+  /**
+   * 术语过滤器 - 将通用描述转换为专业术语
+   */
+  filterTerminology: function(text, topic) {
+    if (!text) return text;
+    
+    const mapping = this.TERM_MAPPING[topic] || this.TERM_MAPPING.general;
+    let filtered = text;
+    
+    // 替换禁用词
+    for (let forbidden in mapping.forbidden) {
+      const replacement = mapping.forbidden[forbidden];
+      const regex = new RegExp(forbidden, 'g');
+      filtered = filtered.replace(regex, replacement);
+    }
+    
+    return filtered;
+  },
+  
+  /**
+   * 从TAROT_DETAILED获取精准解读
+   */
+  getDetailedInterpretation: function(card, topic) {
+    if (!window.TAROT_DETAILED) {
+      console.error('TAROT_DETAILED 数据库未加载');
+      return null;
+    }
+    
+    let cardNum = null;
+    if (card.id && card.id.startsWith('ar')) {
+      cardNum = parseInt(card.id.substring(2));
+    }
+    
+    if (cardNum === null || !window.TAROT_DETAILED[cardNum]) {
+      return null;
+    }
+    
+    const cardData = window.TAROT_DETAILED[cardNum];
+    const position = card.isReversed ? 'reversed' : 'upright';
+    
+    if (cardData[position] && cardData[position][topic]) {
+      return cardData[position][topic];
+    }
+    
+    return null;
+  },
+  
+  /**
+   * 获取时间暗示（直接具体）
+   */
+  getTimingAnswer: function(futureCard) {
+    if (!futureCard) return '两到三个月内';
+    
+    const cardName = futureCard.name || '';
+    const isReversed = futureCard.isReversed;
+    
+    // 快速牌
+    if (cardName.includes('權杖騎士') || cardName.includes('Knight of Wands')) {
+      return isReversed ? '一到两周内，但需要克制冲动' : '两周内';
+    }
+    
+    if (cardName.includes('戰車') || cardName.includes('Chariot')) {
+      return '一个月内';
+    }
+    
+    if (cardName.includes('塔') || cardName.includes('Tower')) {
+      return '一到两周内迅速变化';
+    }
+    
+    // 中速牌
+    if (cardName.includes('魔術師') || cardName.includes('Magician')) {
+      return '当下即可开始，一个月内见效';
+    }
+    
+    if (cardName.includes('太陽') || cardName.includes('Sun')) {
+      return isReversed ? '两到三个月' : '一到两个月';
+    }
+    
+    if (cardName.includes('星星') || cardName.includes('Star')) {
+      return '两到三个月逐步改善';
+    }
+    
+    // 慢速牌
+    if (cardName.includes('隱者') || cardName.includes('Hermit')) {
+      return '三到六个月';
+    }
+    
+    if (cardName.includes('月亮') || cardName.includes('Moon')) {
+      return isReversed ? '三到六个月' : '两到三个月';
+    }
+    
+    if (cardName.includes('死神') || cardName.includes('Death')) {
+      return isReversed ? '半年到一年' : '三个月内完成转型';
+    }
+    
+    // 默认
+    return isReversed ? '三个月左右' : '一到两个月';
+  },
+  
+  /**
+   * 生成标题（短且有力+代价感）
+   */
+  generateTitle: function(cards, topic) {
+    const [past, present, future] = cards;
+    
+    if (topic === 'finance') {
+      // 惡魔专属标题
+      if (future.name.includes('惡魔') || future.name.includes('Devil')) {
+        return '掌控與慾望的博弈';
+      }
+      // 塔专属标题
+      else if (future.name.includes('塔') || future.name.includes('Tower')) {
+        return '破壞性重建前夜';
+      }
+      // 寶劍王牌
+      else if (future.name.includes('寶劍王牌') || future.name.includes('寶劍A')) {
+        return '清晰決策的代價';
+      }
+      // 其他
+      else if (future.isReversed) {
+        return '資金轉機需耐心布局';
+      } else if (future.name.includes('權杖')) {
+        return '財運爆發在即';
+      } else if (future.name.includes('錢幣') || future.name.includes('星币')) {
+        return '穩健收割期來臨';
+      } else {
+        return '財務突破點已現';
+      }
+    } else if (topic === 'career') {
+      if (future.isReversed) {
+        return '職場轉型需謹慎';
+      } else {
+        return '事業躍升時機到';
+      }
+    } else if (topic === 'love') {
+      return '情感流動新階段';
+    } else {
+      return '能量轉換關鍵期';
+    }
+  },
+  
+  /**
+   * 生成核心回答（第一句话直接回答问题）
+   */
+  generateCoreAnswer: function(cards, topic, question) {
+    const [past, present, future] = cards;
+    const timing = this.getTimingAnswer(future);
+    
+    // 判断问题是否询问时间
+    const askingTime = question && (
+      question.includes('多久') || 
+      question.includes('何時') ||
+      question.includes('什么时候') ||
+      question.includes('when') ||
+      question.includes('改善') ||
+      question.includes('好转')
+    );
+    
+    if (topic === 'finance') {
+      // 财务问题 - 强制第一句话直接回答
+      const reversedCount = cards.filter(c => c.isReversed).length;
+      
+      // 默认总是给出时间回答（这是20年塔罗师的标准）
+      let answer = `<span class="highlight-time">${timing}</span>`;
+      
+      // 特殊牌的专门回答
+      if (future.name.includes('惡魔') || future.name.includes('Devil')) {
+        answer += `，財務改善將會到來，但這是一份<strong>伴隨「代碼」與「代價」的禮物</strong>——你會獲得金錢，但可能失去自由。`;
+      } else if (future.name.includes('塔')) {
+        answer += `，你的財務狀況將經歷<strong>破壞性重建</strong>。舊有的結構會崩塌，這不是「改善」，而是通往真正自由的必經之路。`;
+      } else if (future.name.includes('權杖騎士')) {
+        answer += `，財務的爆發性增長就會到來。現金流將快速改善，ROI將顯著提升。`;
+      } else if (future.name.includes('權杖')) {
+        answer += `，財務正從混亂轉向快速行動，爆發性增長信號已出現。`;
+      } else if (future.name.includes('錢幣') || future.name.includes('星币')) {
+        answer += `，穩健收割期將到來，現金流將顯著改善，你之前的投入會開始回報。`;
+      } else if (future.name.includes('寶劍王牌') || future.name.includes('寶劍A')) {
+        answer += `，突破性的理財決策窗口將打開。但要做好心理準備：<strong>清晰往往伴隨割捨。</strong>`;
+      } else if (future.name.includes('太陽') && !future.isReversed) {
+        answer += `，財務困境將結束，清晰的資金流向與預算紀律會顯現。`;
+      } else if (future.name.includes('太陽') && future.isReversed) {
+        answer += `，但這不會是一帆風順的改善。你過去那段看似輝煌但實則虛火的財務擴張期即將重演。`;
+      } else if (reversedCount >= 2) {
+        answer += `，但目前的財務狀況仍處於舊債未清、新機未到的過渡期。`;
+      } else {
+        answer += `，會出現明顯的財務改善。`;
+      }
+      
+      return answer;
+      
+    } else if (topic === 'career') {
+      // 事业问题
+      let answer = `<span class="highlight-time">${timing}</span>`;
+      
+      if (future.name.includes('權杖')) {
+        answer += `，職場行動窗口將打開，決策執行力是關鍵。`;
+      } else if (future.isReversed) {
+        answer += `，職場轉型需要更謹慎的策略，但方向是對的。`;
+      } else {
+        answer += `，職場競爭力將顯著提升。`;
+      }
+      
+      return answer;
+      
+    } else if (topic === 'love') {
+      // 感情问题
+      let answer = `<span class="highlight-time">${timing}</span>`;
+      
+      if (future.name.includes('聖杯')) {
+        answer += `，情感連結將深化，價值觀共鳴將提升。`;
+      } else if (future.name.includes('戀人')) {
+        answer += `，承諾度將明確化，親密關係將升級。`;
+      } else if (future.isReversed) {
+        answer += `，關係需要更多的溝通與調整。`;
+      } else {
+        answer += `，關係將進入新的階段。`;
+      }
+      
+      return answer;
+      
+    } else {
+      // 综合问题
+      return `<span class="highlight-time">${timing}</span>，轉機將逐步顯現。`;
+    }
+  },
+  
+  /**
+   * 分析牌面张力与转化关系
+   */
+  analyzeCardTension: function(past, present, future, topic) {
+    let tension = '';
+    
+    if (topic === 'finance') {
+      // 星幣6 → 星幣女王的转化
+      if (past.name.includes('星幣6') || past.name.includes('錢幣六')) {
+        if (present.name.includes('女王') && present.name.includes('星幣') || present.name.includes('錢幣')) {
+          tension = '從「接受他人資助」轉化為「自主管理資源」，這是一個質的飛躍。你過去的財務安全感來自於一種「平衡的交換」甚至是「他人的餘蔭」，那時你不需要操太多心，但也缺乏主動權。現在，你已經進化到了星幣女王的階段——你開始像守護領地一樣守護你的金錢，你變得務實、精明，甚至有點過度謹慎。';
+        }
+      }
+      
+      // 任何牌 → 惡魔的警告
+      if (future.name.includes('惡魔') || future.name.includes('Devil')) {
+        tension += (tension ? '<br/><br/>' : '') + '但真正的危險隱藏在未來的<span class="highlight-card">惡魔</span>之中。隨著財運的改善，你對金錢的「掌控」可能會演變成「執著」。這張牌警告你：在未來，你會遇到一個看起來回報極高、但會讓你失去自由的機會（可能是高壓的工作，也可能是帶有束縛條款的合約）。<strong>你以為你在玩金錢遊戲，其實你正被金錢所奴役。</strong>';
+      }
+      
+      // 塔的警告
+      if (future.name.includes('塔') || future.name.includes('Tower')) {
+        tension += (tension ? '<br/><br/>' : '') + '<span class="highlight-card">塔</span>預示的不是簡單的「改善」，而是「破壞性重建」。你現有的財務結構會崩塌，但這個崩塌是必要的——因為舊有的模式已經無法支撐你接下來的成長。<strong>代價是痛苦，但收穫是自由。</strong>';
+      }
+    }
+    
+    return tension;
+  },
+  
+  /**
+   * 获取特殊牌的风险提示
+   */
+  getCardRiskWarning: function(card, topic) {
+    const cardName = card.name || '';
+    
+    if (topic === 'finance') {
+      // 惡魔的风险提示
+      if (cardName.includes('惡魔') || cardName.includes('Devil')) {
+        return '⚠️ <strong>惡魔風險警示</strong>：這張牌在財務領域絕非純粹的好事。警惕因為過度擴張導致的債務、被合約束縛、或為了賺錢而失去自由。對金錢的執念會讓你看不清真正的代價。';
+      }
+      
+      // 寶劍系列的决策风险
+      if (cardName.includes('寶劍') || cardName.includes('Swords')) {
+        return '💭 <strong>決策風險</strong>：寶劍代表理性決策，但也代表冷酷與割捨。這個改善可能需要你放棄某些安全感，做出痛苦的選擇。';
+      }
+      
+      // 权杖8的快速风险
+      if (cardName.includes('權杖8') || cardName.includes('Wands 8')) {
+        return '⚡ <strong>速度陷阱</strong>：權杖8的快速可能讓你失去判斷力。在追求速度的同時，別忘了設定止損點。';
+      }
+    }
+    
+    return '';
+  },
+  
+  /**
+   * 生成深度洞察（牌面张力+风险警告+毒舌清醒）
+   */
+  generateDeepInsight: function(cards, topic) {
+    const [past, present, future] = cards;
+    
+    let insight = '';
+    
+    // === 全链条叙事协议：强制因果桥接 ===
+    
+    if (topic === 'finance') {
+      // 财务话题：全流畅叙事（无分段）
+      
+      // 首先，分析是否有特殊张力
+      const tension = this.analyzeCardTension(past, present, future, topic);
+      
+      if (tension) {
+        // 如果有专门的张力分析（如星幣6→星幣女王+惡魔），使用它
+        insight = tension;
+      } else {
+        // 否则，使用强制因果桥接逻辑
+        
+        // 【过去 → 现在】的因果桥接（强制财务术语）
+        insight += `正是因為你過去在<span class="highlight-card">${past.name}</span>`;
+        
+        if (past.name.includes('星幣5') || past.name.includes('錢幣五')) {
+          insight += `階段所經歷的現金流斷裂與財務匱乏——那種「入不敷出」的恐慌`;
+        } else if (past.name.includes('星幣6') || past.name.includes('錢幣六')) {
+          insight += `階段習慣了依賴他人資助、缺乏財務自主權——你的收入來源不在自己手中`;
+        } else if (past.name.includes('星幣8') || past.name.includes('錢幣八')) {
+          insight += `階段的高投入低產出比——拼命工作但ROI極低`;
+        } else if (past.name.includes('權杖8') && past.isReversed) {
+          insight += `階段同時追逐太多投資機會、導致資金鏈緊張——戰線拉得太長，哪個都沒守住`;
+        } else if (past.name.includes('塔')) {
+          insight += `階段經歷的財務結構崩塌與緊急止損——一夜回到解放前的震盪`;
+        } else if (past.name.includes('太陽') && past.isReversed) {
+          insight += `階段那段看似輝煌但實則虛火的財務擴張期——表面風光，實則入不敷出`;
+        } else if (past.isReversed) {
+          insight += `階段所種下的資金使用失控與預算失衡——支出完全沒有紀律`;
+        } else {
+          insight += `階段建立的財務模式——那套舊有的資金使用習慣`;
+        }
+        
+        insight += `，導致了你現在必須在<span class="highlight-card">${present.name}</span>`;
+        
+        if (present.name.includes('星幣2') || present.name.includes('錢幣二')) {
+          insight += `的狀態下重新尋求資金周轉與收支平衡——左手進、右手出，學會在守住本金與追求收益之間走鋼絲`;
+        } else if (present.name.includes('星幣女王') || present.name.includes('錢幣女王')) {
+          insight += `的階段學會對物質極度掌控、精打細算每一筆支出——你開始像守護金庫一樣守護你的每一分錢`;
+        } else if (present.name.includes('魔術師')) {
+          insight += `的狀態下重新盤點資源（現金、信用、人脈）、提升決策執行力——你擁有所有工具，就差出手`;
+        } else if (present.name.includes('皇帝')) {
+          insight += `的階段建立更嚴格的預算紀律與資金管控——這意味著你得對自己狠一點，設定明確的止損點`;
+        } else if (present.name.includes('寶劍')) {
+          insight += `的關鍵時刻做出清晰的財務決策、降低決策風險——最忌諱的就是拖延與模糊`;
+        } else if (present.name.includes('正義')) {
+          insight += `的階段重新審視投入產出比、砍掉那些「看起來重要但其實在吃錢」的項目`;
+        } else {
+          insight += `的狀態下調整資金動態——重新配置你的資產與現金流`;
+        }
+        
+        insight += `。`;
+        
+        // 【现在 → 未来】的因果桥接（强制财务专业术语+代价提示）
+        insight += `然而，`;
+        
+        if (future.name.includes('惡魔') || future.name.includes('Devil')) {
+          insight += `如果你繼續維持<span class="highlight-card">${present.name}</span>這種對金錢的掌控模式而不加以覺察，那麼<span class="highlight-card">${future.name}</span>所預示的風險將不可避免地發生：你對金錢的「掌控」會演變成「執著」。你會遇到一個看起來ROI極高、但實則會讓你被合約束縛、失去財務自由的機會（可能是高壓的職位，也可能是帶有對賭條款的投資）。<strong>你以為你在玩金錢遊戲，其實你正被金錢所奴役。</strong>`;
+        } else if (future.name.includes('塔')) {
+          insight += `如果你不主動調整<span class="highlight-card">${present.name}</span>階段的財務結構、及時設定止損點，那麼<span class="highlight-card">${future.name}</span>所預示的破壞性重建將不可避免。你現有的財務框架會在壓力下崩塌——這不是「改善」，而是「強制清零」。但這個崩塌是必要的，因為舊有的模式已經無法支撐你接下來的成長。<strong>代價是痛苦，但收穫是自由。</strong>`;
+        } else if (future.name.includes('寶劍王牌') || future.name.includes('寶劍A')) {
+          insight += `只要你在<span class="highlight-card">${present.name}</span>階段持續提升決策執行力、砍掉那些吃錢的無效項目，<span class="highlight-card">${future.name}</span>所預示的突破性理財決策與財務計劃就會在未來啟動。這是從資金混亂轉向清晰管控、從被動應對轉向主動配置的關鍵轉折。但要警惕：<strong>清晰不等於輕鬆，你需要做出痛苦的割捨。</strong>`;
+        } else if (future.name.includes('權杖騎士')) {
+          insight += `只要你在<span class="highlight-card">${present.name}</span>階段保持極高的執行強度、不拖延任何財務決策，<span class="highlight-card">${future.name}</span>所預示的財務爆發性增長就會在短期內到來。現金流將快速改善，ROI將顯著提升，資金周轉率會進入快車道。但代價是：<strong>你得保持極高的執行強度，稍有鬆懈就會錯失機會。</strong>`;
+        } else if (future.name.includes('錢幣') || future.name.includes('星币')) {
+          insight += `只要你在<span class="highlight-card">${present.name}</span>階段維持穩健的資源配置、嚴格執行預算紀律，<span class="highlight-card">${future.name}</span>所預示的收割期就會自然到來。你之前的投入會開始回報，資產增值與現金流改善將同步進行。`;
+        } else if (future.name.includes('太陽') && !future.isReversed) {
+          insight += `只要你在<span class="highlight-card">${present.name}</span>階段持續優化資金配置，<span class="highlight-card">${future.name}</span>所預示的財務困境結束期就會到來。清晰的資金流向與預算紀律會顯現，財務結構將趨於健康。`;
+        } else if (future.name.includes('太陽') && future.isReversed) {
+          insight += `但真正的危險在於<span class="highlight-card">${future.name}逆位</span>：你過去那段看似輝煌但實則虛火的財務擴張期可能會重演。表面風光、實則入不敷出的模式會再次出現。你需要區分「真正的收益」與「虛假的繁榮」。`;
+        } else {
+          insight += `<span class="highlight-card">${future.name}</span>所預示的財務新格局將在你持續調整資金動態、優化投入產出比的過程中逐步形成。`;
+        }
+      }
+      
+    } else if (topic === 'love') {
+      // 感情话题：因果桥接叙事
+      insight += `正是因為你過去在<span class="highlight-card">${past.name}</span>階段`;
+      
+      if (past.isReversed) {
+        insight += `所經歷的情感流動受阻與溝通邊界模糊`;
+      } else {
+        insight += `所建立的互動模式`;
+      }
+      
+      insight += `，導致了你現在必須在<span class="highlight-card">${present.name}</span>`;
+      
+      if (present.name.includes('聖杯')) {
+        insight += `的狀態下重新學習情感流動與內在需求表達`;
+      } else if (present.name.includes('寶劍')) {
+        insight += `的階段重建溝通邊界`;
+      } else {
+        insight += `的狀態下調整互動模式`;
+      }
+      
+      insight += `。如果你繼續維持<span class="highlight-card">${present.name}</span>的模式，`;
+      
+      if (future.name.includes('聖杯')) {
+        insight += `那麼<span class="highlight-card">${future.name}</span>所預示的情感連結深化、價值觀共鳴提升就會在關係中自然發生。`;
+      } else if (future.name.includes('戀人')) {
+        insight += `那麼<span class="highlight-card">${future.name}</span>所預示的承諾度明確化、親密關係升級就會成為可能。`;
+      } else {
+        insight += `<span class="highlight-card">${future.name}</span>所預示的新情感格局將逐步形成。`;
+      }
+      
+    } else if (topic === 'career') {
+      // 事业话题：因果桥接叙事
+      insight += `正是因為你過去在<span class="highlight-card">${past.name}</span>階段`;
+      
+      if (past.isReversed) {
+        insight += `所經歷的職場競爭力受限與決策執行力不足`;
+      } else {
+        insight += `所建立的職業定位`;
+      }
+      
+      insight += `，導致了你現在必須在<span class="highlight-card">${present.name}</span>`;
+      
+      if (present.name.includes('寶劍')) {
+        insight += `的階段升級決策能力與資源整合`;
+      } else if (present.name.includes('權杖')) {
+        insight += `的狀態下爆發行動力`;
+      } else {
+        insight += `的狀態下調整職業狀態`;
+      }
+      
+      insight += `。如果你繼續維持<span class="highlight-card">${present.name}</span>的模式，`;
+      
+      if (future.name.includes('權杖')) {
+        insight += `那麼<span class="highlight-card">${future.name}</span>所預示的決策執行力快速提升、職場競爭力顯著增強就會成為現實。`;
+      } else if (future.name.includes('寶劍王牌')) {
+        insight += `那麼<span class="highlight-card">${future.name}</span>所預示的突破性職業計劃啟動、戰略定位重組就會在未來發生。`;
+      } else {
+        insight += `<span class="highlight-card">${future.name}</span>所預示的新職業格局將逐步形成。`;
+      }
+      
+    } else {
+      // 综合话题的通用叙事（避免使用财务术语）
+      console.warn('⚠️ 使用 general 话题叙事，原 topic:', topic);
+      insight += `正是因為你過去在<span class="highlight-card">${past.name}</span>階段所經歷的狀態`;
+      
+      if (past.isReversed) {
+        insight += `——能量受阻、內在矛盾`;
+      } else {
+        insight += `——穩定運行的模式`;
+      }
+      
+      insight += `，導致了你現在必須在<span class="highlight-card">${present.name}</span>`;
+      
+      if (present.isReversed) {
+        insight += `的狀態下重新審視與調整`;
+      } else {
+        insight += `的階段尋求新的平衡`;
+      }
+      
+      insight += `。如果你繼續維持<span class="highlight-card">${present.name}</span>的模式，`;
+      
+      if (future.isReversed) {
+        insight += `那麼<span class="highlight-card">${future.name}</span>所預示的挑戰將需要你更深的覺察與轉化。`;
+      } else {
+        insight += `<span class="highlight-card">${future.name}</span>所預示的轉機將在你的持續努力中逐步顯現。`;
+      }
+    }
+    
+    // 添加风险警告（如果有）
+    const riskWarning = this.getCardRiskWarning(future, topic);
+    if (riskWarning) {
+      insight += `<br/><br/>${riskWarning}`;
+    }
+    
+    return insight;
+  },
+  
+  /**
+   * 生成行动建议（停止+执行）
+   */
+  
+  /**
+   * 生成行动建议（停止+执行）
+   */
+  generateActionAdvice: function(cards, topic) {
+    const [past, present, future] = cards;
+    
+    let stopAction = '';
+    let doAction = '';
+    
+    if (topic === 'finance') {
+      // 停止（毒舌清醒+具体，强制财务术语）
+      const reversedCards = cards.filter(c => c.isReversed);
+      
+      // 特殊牌的专门警告
+      if (future.name.includes('惡魔') || future.name.includes('Devil')) {
+        stopAction = '停止那種「只要能賺錢，什麼代價都能付」的危險念頭。你正在走向金錢的奴隸，而不是主人。那些看起來ROI極高的機會，往往隱藏著失去自由的代價。';
+      } else if (future.name.includes('太陽') && future.isReversed) {
+        stopAction = '停止追求「表面風光」的財務擴張。那種「看起來很成功、但其實入不敷出」的虛火模式必須終止。別再為了面子維持高消費。';
+      } else if (reversedCards.length > 0) {
+        const firstReversed = reversedCards[0];
+        if (firstReversed.name.includes('權杖8')) {
+          stopAction = '停止同時追逐多個投資項目，收束戰線。你不是八爪魚，別假裝你能同時抓住所有機會。戰線拉太長，最後哪個都守不住。';
+        } else if (firstReversed.name.includes('月亮')) {
+          stopAction = '停止在資金流向不明、ROI完全算不清的情況下繼續投入。看不清的東西，不要碰。48小時內設定明確的止損點。';
+        } else if (firstReversed.name.includes('塔')) {
+          stopAction = '停止維持已經崩塌的財務結構，別再騙自己「還能撐」。該止損就止損，拖著只會讓虧損擴大。與其被動崩塌，不如主動重建。';
+        } else if (firstReversed.name.includes('星幣5')) {
+          stopAction = '停止任何高風險投資，優先恢復現金流穩定性。你現在不是賭徒，是生存者。把「能不能翻盤」的幻想收起來，先止血再說。';
+        } else if (firstReversed.name.includes('太陽')) {
+          stopAction = '停止那種「表面輝煌、實則虛火」的財務擴張模式。你需要的不是更多收入，而是更清晰的預算紀律。';
+        } else {
+          stopAction = '停止重複舊有的資金使用模式。同樣的方法不會帶來不同的結果，該換思路了。';
+        }
+      } else {
+        stopAction = '停止觀望和拖延，資金配置窗口已打開。機會不等人，決策執行力是關鍵。別等到「完美時機」，現在就是時機。';
+      }
+      
+      // 执行（48小时/7天内具体行动，强制财务术语）
+      if (future.name.includes('惡魔') || future.name.includes('Devil')) {
+        doAction = '在48小時內列出你當前所有的負債清單與合約條款，標註每一項的「真實ROI」與「隱藏代價」。在7天內，確立你的財務底線——哪些錢可以賺、哪些機會必須拒絕。<strong>記住：不是所有賺錢的機會都值得接受。</strong>';
+      } else if (future.name.includes('權杖騎士') && !future.isReversed) {
+        doAction = '選擇一個你最擅長的技能或產品，在48小時內將其轉化為具體的報價或行動計劃。抓住兩週內的快速增長窗口，提升資金周轉率。但要在執行前設定明確的止盈點（例如：收益達到30%就撤出），別讓貪婪毀了你的判斷。';
+      } else if (future.name.includes('魔術師') && !future.isReversed) {
+        doAction = '在48小時內完成一次完整的資源盤點：列出你的現金、可用信用額度、可變現資產、核心人脈。然後在7天內制定一份具體的資金使用計劃，明確每一筆資金的投入產出比預期。';
+      } else if (future.name.includes('錢幣') || future.name.includes('星币')) {
+        doAction = '在48小時內砍掉三項不必要的訂閱或支出項目，將省下的錢轉入專門的收割期準備金。在7天內，聚焦在一個最有可能產生實際收入的項目上，強化預算紀律。';
+      } else if (present.name.includes('皇帝') && !present.isReversed) {
+        doAction = '在48小時內建立一個每週資金複盤表格（收入、支出、投入產出比），從本週開始嚴格執行預算，每週日晚上檢視一次。';
+      } else if (future.name.includes('寶劍王牌')) {
+        doAction = '在48小時內寫下你當前財務狀況中最需要「砍掉」的三個項目，然後在7天內至少執行一個割捨決策。制定突破性的理財計劃，但要做好心理準備：<strong>清晰的決策往往伴隨痛苦的割捨。</strong>';
+      } else if (future.name.includes('塔')) {
+        doAction = '在48小時內列出你當前所有「看起來還能撐、但其實已經在虧錢」的投資或支出項目。在7天內，主動拆除至少一個搖搖欲墜的財務結構。與其被動崩塌，不如主動重建，設定明確的止損點。';
+      } else {
+        doAction = '在48小時內設定一個7天內可完成的財務小目標（例如：增加500元收入、減少300元支出），然後每天追蹤執行進度與ROI。';
+      }
+      
+    } else if (topic === 'career') {
+      // 停止（使用职场专业术语）
+      if (cards.some(c => c.isReversed)) {
+        stopAction = '停止在不適合的職位上消耗精力，重新評估職場競爭力定位。';
+      } else {
+        stopAction = '停止等待完美時機，決策執行力是關鍵。';
+      }
+      
+      // 执行（使用职场专业术语）
+      if (future.name.includes('權杖')) {
+        doAction = '主動推進關鍵項目，展現決策執行力，提升職場競爭力。';
+      } else if (future.name.includes('寶劍王牌')) {
+        doAction = '制定突破性的職業計劃，提升資源整合能力。';
+      } else {
+        doAction = '建立清晰的職業目標，制定30天行動計劃，追蹤投入產出比。';
+      }
+      
+    } else if (topic === 'love') {
+      // 停止（使用情感专业术语）
+      if (cards.some(c => c.isReversed)) {
+        stopAction = '停止模糊的溝通邊界，明確表達內在需求。';
+      } else {
+        stopAction = '停止過度理性分析，允許情感流動。';
+      }
+      
+      // 执行（使用情感专业术语）
+      if (future.name.includes('聖杯')) {
+        doAction = '深化情感連結，提升共情能力，建立價值觀共鳴。';
+      } else if (future.name.includes('戀人')) {
+        doAction = '明確承諾度，建立健康的互動模式。';
+      } else {
+        doAction = '主動溝通內在需求，提升親密關係品質。';
+      }
+      
+    } else {
+      stopAction = '停止拖延和觀望。';
+      doAction = '立即採取第一步行動。';
+    }
+    
+    return { stop: stopAction, do: doAction };
+  },
+  
+  /**
+   * 生成极简单区块解读（深度整合版）
+   */
+  generateFullHTML: function(cards, topic, question) {
+    if (!cards || cards.length !== 3) {
+      return '<p>需要3张牌</p>';
+    }
+    
+    const [past, present, future] = cards;
+    
+    let html = '';
+    
+    // 添加紫色星光背景动效CSS
+    html += `
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap');
+        
+        .purple-starfield {
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 0;
+          background-image: 
+            radial-gradient(2px 2px at 20% 30%, rgba(162, 136, 227, 0.5), transparent),
+            radial-gradient(2px 2px at 60% 70%, rgba(162, 136, 227, 0.4), transparent),
+            radial-gradient(1px 1px at 50% 50%, rgba(212, 175, 55, 0.5), transparent),
+            radial-gradient(1px 1px at 80% 10%, rgba(162, 136, 227, 0.3), transparent),
+            radial-gradient(2px 2px at 90% 60%, rgba(212, 175, 55, 0.4), transparent),
+            radial-gradient(1px 1px at 33% 70%, rgba(162, 136, 227, 0.4), transparent),
+            radial-gradient(1px 1px at 15% 85%, rgba(212, 175, 55, 0.3), transparent);
+          background-size: 200% 200%;
+          animation: starFloat 25s ease-in-out infinite;
+          opacity: 0.7;
+        }
+        
+        @keyframes starFloat {
+          0%, 100% { 
+            background-position: 0% 0%, 100% 100%, 50% 50%, 80% 20%, 20% 80%, 60% 40%, 15% 85%; 
+          }
+          50% { 
+            background-position: 100% 100%, 0% 0%, 60% 60%, 90% 30%, 30% 90%, 70% 50%, 25% 75%; 
+          }
+        }
+        
+        .highlight-card {
+          color: #A288E3;
+          font-weight: 600;
+        }
+        
+        .highlight-time {
+          color: #D4AF37;
+          font-weight: 600;
+        }
+      </style>
+      
+      <div class="purple-starfield"></div>
+    `;
+    
+    // 生成完整叙事（调用优化过的函数）
+    const coreAnswer = this.generateCoreAnswer(cards, topic, question);
+    const deepInsight = this.generateDeepInsight(cards, topic);
+    const actions = this.generateActionAdvice(cards, topic);
+    
+    // ============================================
+    // 极简单区块：【靈魂指引總結】（三段式）
+    // ============================================
+    
+    let narrative = '';
+    
+    // 第一段：核心回答（直接回答时间）
+    narrative += coreAnswer;
+    
+    // 第二段：深度洞察（因果叙事，散文式）
+    narrative += `<br/><br/>`;
+    narrative += deepInsight;
+    
+    if (topic === 'finance') {
+      // 财务专属叙事
+      narrative += `你过去经历的那段<span class="highlight-card">${past.name}</span>`;
+      
+      // 根据过去牌给出财务定位（使用财务专业术语）
+      if (past.name.includes('星幣5') || past.name.includes('錢幣五')) {
+        narrative += `——現金流斷裂的財務匱乏期`;
+      } else if (past.name.includes('星幣8') || past.name.includes('錢幣八')) {
+        narrative += `——高投入低產出比的積累期`;
+      } else if (past.name.includes('權杖8') && past.isReversed) {
+        narrative += `——因過度擴張導致資金鏈緊張的混亂期`;
+      } else if (past.name.includes('塔')) {
+        narrative += `——財務結構崩塌、需緊急止損的震蕩期`;
+      } else if (past.isReversed) {
+        narrative += `——資金流動受阻、預算失控的困頓期`;
+      } else {
+        narrative += `——舊有的資金使用模式`;
+      }
+      
+      narrative += `已经结束了。现在你进入了<span class="highlight-card">${present.name}</span>`;
+      
+      // 根据现在牌给出当下定位（使用财务专业术语）
+      if (present.name.includes('星幣2') || present.name.includes('錢幣二')) {
+        narrative += `的資金周轉與收支平衡調整期`;
+      } else if (present.name.includes('魔術師')) {
+        narrative += `——你的財務決策執行力正在回歸，資源配置已就位，就差行動`;
+      } else if (present.name.includes('皇帝')) {
+        narrative += `——需要建立更嚴格的預算紀律與資金管控體系`;
+      } else if (present.name.includes('寶劍')) {
+        narrative += `——必須做出清晰的財務決策，降低決策風險`;
+      } else if (present.name.includes('正義')) {
+        narrative += `——需要重新審視投入產出比，調整資源分配`;
+      } else {
+        narrative += `的資金動態重組期`;
+      }
+      
+      narrative += `。`;
+      
+      // 未来牌指向（使用财务专业术语）
+      narrative += `而<span class="highlight-card">${future.name}</span>`;
+      
+      if (future.name.includes('寶劍王牌') || future.name.includes('寶劍A')) {
+        narrative += `預示著一個突破性的理財決策或全新的財務計劃即將啟動。這是從資金混亂轉向清晰管控、從被動應對轉向主動配置的關鍵轉折點，決策執行力將成為核心競爭力。`;
+      } else if (future.name.includes('權杖騎士')) {
+        narrative += `告訴你，財務的爆發性增長信號已出現。這是從資金停滯轉向快速周轉的關鍵點，現金流會在短期內顯著改善，ROI將快速提升。`;
+      } else if (future.name.includes('錢幣') || future.name.includes('星币')) {
+        narrative += `指向穩健的收割期，你之前的投入會開始回報，資產增值與現金流改善將同步進行。`;
+      } else if (future.name.includes('太陽')) {
+        narrative += `預示財務困境即將結束，清晰的資金流向與預算紀律會顯現，財務結構將趨於健康。`;
+      } else if (future.name.includes('世界')) {
+        narrative += `指向財務週期的完整閉環，資產配置達到平衡狀態，收割期正式到來。`;
+      } else {
+        narrative += `指向資金動態的重組與新的財務格局形成，需要重新評估投入產出比。`;
+      }
+      
+    } else if (topic === 'love') {
+      // 感情话题叙事（使用情感专业术语）
+      narrative += `你過去的<span class="highlight-card">${past.name}</span>`;
+      
+      if (past.isReversed) {
+        narrative += `——情感流動受阻、溝通邊界模糊的時期`;
+      } else {
+        narrative += `——舊有的互動模式`;
+      }
+      
+      narrative += `已經結束了。現在你進入了<span class="highlight-card">${present.name}</span>`;
+      
+      if (present.name.includes('聖杯')) {
+        narrative += `的情感流動與內在需求表達期`;
+      } else if (present.name.includes('寶劍')) {
+        narrative += `的溝通邊界重建期`;
+      } else {
+        narrative += `的新互動模式`;
+      }
+      
+      narrative += `。而<span class="highlight-card">${future.name}</span>指向`;
+      
+      if (future.name.includes('聖杯')) {
+        narrative += `情感連結深化、價值觀共鳴提升的階段`;
+      } else if (future.name.includes('戀人')) {
+        narrative += `承諾度明確化、親密關係升級的轉折點`;
+      } else {
+        narrative += `情感關係的新格局形成`;
+      }
+      
+      narrative += `。`;
+      
+    } else if (topic === 'career') {
+      // 事业话题叙事（使用职场专业术语）
+      narrative += `你過去的<span class="highlight-card">${past.name}</span>`;
+      
+      if (past.isReversed) {
+        narrative += `——職場競爭力受限、決策執行力不足的時期`;
+      } else {
+        narrative += `——舊有的職業定位`;
+      }
+      
+      narrative += `已經結束了。現在你進入了<span class="highlight-card">${present.name}</span>`;
+      
+      if (present.name.includes('寶劍')) {
+        narrative += `的決策升級與資源整合期`;
+      } else if (present.name.includes('權杖')) {
+        narrative += `的行動力爆發期`;
+      } else {
+        narrative += `的新職業狀態`;
+      }
+      
+      narrative += `。而<span class="highlight-card">${future.name}</span>指向`;
+      
+      if (future.name.includes('權杖')) {
+        narrative += `決策執行力快速提升、職場競爭力顯著增強的階段`;
+      } else if (future.name.includes('寶劍王牌')) {
+        narrative += `突破性職業計劃啟動、戰略定位重組的關鍵點`;
+      } else {
+        narrative += `職業發展的新格局形成`;
+      }
+      
+      narrative += `。`;
+      
+    } else {
+      // 综合话题的通用叙事
+      narrative += `你過去的<span class="highlight-card">${past.name}</span>階段已經結束，現在進入了<span class="highlight-card">${present.name}</span>的新狀態，而<span class="highlight-card">${future.name}</span>指向即將到來的轉機。`;
+    }
+    
+    // 第三段：执行策略
+    narrative += `<br/><br/>本周的执行策略：立即<strong>停止</strong>${actions.stop.replace(/^停止/, '')}，转而<strong>执行</strong>${actions.do.replace(/^立即执行|^执行/, '')}`;
+    
+    // 主容器（极简版，无标题，添加塔罗背景图）
+    html += `
+      <div style="
+        max-width: 900px;
+        margin: 0 auto;
+        background-image: url('./tarot-reading-bg.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 32px;
+        padding: 50px 40px;
+        border: 1px solid rgba(162, 136, 227, 0.3);
+        box-shadow: 0 20px 60px rgba(162, 136, 227, 0.3);
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+      ">
+        <!-- 渐变遮罩层，确保文字可读 -->
+        <div style="
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            135deg,
+            rgba(18, 10, 33, 0.85) 0%,
+            rgba(30, 16, 48, 0.75) 50%,
+            rgba(18, 10, 33, 0.85) 100%
+          );
+          z-index: -1;
+        "></div>
+        
+        <div style="
+          color: #F5F5DC;
+          font-size: 1.15em;
+          line-height: 1.8;
+          text-align: justify;
+          font-family: 'Noto Serif SC', serif;
+          position: relative;
+          z-index: 1;
+        ">
+          ${narrative}
+        </div>
+      </div>
+    `;
+    
+    return html;
+  }
+};
+
+console.log('🎯 Direct Reading Generator V2 (Professional Tarot Master Style) loaded');

@@ -1,0 +1,9 @@
+                  {/* 深度解读按钮 */}
+                  <div className="flex justify-center mt-8 mb-4">
+                    <button
+                      onClick={() => setView('deepReading')}
+                      className="px-12 py-4 rounded-full border border-[#9d85c4]/40 hover:border-[#9d85c4] hover:shadow-[0_0_30px_rgba(157,133,196,0.4)] transition-all duration-500 tracking-[0.4em] text-sm uppercase bg-[#9d85c4]/10 backdrop-blur-md"
+                    >
+                      ✦ 查看深度解读 ✦
+                    </button>
+                  </div>

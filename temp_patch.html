@@ -1,0 +1,33 @@
+<!-- 在</head>前添加 -->
+<script src="./assets/enhanced-tarot-data.js"></script>
+<style>
+.deep-insight-panel {
+  background: linear-gradient(135deg, rgba(26, 27, 58, 0.95) 0%, rgba(13, 14, 26, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(247, 231, 206, 0.15);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wisdom-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.wisdom-card.jungian { border-left-color: #9d85c4; }
+.wisdom-card.symbol { border-left-color: #f7e7ce; }
+.wisdom-card.book { border-left-color: #7b68ee; }
+</style>

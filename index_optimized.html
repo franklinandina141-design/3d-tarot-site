@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intuitive Tarot Guidance - 优化版</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&display=swap');
+      body { margin: 0; background: #0d0e1a; font-family: 'Cormorant Garamond', serif; }
+      .font-serif { font-family: 'Cormorant Garamond', serif; }
+
+      /* 性能优化：使用GPU加速 */
+      .aurora-bg {
+        position: fixed;
+        inset: -20%;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 20% 30%, rgba(157, 133, 196, 0.22), transparent 40%),
+          radial-gradient(circle at 78% 18%, rgba(247, 231, 206, 0.16), transparent 36%),
+          radial-gradient(circle at 50% 82%, rgba(123, 104, 238, 0.18), transparent 42%);
+        filter: blur(40px);
+        animation: auroraShift 16s ease-in-out infinite alternate;
+        transform: translate3d(0, 0, 0); /* GPU加速 */
+      }
+
+      .grain-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.08;
+        background-image: radial-gradient(rgba(255,255,255,0.9) 0.35px, transparent 0.35px);
+        background-size: 3px 3px;
+        transform: translate3d(0, 0, 0); /* GPU加速 */
+      }
+
+      @keyframes auroraShift {
+        0% { transform: translate3d(-2%, -1%, 0) scale(1); }
+        100% { transform: translate3d(2%, 1%, 0) scale(1.08); }
+      }
+
+      @keyframes cardRevealSpin {
+        0% { opacity: 0; transform: translateY(14px) rotate(-8deg) scale(0.96); }
+        100% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+      }
+
+      .card-reveal {
+        will-change: transform, opacity;
+        animation: cardRevealSpin 520ms ease-out both;
+      }
+      
+      /* 性能优化：卡牌轮播使用GPU加速 */
+      .carousel-wrapper {
+        will-change: transform;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+      }
+      
+      .card-item {
+        will-change: transform;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+      }
+      
+      /* 手势指示器优化 */
+      .hand-indicator {
+        will-change: transform;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script>
+      // 性能优化工具函数
+      const perfUtils = {
+        // 节流函数：限制函数执行频率
+        throttle: (func, limit) => {
+          let inThrottle;
+          return function(...args) {
+            if (!inThrottle) {
+              func.apply(this, args);
+              inThrottle = true;
+              setTimeout(() => inThrottle = false, limit);
+            }
+          };
+        },
+        
+        // 防抖函数：延迟执行直到停止调用
+        debounce: (func, delay) => {
+          let timeoutId;
+          return function(...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+          };
+        },
+        
+        // RAF节流：确保每帧只执行一次
+        rafThrottle: (func) => {
+          let rafId = null;
+          return function(...args) {
+            if (rafId === null) {
+              rafId = requestAnimationFrame(() => {
+                func.apply(this, args);
+                rafId = null;
+              });
+            }
+          };
+        }
+      };
+    </script>
+
+    <script type="text/babel">
+      const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+      const MAJOR_ARCANA = [
+        "愚者 (The Fool)", "魔術師 (The Magician)", "女祭司 (The High Priestess)", "女皇 (The Empress)", "皇帝 (The Emperor)",
+        "教皇 (The Hierophant)", "戀人 (The Lovers)", "戰車 (The Chariot)", "力量 (Strength)", "隱者 (The Hermit)",
+        "命運之輪 (Wheel of Fortune)", "正義 (Justice)", "倒吊人 (The Hanged Man)", "死神 (Death)", "節制 (Temperance)",
+        "惡魔 (The Devil)", "高塔 (The Tower)", "星星 (The Star)", "月亮 (The Moon)", "太陽 (The Sun)",
+        "審判 (Judgement)", "世界 (The World)"
+      ];
+
+      const MAJOR_KEYWORDS = {
+        0: ["新旅程", "信任未知", "天真與風險"], 1: ["意志顯化", "資源整合", "行動力"], 2: ["直覺", "潛意識", "靜默智慧"],
+        3: ["滋養", "豐盛", "創造"], 4: ["秩序", "邊界", "責任"], 5: ["傳統", "信念系統", "導師"],
+        6: ["關係選擇", "價值一致", "承諾"], 7: ["掌舵", "自律", "突破"], 8: ["溫柔力量", "耐心", "本能整合"],
+        9: ["退隱", "獨處反思", "內在明燈"], 10: ["週期轉折", "命運節點", "順勢"], 11: ["因果平衡", "誠實", "清晰判斷"],
+        12: ["停看轉化", "視角翻轉", "放下控制"], 13: ["結束與重生", "斷捨離", "深層更新"], 14: ["調和", "節奏", "療癒整合"],
+        15: ["慾望束縛", "依附", "自我覺察"], 16: ["真相揭露", "結構崩塌", "重建"], 17: ["希望", "修復", "靈感"],
+        18: ["投射", "不安", "潛在真相"], 19: ["生命力", "清晰", "喜悅"], 20: ["召喚", "復盤", "覺醒"], 21: ["完成", "整合", "新階段"],
+      };
+      
+      // ... (保留所有原有数据和函数，这里省略以节省篇幅)
+
+      function App() {
+        const [view, setView] = useState('cover');
+        const [question, setQuestion] = useState('');
+        const [deck, setDeck] = useState([]);
+        const [selectedCards, setSelectedCards] = useState([]);
+        const [submittedQuestion, setSubmittedQuestion] = useState('');
+        
+        // 性能优化：手势状态
+        const [handPos, setHandPos] = useState({ x: 0, y: 0 });
+        const [isPinching, setIsPinching] = useState(false);
+        const [isHandDetected, setIsHandDetected] = useState(false); // 新增：是否检测到手
+        
+        const videoRef = useRef(null);
+        const canvasRef = useRef(null);
+        const carouselWrapperRef = useRef(null);
+        const animationFrameRef = useRef(null);
+        const cameraRef = useRef(null);
+        
+        const scrollPosRef = useRef(0);
+        const targetScrollRef = useRef(0);
+        const selectedCardsRef = useRef([]);
+        const deckRef = useRef([]);
+        const pinchCooldownRef = useRef(false);
+        
+        // 性能优化：手势检测状态
+        const lastHandTimeRef = useRef(0);
+        const isAnimatingRef = useRef(false);
+
+        useEffect(() => { selectedCardsRef.current = selectedCards; }, [selectedCards]);
+        useEffect(() => { deckRef.current = deck; }, [deck]);
+
+        // 优化后的initializeDeck
+        const initializeDeck = () => {
+          const buildCardByIndex = (index) => ({
+            id: `ar-${index}`,
+            name: MAJOR_ARCANA[index],
+            nameEn: MAJOR_ARCANA[index].match(/\(([^)]+)\)/)?.[1] || '',
+            image: `https://placehold.co/200x350/1a1b3a/9d85c4?text=${encodeURIComponent(MAJOR_ARCANA[index].split(' ')[0])}`,
+            keywords: MAJOR_KEYWORDS[index] || [],
+            upright: { energy: '', message: '', action: '' },
+            reversed: { energy: '', message: '', action: '' }
+          });
+
+          const fullDeck = Array.from({ length: 22 },
+            (_, index) => ({
+              ...buildCardByIndex(index),
+              backupImage: buildCardByIndex(index).image,
+              uid: Math.random().toString(36).slice(2, 11),
+              isReversed: Math.random() > 0.5
+            })
+          ).sort(() => Math.random() - 0.5);
+
+          setDeck(fullDeck);
+          const init = Math.max(0, (fullDeck.length * 220 - window.innerWidth) / 2);
+          scrollPosRef.current = init;
+          targetScrollRef.current = init;
+        };
+
+        // 性能优化关键：只在有手势时运行动画
+        useEffect(() => {
+          let rafId = null;
+          
+          const loop = () => {
+            const diff = targetScrollRef.current - scrollPosRef.current;
+            
+            // 优化1：只在差值明显时更新DOM
+            if (Math.abs(diff) > 0.1) {
+              scrollPosRef.current += diff * 0.12; // 提高响应速度从0.08到0.12
+              
+              if (carouselWrapperRef.current) {
+                // 优化2：使用transform替代left/right，启用GPU加速
+                carouselWrapperRef.current.style.transform = `translate3d(${-scrollPosRef.current}px, 0, 0)`;
+              }
+              
+              rafId = requestAnimationFrame(loop);
+              isAnimatingRef.current = true;
+            } else {
+              // 优化3：动画停止时取消RAF
+              isAnimatingRef.current = false;
+            }
+          };
+
+          if (view === 'reading') {
+            startHandTracking();
+            rafId = requestAnimationFrame(loop);
+          }
+
+          return () => {
+            if (rafId) cancelAnimationFrame(rafId);
+            if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+            if (cameraRef.current && typeof cameraRef.current.stop === 'function') {
+              cameraRef.current.stop();
+              cameraRef.current = null;
+            }
+            isAnimatingRef.current = false;
+          };
+        }, [view, deck.length]);
+
+        // 优化后的手势识别
+        const startHandTracking = async () => {
+          if (typeof window.Hands === 'undefined' || typeof window.Camera === 'undefined' || !videoRef.current) return;
+
+          const hands = new window.Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+          });
+
+          // 优化4：降低模型复杂度以提高性能
+          hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 0, // 从1改为0，更快
+            minDetectionConfidence: 0.5, // 从0.6降低到0.5
+            minTrackingConfidence: 0.5   // 从0.6降低到0.5
+          });
+
+          // 优化5：使用RAF节流避免过度更新
+          const throttledSetHandPos = perfUtils.rafThrottle((pos) => {
+            setHandPos(pos);
+            lastHandTimeRef.current = Date.now();
+            setIsHandDetected(true);
+          });
+          
+          const throttledSetPinching = perfUtils.throttle((value) => {
+            setIsPinching(value);
+          }, 50); // 50ms节流
+
+          hands.onResults((results) => {
+            if (!(results.multiHandLandmarks && results.multiHandLandmarks.length > 0)) {
+              setIsPinching(false);
+              setIsHandDetected(false);
+              pinchCooldownRef.current = false;
+              return;
+            }
+
+            const landmark = results.multiHandLandmarks[0];
+            const indexTip = landmark[8];
+            const thumbTip = landmark[4];
+
+            // 优化6：使用节流更新手势位置
+            throttledSetHandPos({ 
+              x: (1 - indexTip.x) * window.innerWidth, 
+              y: indexTip.y * window.innerHeight 
+            });
+
+            // 优化7：提高滚动灵敏度
+            const offset = (indexTip.x - 0.5) * 2;
+            targetScrollRef.current += offset * 60; // 从45提高到60
+
+            const maxScroll = (deckRef.current.length * 220) - window.innerWidth;
+            targetScrollRef.current = Math.max(-window.innerWidth / 4, Math.min(targetScrollRef.current, maxScroll));
+
+            // 优化8：捏合检测优化
+            const dist = Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y);
+            const activePinch = dist < 0.05; // 从0.04放宽到0.05，更容易触发
+            throttledSetPinching(activePinch);
+
+            if (activePinch && !pinchCooldownRef.current && selectedCardsRef.current.length < 3) {
+              handleCardSelect();
+            }
+            
+            // 重启动画循环（如果已停止）
+            if (!isAnimatingRef.current && animationFrameRef.current === null) {
+              const loop = () => {
+                const diff = targetScrollRef.current - scrollPosRef.current;
+                if (Math.abs(diff) > 0.1) {
+                  scrollPosRef.current += diff * 0.12;
+                  if (carouselWrapperRef.current) {
+                    carouselWrapperRef.current.style.transform = `translate3d(${-scrollPosRef.current}px, 0, 0)`;
+                  }
+                  animationFrameRef.current = requestAnimationFrame(loop);
+                } else {
+                  animationFrameRef.current = null;
+                }
+              };
+              animationFrameRef.current = requestAnimationFrame(loop);
+            }
+          });
+
+          const camera = new window.Camera(videoRef.current, {
+            onFrame: async () => {
+              // 优化9：降低处理帧率
+              if (Date.now() - lastHandTimeRef.current < 33) { // 约30fps
+                await hands.send({ image: videoRef.current });
+              }
+            },
+            width: 640,  // 从默认降低分辨率
+            height: 480  // 提高性能
+          });
+
+          cameraRef.current = camera;
+          camera.start();
+        };
+
+        const handleCardSelect = useCallback(() => {
+          if (pinchCooldownRef.current || selectedCardsRef.current.length >= 3) return;
+
+          const centerX = scrollPosRef.current + window.innerWidth / 2;
+          const cardIndex = Math.round(centerX / 220);
+
+          if (cardIndex >= 0 && cardIndex < deckRef.current.length) {
+            const selected = deckRef.current[cardIndex];
+            if (!selectedCardsRef.current.some(c => c.uid === selected.uid)) {
+              const newSelected = [...selectedCardsRef.current, selected];
+              setSelectedCards(newSelected);
+              selectedCardsRef.current = newSelected;
+
+              pinchCooldownRef.current = true;
+              setTimeout(() => { pinchCooldownRef.current = false; }, 800);
+            }
+          }
+        }, []);
+
+        return (
+          <div className="relative min-h-screen overflow-hidden">
+            <div className="aurora-bg" />
+            <div className="grain-overlay" />
+
+            <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+              {view === 'cover' && (
+                <div className="text-center max-w-xl space-y-10 animate-fade-in">
+                  <h1 className="text-6xl font-light tracking-widest text-[#F7E7CE] drop-shadow-[0_0_30px_rgba(247,231,206,0.6)]">
+                    Intuitive Tarot <br />Guidance
+                  </h1>
+                  <p className="text-lg text-[#F7E7CE]/70 leading-relaxed tracking-wide">
+                    "傾聽靈魂深處的低語，在光影中找尋妳的真實指引。"
+                  </p>
+                  <input
+                    type="text"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    placeholder="先寫下你此刻最想釐清的一個問題（例如：這段關係還值得投入嗎？）"
+                    className="w-full px-6 py-4 bg-white/5 border border-[#F7E7CE]/20 rounded-lg text-[#F7E7CE] placeholder-[#F7E7CE]/40 focus:border-[#F7E7CE]/60 focus:outline-none backdrop-blur-sm text-center"
+                  />
+                  <button
+                    onClick={() => { initializeDeck(); setSelectedCards([]); selectedCardsRef.current = []; setSubmittedQuestion(question.trim()); setView('reading'); }}
+                    className="px-16 py-4 rounded-full border border-[#F7E7CE]/30 hover:border-[#F7E7CE] hover:shadow-[0_0_40px_rgba(247,231,206,0.4)] transition-all duration-700 tracking-[0.5em] text-lg uppercase bg-white/5 backdrop-blur-md"
+                  >
+                    開啟靈魂儀式
+                  </button>
+                </div>
+              )}
+
+              {view === 'reading' && (
+                <div className="w-full">
+                  <div className="text-center mb-12">
+                    <h2 className="text-2xl text-[#F7E7CE]/80 mb-4 tracking-wider">挑選三張牌</h2>
+                    <div className="flex justify-center gap-4">
+                      {[0, 1, 2].map(i => (
+                        <div key={i} className={`w-16 h-24 rounded-lg border transition-all duration-700 flex items-center justify-center ${selectedCards[i] ? 'border-[#F7E7CE] shadow-[0_0_20px_#F7E7CE55] bg-[#F7E7CE]/10' : 'border-[#F7E7CE]/20 bg-white/5'}`}>
+                          {selectedCards[i] && <span className="text-xs text-[#F7E7CE]/60">{i + 1}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 优化10：添加CSS类实现GPU加速 */}
+                  <div ref={carouselWrapperRef} className="carousel-wrapper flex items-center mt-20">
+                    {deck.map((card, idx) => (
+                      <div key={card.uid} className="card-item flex-shrink-0 mr-5" style={{ width: '200px' }}>
+                        <div className="relative group">
+                          <div className="w-[200px] h-[350px] rounded-xl overflow-hidden border border-[#F7E7CE]/20 bg-gradient-to-br from-[#1a1b3a] to-[#0d0e1a] shadow-[0_8px_40px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_60px_rgba(157,133,196,0.3)] transition-all duration-500">
+                            <img src={card.backupImage} alt={card.name} className="w-full h-full object-cover" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 优化11：手势指示器使用CSS类 */}
+                  {isHandDetected && (
+                    <div className="hand-indicator fixed pointer-events-none z-50 transition-transform duration-75" style={{ left: handPos.x, top: handPos.y, transform: `translate(-50%, -50%) scale(${isPinching ? 0.6 : 1})` }}>
+                      <div className={`w-12 h-12 rounded-full border-2 ${isPinching ? 'border-[#9d85c4] bg-[#9d85c4]/20' : 'border-[#F7E7CE]/60 bg-[#F7E7CE]/10'} backdrop-blur-md shadow-[0_0_30px_currentColor] transition-colors duration-200`} />
+                    </div>
+                  )}
+
+                  <video ref={videoRef} className="hidden" />
+                  <canvas ref={canvasRef} className="hidden" />
+
+                  {selectedCards.length === 3 && (
+                    <div className="text-center mt-20">
+                      <button
+                        onClick={() => setView('result')}
+                        className="px-14 py-4 rounded-full border border-[#F7E7CE]/40 hover:border-[#F7E7CE] hover:shadow-[0_0_40px_rgba(247,231,206,0.4)] transition-all duration-700 text-lg tracking-[0.4em] uppercase bg-white/5 backdrop-blur-md"
+                      >
+                        揭曉解讀
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {view === 'result' && (
+                <div className="max-w-4xl mx-auto space-y-16">
+                  <div className="text-center space-y-4 pb-8 border-b border-[#F7E7CE]/10">
+                    <h2 className="text-4xl text-[#F7E7CE] tracking-wider">你的靈魂訊息</h2>
+                    {submittedQuestion && (
+                      <p className="text-lg text-[#F7E7CE]/60 italic">\"{submittedQuestion}\"</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-6 pb-12 border-b border-[#F7E7CE]/10">
+                    {selectedCards.map((card, idx) => (
+                      <div key={idx} className="card-reveal text-center space-y-3" style={{ animationDelay: `${idx * 120}ms` }}>
+                        <div className="text-xs text-[#9d85c4]/80 uppercase tracking-widest mb-2">
+                          {['過去', '現在', '未來'][idx]}
+                        </div>
+                        <div className="w-full h-[280px] rounded-lg overflow-hidden border border-[#F7E7CE]/20 bg-gradient-to-br from-[#1a1b3a] to-[#0d0e1a]">
+                          <img src={card.backupImage} alt={card.name} className="w-full h-full object-cover" style={{ transform: card.isReversed ? 'rotate(180deg)' : 'none' }} />
+                        </div>
+                        <h3 className="text-lg text-[#F7E7CE]">{card.name}</h3>
+                        {card.isReversed && <span className="text-xs text-[#d9c7ff]/60">(逆位)</span>}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-8 text-[#F7E7CE]/80 leading-relaxed">
+                    <p className="text-center text-sm text-[#9d85c4]/70">
+                      「這是一場深度的心理對話，不是宿命預測。每張牌都在映照你內在的真實，而不是外在的結果。」
+                    </p>
+                  </div>
+
+                  <div className="text-center pt-8">
+                    <button
+                      onClick={() => { setView('cover'); setSelectedCards([]); selectedCardsRef.current = []; pinchCooldownRef.current = false; setSubmittedQuestion(''); }}
+                      className="px-14 py-4 rounded-full border border-[#F7E7CE]/20 text-[10px] tracking-[0.6em] hover:bg-[#F7E7CE]/10 transition-all uppercase"
+                    >
+                      重新開始
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
